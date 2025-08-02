@@ -303,11 +303,12 @@ public class yq {
         fileUtil.b(projectMyscPath + File.separator + "settings.gradle", Lx.a());
         fileUtil.b(projectMyscPath + File.separator + "build.gradle", Lx.c("8.7.0", "4.4.2"));
 
-        fileUtil.b(projectMyscPath + File.separator + "gradle.properties", """
+        fileUtil.b(projectMyscPath + File.separator + "gradle.properties", ("""
                 android.enableR8.fullMode=false
                 android.enableJetifier=true
                 android.useAndroidX=true
-                """.trim());
+                org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8 -XX:+UseParallelGC
+                """).trim());
     }
 
     /**
