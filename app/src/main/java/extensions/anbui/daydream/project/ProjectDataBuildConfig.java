@@ -12,16 +12,7 @@ import extensions.anbui.daydream.file.FileUtils;
 public class ProjectDataBuildConfig {
 
     public static void setDataForFirstTimeProjectCreation(String projectID) {
-        Configs.currentProjectID = projectID;
-        //There is some code that will temporarily block after the project is created so wait a second.
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                writeDataFile(projectID, "{\"dexer\":\"D8\",\"classpath\":\"\",\"enable_logcat\":\"true\",\"no_http_legacy\":\"false\",\"android_jar\":\"\",\"no_warn\":\"true\",\"java_ver\":\"11\"}");
-            } catch (InterruptedException e) {
-                Log.e("ProjectDataBuildConfig", "setDataForFirstTimeProjectCreation: " + e.getMessage());
-            }
-        }).start();
+        writeDataFile(projectID, "{\"dexer\":\"D8\",\"classpath\":\"\",\"enable_logcat\":\"true\",\"no_http_legacy\":\"false\",\"android_jar\":\"\",\"no_warn\":\"true\",\"java_ver\":\"11\"}");
     }
 
     public static void setDataString(String projectID, String key, String value) {

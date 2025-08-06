@@ -2,6 +2,7 @@ package mod.jbk.build;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -23,7 +24,7 @@ public class BuiltInLibraries {
 
     // None final so that field values won't be optimized into code, and to allow easy changing of library names due to that
 
-    public static String ANDROIDX_ACTIVITY = "activity-1.3.0";
+    public static String ANDROIDX_ACTIVITY = "activity-1.10.1";
     public static String ANDROIDX_ANNOTATION = "annotation-1.5.1";
     public static String ANDROIDX_ANNOTATION_EXPERIMENTAL = "annotation-experimental-1.4.0";
     public static String ANDROIDX_APPCOMPAT = "appcompat-1.6.1";
@@ -144,7 +145,6 @@ public class BuiltInLibraries {
     public static String YOUTUBE_PLAYER = "android-youtube-player-10.0.5";
 
     //NEW
-    public static String ANDROIDX_ACTIVITY_ACTIVITY = "activity-1.10.1";
     public static String ANDROIDX_ANNOTATION_ANNOTATION_JVM = "annotation-jvm-1.9.1";
     public static String ANDROIDX_CORE_CORE_VIEWTREE = "core-viewtree-1.0.0";
     public static String ANDROIDX_ARCH_CORE_CORE_COMMON = "android-arch-core-common-2.2.0";
@@ -155,7 +155,9 @@ public class BuiltInLibraries {
 
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
             new BuiltInLibrary(ANDROIDX_ACTIVITY, List.of(ANDROIDX_ANNOTATION, ANDROIDX_COLLECTION, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_RUNTIME,
-                    ANDROIDX_LIFECYCLE_VIEWMODEL, ANDROIDX_LIFECYCLE_VIEWMODEL_SAVEDSTATE, ANDROIDX_SAVEDSTATE, ANDROIDX_TRACING)),
+                    ANDROIDX_LIFECYCLE_VIEWMODEL, ANDROIDX_LIFECYCLE_VIEWMODEL_SAVEDSTATE, ANDROIDX_SAVEDSTATE, ANDROIDX_TRACING,
+                    ANDROIDX_ANNOTATION_ANNOTATION_JVM, ANDROIDX_CORE_CORE_VIEWTREE, ANDROIDX_LIFECYCLE_COMMON, ANDROIDX_SAVEDSTATE, GUAVA),
+                    "androidx.activity"),
 
             new BuiltInLibrary(ANDROIDX_ANNOTATION),
             new BuiltInLibrary(ANDROIDX_ANNOTATION_EXPERIMENTAL),
@@ -370,12 +372,6 @@ public class BuiltInLibraries {
                     "com.pierfrancescosoffritti.androidyoutubeplayer"),
 
             new BuiltInLibrary(GUAVA),
-
-            //Overwrite old versions.
-            new BuiltInLibrary(ANDROIDX_ACTIVITY_ACTIVITY, List.of(ANDROIDX_ANNOTATION_ANNOTATION_JVM, ANDROIDX_CORE_CORE_VIEWTREE, ANDROIDX_LIFECYCLE_COMMON,
-                    ANDROIDX_LIFECYCLE_RUNTIME, ANDROIDX_LIFECYCLE_VIEWMODEL,ANDROIDX_LIFECYCLE_VIEWMODEL_SAVEDSTATE,
-                    ANDROIDX_SAVEDSTATE, GUAVA),
-                    "androidx.activity"),
 
             new BuiltInLibrary(ANDROIDX_ANNOTATION_ANNOTATION_JVM),
             new BuiltInLibrary(ANDROIDX_CORE_CORE_VIEWTREE),
