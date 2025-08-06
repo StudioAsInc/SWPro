@@ -24,10 +24,10 @@ public class BuiltInLibraries {
     // None final so that field values won't be optimized into code, and to allow easy changing of library names due to that
 
     public static String ANDROIDX_ACTIVITY = "activity-1.3.0";
-    public static String ANDROIDX_ANNOTATION = "annotation-1.3.0";
-    public static String ANDROIDX_ANNOTATION_EXPERIMENTAL = "annotation-experimental-1.2.0";
-    public static String ANDROIDX_APPCOMPAT = "appcompat-1.4.0";
-    public static String ANDROIDX_APPCOMPAT_RESOURCES = "appcompat-resources-1.4.0";
+    public static String ANDROIDX_ANNOTATION = "annotation-1.5.1";
+    public static String ANDROIDX_ANNOTATION_EXPERIMENTAL = "annotation-experimental-1.4.0";
+    public static String ANDROIDX_APPCOMPAT = "appcompat-1.6.1";
+    public static String ANDROIDX_APPCOMPAT_RESOURCES = "appcompat-resources-1.6.1";
     public static String ANDROIDX_ASYNCLAYOUTINFLATER = "asynclayoutinflater-1.0.0";
     public static String ANDROIDX_BROWSER = "browser-1.5.0";
     public static String ANDROIDX_CARDVIEW = "cardview-1.0.0";
@@ -36,9 +36,8 @@ public class BuiltInLibraries {
     public static String ANDROIDX_CONSTRAINTLAYOUT = "constraintlayout-2.1.2";
     public static String ANDROIDX_CONSTRAINTLAYOUT_CORE = "constraintlayout-core-1.0.2";
     public static String ANDROIDX_COORDINATORLAYOUT = "coordinatorlayout-1.1.0";
-    public static String ANDROIDX_CORE = "core-1.7.0";
-    public static String ANDROIDX_CORE_COMMON = "core-common-2.1.0";
-    public static String ANDROIDX_CORE_KTX = "core-ktx-1.5.0-beta01";
+    public static String ANDROIDX_CORE = "core-1.13.1";
+    public static String ANDROIDX_CORE_KTX = "core-ktx-1.16.0";
     public static String ANDROIDX_CORE_RUNTIME = "core-runtime-2.1.0";
     public static String ANDROIDX_CURSORADAPTER = "cursoradapter-1.0.0";
     public static String ANDROIDX_CUSTOMVIEW = "customview-1.1.0";
@@ -54,14 +53,14 @@ public class BuiltInLibraries {
     public static String ANDROIDX_LEGACY_SUPPORT_CORE_UTILS = "legacy-support-core-utils-1.0.0";
     public static String ANDROIDX_LEGACY_SUPPORT_V4 = "legacy-support-v4-1.0.0";
     public static String ANDROIDX_LEGACY_SUPPORT_V13 = "legacy-support-v13-1.0.0";
-    public static String ANDROIDX_LIFECYCLE_COMMON = "lifecycle-common-2.4.0";
-    public static String ANDROIDX_LIFECYCLE_LIVEDATA = "lifecycle-livedata-2.4.0";
-    public static String ANDROIDX_LIFECYCLE_LIVEDATA_CORE = "lifecycle-livedata-core-2.4.0";
-    public static String ANDROIDX_LIFECYCLE_PROCESS = "lifecycle-process-2.4.0";
-    public static String ANDROIDX_LIFECYCLE_RUNTIME = "lifecycle-runtime-2.4.0";
-    public static String ANDROIDX_LIFECYCLE_SERVICE = "lifecycle-service-2.4.0";
-    public static String ANDROIDX_LIFECYCLE_VIEWMODEL = "lifecycle-viewmodel-2.3.1";
-    public static String ANDROIDX_LIFECYCLE_VIEWMODEL_SAVEDSTATE = "lifecycle-viewmodel-savedstate-2.3.1";
+    public static String ANDROIDX_LIFECYCLE_COMMON = "lifecycle-common-2.6.2";
+    public static String ANDROIDX_LIFECYCLE_LIVEDATA = "lifecycle-livedata-2.6.2";
+    public static String ANDROIDX_LIFECYCLE_LIVEDATA_CORE = "lifecycle-livedata-core-2.6.2";
+    public static String ANDROIDX_LIFECYCLE_PROCESS = "lifecycle-process-2.6.2";
+    public static String ANDROIDX_LIFECYCLE_RUNTIME = "lifecycle-runtime-2.6.2";
+    public static String ANDROIDX_LIFECYCLE_SERVICE = "lifecycle-service-2.6.2";
+    public static String ANDROIDX_LIFECYCLE_VIEWMODEL = "lifecycle-viewmodel-2.6.2";
+    public static String ANDROIDX_LIFECYCLE_VIEWMODEL_SAVEDSTATE = "lifecycle-viewmodel-savedstate-2.6.2";
     public static String ANDROIDX_LOADER = "loader-1.1.0";
     public static String ANDROIDX_LOCALBROADCASTMANAGER = "localbroadcastmanager-1.0.0";
     public static String ANDROIDX_MEDIA = "media-1.2.1";
@@ -71,11 +70,11 @@ public class BuiltInLibraries {
     public static String ANDROIDX_RESOURCEINSPECTION_ANNOTATION = "resourceinspection-annotation-1.0.0";
     public static String ANDROIDX_ROOM_COMMON = "room-common-2.2.6";
     public static String ANDROIDX_ROOM_RUNTIME = "room-runtime-2.2.6";
-    public static String ANDROIDX_SAVEDSTATE = "savedstate-1.1.0";
+    public static String ANDROIDX_SAVEDSTATE = "savedstate-1.2.1";
     public static String ANDROIDX_SLIDINGPANELAYOUT = "slidingpanelayout-1.1.0";
     public static String ANDROIDX_SQLITE = "sqlite-2.2.0";
     public static String ANDROIDX_SQLITE_FRAMEWORK = "sqlite-framework-2.2.0";
-    public static String ANDROIDX_STARTUP_RUNTIME = "startup-runtime-1.1.0";
+    public static String ANDROIDX_STARTUP_RUNTIME = "startup-runtime-1.2.0";
     public static String ANDROIDX_SWIPEREFRESHLAYOUT = "swiperefreshlayout-1.2.0-alpha01";
     public static String ANDROIDX_TRACING = "tracing-1.0.0";
     public static String ANDROIDX_TRANSITION = "transition-1.4.1";
@@ -85,6 +84,8 @@ public class BuiltInLibraries {
     public static String ANDROIDX_VIEWPAGER2 = "viewpager2-1.0.0";
     public static String ANDROIDX_VIEWPAGER = "viewpager-1.0.0";
     public static String ANDROIDX_WORK_RUNTIME = "work-runtime-2.7.1";
+    public static String ANDROIDX_COLLECTION_JVM = "collection-jvm-1.5.0";
+    public static String ANDROIDX_GRAPHICS_SHAPES_ANDROID = "graphics-shapes-android-1.0.1";
     public static String FIREBASE_AUTH = "firebase-auth-19.0.0";
     public static String FIREBASE_AUTH_INTEROP = "firebase-auth-interop-18.0.0";
     public static String FIREBASE_COMMON = "firebase-common-19.3.1";
@@ -109,10 +110,10 @@ public class BuiltInLibraries {
     public static String GUAVA_LISTENABLEFUTURE = "listenablefuture-1.0.0";
     public static String HTTP_LEGACY_ANDROID_28 = "http-legacy-android-28";
     public static String JETBRAINS_ANNOTATIONS = "annotations-13.0";
-    public static String KOTLIN_STDLIB = "kotlin-stdlib-1.4.30-M1-release-152";
-    public static String KOTLIN_STDLIB_JDK7 = "kotlin-stdlib-jdk7-1.4.30-M1-release-152";
+    public static String KOTLIN_STDLIB = "kotlin-stdlib-2.0.0";
+    public static String KOTLIN_STDLIB_JDK7 = "kotlin-stdlib-jdk7-1.6.21";
     public static String LOTTIE = "lottie-3.4.0";
-    public static String MATERIAL = "material-1.6.1";
+    public static String MATERIAL = "material-1.14.0-alpha03";
     public static String OKHTTP = "okhttp-3.9.1";
     public static String OKIO = "okio-1.17.4";
     public static String ONESIGNAL = "OneSignal-3.14.0";
@@ -141,6 +142,16 @@ public class BuiltInLibraries {
     public static String UMP_USER_MESSAGING_PLATFORM = "user-messaging-platform-2.0.0";
     public static String WAVE_SIDE_BAR = "wave-side-bar";
     public static String YOUTUBE_PLAYER = "android-youtube-player-10.0.5";
+
+    //NEW
+    public static String ANDROIDX_ACTIVITY_ACTIVITY = "activity-1.10.1";
+    public static String ANDROIDX_ANNOTATION_ANNOTATION_JVM = "annotation-jvm-1.9.1";
+    public static String ANDROIDX_CORE_CORE_VIEWTREE = "core-viewtree-1.0.0";
+    public static String ANDROIDX_ARCH_CORE_CORE_COMMON = "android-arch-core-common-2.2.0";
+    public static String GUAVA = "guava-33.1.0-android";
+    public static String ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_JVM = "kotlinx-coroutines-core-jvm-1.6.4";
+    public static String ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_ANDROID = "kotlinx-coroutines-core-android-1.6.4";
+    public static String ORG_JETBRAINS_KOTLIN_KOTLIN_STDLIB_JDK8 = "kotlin-stdlib-jdk8-1.6.21";
 
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
             new BuiltInLibrary(ANDROIDX_ACTIVITY, List.of(ANDROIDX_ANNOTATION, ANDROIDX_COLLECTION, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_RUNTIME,
@@ -171,11 +182,12 @@ public class BuiltInLibraries {
                     "androidx.coordinatorlayout"),
 
             new BuiltInLibrary(ANDROIDX_CORE, List.of(ANDROIDX_ANNOTATION, ANDROIDX_ANNOTATION_EXPERIMENTAL, ANDROIDX_COLLECTION,
-                    ANDROIDX_CONCURRENT_FUTURES, ANDROIDX_LIFECYCLE_RUNTIME, ANDROIDX_VERSIONEDPARCELABLE), "androidx.core"),
+                    ANDROIDX_CONCURRENT_FUTURES, ANDROIDX_LIFECYCLE_RUNTIME, ANDROIDX_VERSIONEDPARCELABLE, ANDROIDX_ARCH_CORE_CORE_COMMON,
+                    ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_JVM, ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_ANDROID, ORG_JETBRAINS_KOTLIN_KOTLIN_STDLIB_JDK8), "androidx.core"),
 
             new BuiltInLibrary(ANDROIDX_CORE_KTX),
-            new BuiltInLibrary(ANDROIDX_CORE_COMMON, List.of(ANDROIDX_ANNOTATION)),
-            new BuiltInLibrary(ANDROIDX_CORE_RUNTIME, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE_COMMON)),
+            new BuiltInLibrary(ANDROIDX_ARCH_CORE_CORE_COMMON, List.of(ANDROIDX_ANNOTATION)),
+            new BuiltInLibrary(ANDROIDX_CORE_RUNTIME, List.of(ANDROIDX_ANNOTATION, ANDROIDX_ARCH_CORE_CORE_COMMON)),
             new BuiltInLibrary(ANDROIDX_CURSORADAPTER, List.of(ANDROIDX_ANNOTATION)),
             new BuiltInLibrary(ANDROIDX_CUSTOMVIEW, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE)),
             new BuiltInLibrary(ANDROIDX_DOCUMENTFILE, List.of(ANDROIDX_ANNOTATION)),
@@ -205,10 +217,10 @@ public class BuiltInLibraries {
                     ANDROIDX_LEGACY_SUPPORT_CORE_UTILS, ANDROIDX_MEDIA)),
 
             new BuiltInLibrary(ANDROIDX_LIFECYCLE_COMMON, List.of(ANDROIDX_ANNOTATION)),
-            new BuiltInLibrary(ANDROIDX_LIFECYCLE_LIVEDATA, List.of(ANDROIDX_CORE_COMMON, ANDROIDX_CORE_RUNTIME, ANDROIDX_LIFECYCLE_LIVEDATA_CORE)),
-            new BuiltInLibrary(ANDROIDX_LIFECYCLE_LIVEDATA_CORE, List.of(ANDROIDX_LIFECYCLE_COMMON, ANDROIDX_CORE_COMMON, ANDROIDX_CORE_RUNTIME)),
+            new BuiltInLibrary(ANDROIDX_LIFECYCLE_LIVEDATA, List.of(ANDROIDX_ARCH_CORE_CORE_COMMON, ANDROIDX_CORE_RUNTIME, ANDROIDX_LIFECYCLE_LIVEDATA_CORE)),
+            new BuiltInLibrary(ANDROIDX_LIFECYCLE_LIVEDATA_CORE, List.of(ANDROIDX_LIFECYCLE_COMMON, ANDROIDX_ARCH_CORE_CORE_COMMON, ANDROIDX_CORE_RUNTIME)),
             new BuiltInLibrary(ANDROIDX_LIFECYCLE_PROCESS, List.of(ANDROIDX_LIFECYCLE_RUNTIME, ANDROIDX_STARTUP_RUNTIME)),
-            new BuiltInLibrary(ANDROIDX_LIFECYCLE_RUNTIME, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE_COMMON, ANDROIDX_CORE_RUNTIME,
+            new BuiltInLibrary(ANDROIDX_LIFECYCLE_RUNTIME, List.of(ANDROIDX_ANNOTATION, ANDROIDX_ARCH_CORE_CORE_COMMON, ANDROIDX_CORE_RUNTIME,
                     ANDROIDX_LIFECYCLE_COMMON), "androidx.lifecycle.runtime"),
 
             new BuiltInLibrary(ANDROIDX_LIFECYCLE_SERVICE, List.of(ANDROIDX_LIFECYCLE_RUNTIME)),
@@ -229,7 +241,7 @@ public class BuiltInLibraries {
             new BuiltInLibrary(ANDROIDX_ROOM_RUNTIME, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE_RUNTIME, ANDROIDX_ROOM_COMMON,
                     ANDROIDX_SQLITE_FRAMEWORK, ANDROIDX_SQLITE)),
 
-            new BuiltInLibrary(ANDROIDX_SAVEDSTATE, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE_COMMON, ANDROIDX_LIFECYCLE_COMMON),
+            new BuiltInLibrary(ANDROIDX_SAVEDSTATE, List.of(ANDROIDX_ANNOTATION, ANDROIDX_ARCH_CORE_CORE_COMMON, ANDROIDX_LIFECYCLE_COMMON),
                     "androidx.savedstate"),
 
             new BuiltInLibrary(ANDROIDX_SLIDINGPANELAYOUT, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE, ANDROIDX_CUSTOMVIEW)),
@@ -251,6 +263,11 @@ public class BuiltInLibraries {
             new BuiltInLibrary(ANDROIDX_WORK_RUNTIME, List.of(ANDROIDX_ANNOTATION_EXPERIMENTAL, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_LIVEDATA,
                     ANDROIDX_LIFECYCLE_SERVICE, ANDROIDX_ROOM_RUNTIME, ANDROIDX_SQLITE, ANDROIDX_SQLITE_FRAMEWORK, ANDROIDX_STARTUP_RUNTIME,
                     GUAVA_LISTENABLEFUTURE), "androidx.work"),
+
+            new BuiltInLibrary(ANDROIDX_COLLECTION_JVM),
+
+            new BuiltInLibrary(ANDROIDX_GRAPHICS_SHAPES_ANDROID),
+
             new BuiltInLibrary(CIRCLE_IMAGEVIEW, List.of(ANDROIDX_ANNOTATION), "de.hdodenhof.circleimageview"),
             new BuiltInLibrary(CODE_VIEW, List.of(), "br.tiagohm.codeview"),
             new BuiltInLibrary(FACEBOOK_ADS_AUDIENCE_NETWORK_SDK),
@@ -295,7 +312,7 @@ public class BuiltInLibraries {
             new BuiltInLibrary(MATERIAL, List.of(ANDROIDX_ANNOTATION, ANDROIDX_ANNOTATION_EXPERIMENTAL, ANDROIDX_APPCOMPAT, ANDROIDX_CARDVIEW,
                     ANDROIDX_CONSTRAINTLAYOUT, ANDROIDX_COORDINATORLAYOUT, ANDROIDX_CORE, ANDROIDX_DRAWERLAYOUT, ANDROIDX_DYNAMIC_ANIMATION,
                     ANDROIDX_FRAGMENT, ANDROIDX_LIFECYCLE_RUNTIME, ANDROIDX_RECYCLERVIEW, ANDROIDX_TRANSITION, ANDROIDX_VECTORDRAWABLE,
-                    ANDROIDX_VIEWPAGER2), "com.google.android.material"),
+                    ANDROIDX_VIEWPAGER2, KOTLIN_STDLIB, ANDROIDX_COLLECTION_JVM, ANDROIDX_GRAPHICS_SHAPES_ANDROID), "com.google.android.material"),
 
             new BuiltInLibrary(OKHTTP, List.of(OKIO)),
             new BuiltInLibrary(OKIO),
@@ -351,6 +368,21 @@ public class BuiltInLibraries {
             new BuiltInLibrary(WAVE_SIDE_BAR, List.of(), "com.sayuti.lib"),
             new BuiltInLibrary(YOUTUBE_PLAYER, List.of(ANDROIDX_APPCOMPAT, ANDROIDX_RECYCLERVIEW, KOTLIN_STDLIB_JDK7),
                     "com.pierfrancescosoffritti.androidyoutubeplayer"),
+
+            new BuiltInLibrary(GUAVA),
+
+            //Overwrite old versions.
+            new BuiltInLibrary(ANDROIDX_ACTIVITY_ACTIVITY, List.of(ANDROIDX_ANNOTATION_ANNOTATION_JVM, ANDROIDX_CORE_CORE_VIEWTREE, ANDROIDX_LIFECYCLE_COMMON,
+                    ANDROIDX_LIFECYCLE_RUNTIME, ANDROIDX_LIFECYCLE_VIEWMODEL,ANDROIDX_LIFECYCLE_VIEWMODEL_SAVEDSTATE,
+                    ANDROIDX_SAVEDSTATE, GUAVA),
+                    "androidx.activity"),
+
+            new BuiltInLibrary(ANDROIDX_ANNOTATION_ANNOTATION_JVM),
+            new BuiltInLibrary(ANDROIDX_CORE_CORE_VIEWTREE),
+            new BuiltInLibrary(ANDROIDX_ARCH_CORE_CORE_COMMON),
+            new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_JVM),
+            new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_ANDROID),
+            new BuiltInLibrary(ORG_JETBRAINS_KOTLIN_KOTLIN_STDLIB_JDK8),
     };
 
     public static File getLibraryPath(String libraryName) {

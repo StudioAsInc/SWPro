@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
 import mod.agus.jcoderz.beans.ViewBeans;
 import mod.agus.jcoderz.editor.manage.library.locallibrary.ManageLocalLibrary;
 import mod.agus.jcoderz.handle.component.ConstVarComponent;
@@ -359,12 +362,32 @@ public class Jx {
             sb.append("protected void onCreate(Bundle _savedInstanceState) {").append(EOL);
             sb.append("super.onCreate(_savedInstanceState);").append(EOL);
 
+            if (ProjectDataLibrary.isEnabledAppCompat(sc_id)) {
+                if (ProjectDataDayDream.isEnableEdgeToEdge(sc_id, projectFileBean.fileName))
+                    sb.append("EdgeToEdge.enable(this);").append(EOL);
+            }
+
             if (isViewBindingEnabled) {
                 sb.append("binding = ").append(bindingName).append(".inflate(getLayoutInflater());").append(EOL);
                 sb.append("setContentView(binding.getRoot());").append(EOL);
             } else {
                 sb.append("setContentView(R.layout.").append(projectFileBean.fileName).append(");").append(EOL);
             }
+
+            if (ProjectDataLibrary.isEnabledAppCompat(sc_id)) {
+                if (ProjectDataDayDream.isEnableWindowInsetsHandling(sc_id, projectFileBean.fileName)) {
+                    if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR)) {
+                        sb.append("ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id._coordinator), (v, insets) -> {").append(EOL);
+                    } else {
+                        sb.append("ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id._main), (v, insets) -> {").append(EOL);
+                    }
+                    sb.append("Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());").append(EOL);
+                    sb.append("v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);").append(EOL);
+                    sb.append("return insets;").append(EOL);
+                    sb.append("});").append(EOL);
+                }
+            }
+
             sb.append("initialize(_savedInstanceState);");
         }
         sb.append(EOL);
@@ -745,6 +768,18 @@ public class Jx {
         } else {
             addImport("android.app.Activity");
         }
+
+        if (ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
+            if (ProjectDataDayDream.isEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName))
+                addImport("androidx.activity.EdgeToEdge");
+
+            if (ProjectDataDayDream.isEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName)) {
+                addImport("androidx.core.graphics.Insets");
+                addImport("androidx.core.view.ViewCompat");
+                addImport("androidx.core.view.WindowInsetsCompat");
+            }
+        }
+
         if (isViewBindingEnabled) {
             fields.add("private " + ViewBindingBuilder.generateFileNameForLayout(projectFileBean.fileName) + " binding;");
         }
