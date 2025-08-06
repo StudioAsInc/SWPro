@@ -37,6 +37,22 @@ public class ProjectDataDayDream {
         setDataBoolean(projectID, activityName, "isDisableAutomaticPermissionRequests", isEnable);
     }
 
+    public static boolean isEnableAndroidTextColorRemoval(String projectID) {
+        return getDataUniversalThemeSettings(projectID, "isEnableAndroidTextColorRemoval");
+    }
+
+    public static void setEnableAndroidTextColorRemoval(String projectID, boolean isEnable) {
+        setDataUniversalThemeSettings(projectID, "isEnableAndroidTextColorRemoval",isEnable);
+    }
+
+    public static boolean getDataUniversalThemeSettings(String projectID, String settingName) {
+        return getDataBoolean(projectID, "DataUniversalThemeSettings", settingName);
+    }
+
+    public static void setDataUniversalThemeSettings(String projectID, String settingName, boolean isEnable) {
+        setDataBoolean(projectID, "DataUniversalThemeSettings", settingName, isEnable);
+    }
+
     public static boolean getDataBoolean(String projectID, String toplevelkey, String key) {
         JsonObject json = JsonParser.parseString(readDayDreamDataFile(projectID)).getAsJsonObject();
         if (json.has(toplevelkey)) {

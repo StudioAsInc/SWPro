@@ -3,6 +3,7 @@ package a.a.a;
 import static com.besome.sketch.editor.property.PropertyAttributesItem.RELATIVE_IDS;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import dev.aldi.sayuti.editor.injection.AppCompatInjection;
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
 import mod.agus.jcoderz.beans.ViewBeans;
 import mod.jbk.util.LogUtil;
 import pro.sketchware.managers.inject.InjectRootLayoutManager;
@@ -778,7 +781,9 @@ public class Ox {
                     nx.addAttribute("android", "textColor", "@color/" + viewBean.text.resTextColor);
                 }
             } else if (!hasAttr("textColor", viewBean) && !toNotAdd.contains("android:textColor") && !injectHandler.contains("textColor")) {
-                nx.addAttribute("android", "textColor", formatColor(viewBean.text.textColor & 0xffffff));
+                //-16777216 aka black
+                if (!ProjectDataDayDream.isEnableAndroidTextColorRemoval(Configs.currentProjectID) || viewBean.text.textColor != -16777216)
+                    nx.addAttribute("android", "textColor", formatColor(viewBean.text.textColor & 0xffffff));
             }
         }
         switch (viewBean.type) {
@@ -801,7 +806,9 @@ public class Ox {
                             nx.addAttribute("android", "textColorHint", "@color/" + viewBean.text.resHintColor);
                         }
                     } else if (!hasAttr("textColorHint", viewBean) && !toNotAdd.contains("android:textColorHint")) {
-                        nx.addAttribute("android", "textColorHint", formatColor(viewBean.text.hintColor & 0xffffff));
+                        //-10453621 aka grey
+                        if (!ProjectDataDayDream.isEnableAndroidTextColorRemoval(Configs.currentProjectID) || viewBean.text.hintColor != -10453621)
+                            nx.addAttribute("android", "textColorHint", formatColor(viewBean.text.hintColor & 0xffffff));
                     }
                 }
                 if (viewBean.text.singleLine != 0 && !toNotAdd.contains("android:singleLine") && !injectHandler.contains("singleLine")) {
