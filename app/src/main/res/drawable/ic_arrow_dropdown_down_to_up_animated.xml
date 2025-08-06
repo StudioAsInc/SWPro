@@ -1,6 +1,0 @@
-<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/ic_keyboard_arrow_down">
-    <target
-        android:name="arrow_group"
-        android:animation="@animator/rotate_arrow_dropdown_animator" />
-</animated-vector>

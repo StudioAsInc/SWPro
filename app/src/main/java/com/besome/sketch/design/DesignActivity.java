@@ -481,14 +481,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         });
 
         btnOptions = findViewById(R.id.btn_options);
-        btnOptions.setOnClickListener(v -> {
-            Drawable icon = AppCompatResources.getDrawable(DesignActivity.this, R.drawable.ic_arrow_dropdown_down_to_up_animated);
-            btnOptions.setIcon(icon);
-            btnOptions.setChecked(true);
-            bottomPopupMenu.show();
-            assert icon != null;
-            ((AnimatedVectorDrawable) icon).start();
-        });
+        btnOptions.setOnClickListener(v -> bottomPopupMenu.show());
 
         bottomPopupMenu = new PopupMenu(this, btnOptions);
         bottomMenu = bottomPopupMenu.getMenu();
@@ -532,11 +525,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         bottomPopupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
             @Override
             public void onDismiss(PopupMenu menu) {
-                Drawable icon = AppCompatResources.getDrawable(DesignActivity.this, R.drawable.ic_arrow_dropdown_up_to_down_animated);
-                btnOptions.setIcon(icon);
                 btnOptions.setChecked(false);
-                assert icon != null;
-                ((AnimatedVectorDrawable) icon).start();
             }
         });
 
