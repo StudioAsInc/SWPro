@@ -19,6 +19,10 @@ public class ProjectDataDecryptor {
         try {
             // Readfile
             File file = new File(path);
+            if (!file.exists()) {
+                Log.e("DecryptError", "File does not exist.");
+                return "";
+            }
             FileInputStream fis = new FileInputStream(file);
             byte[] encrypted = new byte[(int) file.length()];
             if (fis.read(encrypted) != encrypted.length) {
