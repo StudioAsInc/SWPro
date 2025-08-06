@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.NotificationCompat;
@@ -141,10 +143,13 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
     private Menu bottomMenu;
     private PopupMenu bottomPopupMenu;
     private MaterialButton btnRun;
+    private MaterialButton btnOptions;
     private ProjectFileBean projectFile;
     private TextView fileName;
     private String currentJavaFileName;
     private ViewEditorFragment viewTabAdapter;
+    private boolean isBuilding = false;
+
     private final ActivityResultLauncher<Intent> openCollectionManager = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
             if (viewTabAdapter != null) {
@@ -465,7 +470,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
 
         btnRun = findViewById(R.id.btn_run);
         btnRun.setOnClickListener(v -> {
-            if (currentBuildTask != null && !currentBuildTask.canceled) {
+            if (currentBuildTask != null && !currentBuildTask.canceled && isBuilding) {
                 currentBuildTask.cancelBuild();
                 return;
             }
@@ -475,9 +480,14 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
             buildTask.execute();
         });
 
-        Button btnOptions = findViewById(R.id.btn_options);
+        btnOptions = findViewById(R.id.btn_options);
         btnOptions.setOnClickListener(v -> {
+            Drawable icon = AppCompatResources.getDrawable(DesignActivity.this, R.drawable.ic_arrow_dropdown_down_to_up_animated);
+            btnOptions.setIcon(icon);
+            btnOptions.setChecked(true);
             bottomPopupMenu.show();
+            assert icon != null;
+            ((AnimatedVectorDrawable) icon).start();
         });
 
         bottomPopupMenu = new PopupMenu(this, btnOptions);
@@ -518,6 +528,18 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
             toViewCodeEditor();
             return true;
         });
+
+        bottomPopupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+                Drawable icon = AppCompatResources.getDrawable(DesignActivity.this, R.drawable.ic_arrow_dropdown_up_to_down_animated);
+                btnOptions.setIcon(icon);
+                btnOptions.setChecked(false);
+                assert icon != null;
+                ((AnimatedVectorDrawable) icon).start();
+            }
+        });
+
 
         xmlLayoutOrientation = findViewById(R.id.img_orientation);
         viewPager = findViewById(R.id.viewpager);
@@ -1032,6 +1054,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         private final NotificationManager notificationManager;
         private final int notificationId = 1;
         private final MaterialButton btnRun;
+        private final MaterialButton btnOptions;
         private final LinearLayout progressContainer;
         private final TextView progressText;
         private final LinearProgressIndicator progressBar;
@@ -1043,6 +1066,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
             super(activity);
             notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
             btnRun = activity.btnRun;
+            btnOptions = activity.btnOptions;
             progressContainer = activity.findViewById(R.id.progress_container);
             progressText = activity.findViewById(R.id.progress_text);
             progressBar = activity.findViewById(R.id.progress);
@@ -1069,6 +1093,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         private void doInBackground() {
             DesignActivity activity = getActivity();
             if (activity == null) return;
+            activity.isBuilding = true;
 
             try {
                 var q = activity.q;
@@ -1219,6 +1244,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 LogUtil.e("DesignActivity$BuildTask", "Failed to build project", tr);
                 activity.indicateCompileErrorOccurred(Log.getStackTraceString(tr));
             } finally {
+                activity.isBuilding = false;
                 activity.runOnUiThread(this::onPostExecute);
             }
         }
@@ -1334,6 +1360,9 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
             btnRun.setBackgroundTintList(ColorStateList.valueOf(ThemeUtils.getColor(context, isRunning ? R.attr.colorErrorContainer : R.attr.colorPrimary)));
             btnRun.setIcon(ContextCompat.getDrawable(context, isRunning ? R.drawable.ic_mtrl_stop : R.drawable.ic_mtrl_run));
             btnRun.setIconTint(ColorStateList.valueOf(ThemeUtils.getColor(context, isRunning ? R.attr.colorOnErrorContainer : R.attr.colorSurfaceContainerLowest)));
+            btnRun.setTextColor(ColorStateList.valueOf(ThemeUtils.getColor(context, isRunning ? R.attr.colorOnErrorContainer : R.attr.colorSurfaceContainerLowest)));
+            btnRun.setText(isRunning ? "Stop" : "Run");
+            btnOptions.setEnabled(!isRunning);
             progressContainer.setVisibility(isRunning ? View.VISIBLE : View.GONE);
         }
     }
