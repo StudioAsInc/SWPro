@@ -98,6 +98,14 @@ public class ProjectDataDayDream {
     public static void setUniversalDisableAutomaticPermissionRequests(String projectID, boolean isEnable) {
         setUniversalSettings(projectID, "disableAutomaticPermissionRequests", isEnable);
     }
+
+    public static boolean isForceAddWorkManager(String projectID) {
+        return getUniversalSettings(projectID, "forceAddWorkManager");
+    }
+
+    public static void setForceAddWorkManager(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "forceAddWorkManager", isEnable);
+    }
     //Read and write universal settings
     public static boolean getUniversalSettings(String projectID, String settingName) {
         return getDataBoolean(projectID, "Universal", settingName);

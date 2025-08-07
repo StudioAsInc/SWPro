@@ -97,6 +97,7 @@ import a.a.a.yq;
 import a.a.a.zy;
 import dev.chrisbanes.insetter.Insetter;
 import extensions.anbui.daydream.activity.UniversalProjectSettings;
+import extensions.anbui.daydream.configs.Configs;
 import mod.agus.jcoderz.editor.manage.permission.ManagePermissionActivity;
 import mod.agus.jcoderz.editor.manage.resource.ManageResourceActivity;
 import mod.hey.studios.activity.managers.assets.ManageAssetsActivity;
@@ -448,6 +449,8 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         } else {
             sc_id = savedInstanceState.getString("sc_id");
         }
+
+        Configs.currentProjectID = sc_id;
 
         r = new DB(getApplicationContext(), "P1");
         t = new DB(getApplicationContext(), "P12");

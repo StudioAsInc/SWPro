@@ -79,7 +79,6 @@ public class ProjectsFragment extends DA {
     }
 
     public void toDesignActivity(String sc_id) {
-        Configs.currentProjectID = sc_id;
         Intent intent = new Intent(requireContext(), DesignActivity.class);
         ProjectTracker.setScId(sc_id);
         intent.putExtra("sc_id", sc_id);

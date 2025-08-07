@@ -47,6 +47,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
 import mod.agus.jcoderz.dex.Dex;
 import mod.agus.jcoderz.dex.FieldId;
 import mod.agus.jcoderz.dex.MethodId;
@@ -761,6 +763,8 @@ public class ProjectBuilder {
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_APPCOMPAT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_COORDINATORLAYOUT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.MATERIAL);
+            if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID))
+                builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_WORK_RUNTIME);
         }
         if (yq.N.isFirebaseEnabled) {
             builtInLibraryManager.addLibrary(BuiltInLibraries.FIREBASE_COMMON);

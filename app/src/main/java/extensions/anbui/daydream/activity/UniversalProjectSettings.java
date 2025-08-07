@@ -57,12 +57,16 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.swContentprotection.setChecked(ProjectDataDayDream.isUniversalContentProtection(projectID));
         binding.swContentprotection.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalContentProtection(projectID, isChecked));
 
+        binding.swForceaddworkmanager.setChecked(ProjectDataDayDream.isForceAddWorkManager(projectID));
+        binding.swForceaddworkmanager.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setForceAddWorkManager(projectID, isChecked));
+
         binding.lnEnabled.setOnClickListener(v -> binding.swEnabled.toggle());
         binding.lnEdgetoedge.setOnClickListener(v -> binding.swEdgetoedge.toggle());
         binding.lnWindowinsetshandling.setOnClickListener(v -> binding.swWindowinsetshandling.toggle());
         binding.lnEnableandroidtextcolorremoval.setOnClickListener(v -> binding.swEnableandroidtextcolorremoval.toggle());
         binding.lnDisableautomaticpermissionrequests.setOnClickListener(v -> binding.swDisableautomaticpermissionrequests.toggle());
         binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
+        binding.lnForceaddworkmanager.setOnClickListener(v -> binding.swForceaddworkmanager.toggle());
 
         universalUIController(binding.swEnabled.isChecked());
     }
@@ -72,11 +76,14 @@ public class UniversalProjectSettings extends AppCompatActivity {
         if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
             binding.lnEdgetoedge.setEnabled(false);
             binding.lnWindowinsetshandling.setEnabled(false);
+            binding.lnForceaddworkmanager.setEnabled(false);
             binding.lnEdgetoedge.setAlpha(isEnable ? 0.5f : 1);
             binding.lnWindowinsetshandling.setAlpha(isEnable ? 0.5f : 1);
+            binding.lnForceaddworkmanager.setAlpha(isEnable ? 0.5f : 1);
             if (!binding.tvEdgetoedgenote.getText().toString().contains("AppCompat")) {
                 binding.tvEdgetoedgenote.setText("To use, enable AppCompat. " + binding.tvEdgetoedgenote.getText().toString());
                 binding.tvWindowinsetshandlingnote.setText("To use, enable AppCompat. " + binding.tvWindowinsetshandlingnote.getText().toString());
+                binding.tvForceaddworkmanagernote.setText("To use, enable AppCompat. " + binding.tvForceaddworkmanagernote.getText().toString());
             }
 
         } else {

@@ -228,7 +228,6 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
     }
 
     private void toExportProjectActivity(HashMap<String, Object> project) {
-        Configs.currentProjectID = yB.c(project, "sc_id");
         Intent intent = new Intent(activity, ExportProjectActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("sc_id", yB.c(project, "sc_id"));
