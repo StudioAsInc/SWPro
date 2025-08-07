@@ -29,7 +29,9 @@ import a.a.a.uq;
 import a.a.a.wB;
 import a.a.a.xB;
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 import pro.sketchware.databinding.ManageScreenActivityAddTempBinding;
@@ -173,6 +175,49 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.edgetoedge.setChecked(ProjectDataDayDream.isEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName));
             binding.windowinsetshandling.setChecked(ProjectDataDayDream.isEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName));
             binding.disableautomaticpermissionrequests.setChecked(ProjectDataDayDream.isDisableAutomaticPermissionRequests(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swContentprotection.setChecked(ProjectDataDayDream.isContentProtection(Configs.currentProjectID, projectFileBean.fileName));
+
+            binding.lnEdgetoedge.setOnClickListener(v -> binding.edgetoedge.toggle());
+            binding.lnWindowinsetshandling.setOnClickListener(v -> binding.windowinsetshandling.toggle());
+            binding.lnDisableautomaticpermissionrequests.setOnClickListener(v -> binding.disableautomaticpermissionrequests.toggle());
+            binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
+
+            if (!ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
+                binding.lnEdgetoedge.setEnabled(false);
+                binding.lnWindowinsetshandling.setEnabled(false);
+                binding.lnEdgetoedge.setAlpha(0.5f);
+                binding.lnWindowinsetshandling.setAlpha(0.5f);
+                binding.tvEdgetoedgenote.setText("To use, enable AppCompat. " + binding.tvEdgetoedgenote.getText().toString());
+                binding.tvWindowinsetshandlingnote.setText("To use, enable AppCompat. " + binding.tvWindowinsetshandlingnote.getText().toString());
+            } else {
+                if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalEdgeToEdge(Configs.currentProjectID)) {
+                    binding.lnEdgetoedge.setEnabled(false);
+                    binding.lnEdgetoedge.setAlpha(0.5f);
+                    binding.tvEdgetoedgenote.setText("It is enabled and cannot be changed because it applies to the entire project. " + binding.tvEdgetoedgenote.getText().toString());
+                }
+
+                if (ProjectDataBuildConfig.isUseJava7(Configs.currentProjectID)) {
+                    binding.lnWindowinsetshandling.setEnabled(false);
+                    binding.lnWindowinsetshandling.setAlpha(0.5f);
+                    binding.tvWindowinsetshandlingnote.setText("To use, use a newer version of Java. " + binding.tvWindowinsetshandlingnote.getText().toString());
+                } else if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalWindowInsetsHandling(Configs.currentProjectID)) {
+                    binding.lnWindowinsetshandling.setEnabled(false);
+                    binding.lnWindowinsetshandling.setAlpha(0.5f);
+                    binding.tvWindowinsetshandlingnote.setText("It is enabled and cannot be changed because it applies to the entire project. " + binding.tvWindowinsetshandlingnote.getText().toString());
+                }
+            }
+
+            if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalDisableAutomaticPermissionRequests(Configs.currentProjectID)) {
+                binding.lnDisableautomaticpermissionrequests.setEnabled(false);
+                binding.lnDisableautomaticpermissionrequests.setAlpha(0.5f);
+                binding.tvDisableautomaticpermissionrequestsnote.setText("It is enabled and cannot be changed because it applies to the entire project. " + binding.tvDisableautomaticpermissionrequestsnote.getText().toString());
+            }
+
+            if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalContentProtection(Configs.currentProjectID)) {
+                binding.lnContentprotection.setEnabled(false);
+                binding.lnContentprotection.setAlpha(0.5f);
+                binding.tvContentprotectionnote.setText("It is enabled and cannot be changed because it applies to the entire project. " + binding.tvContentprotectionnote.getText().toString());
+            }
         }
     }
 
@@ -181,10 +226,12 @@ public class AddViewActivity extends BaseAppCompatActivity {
             ProjectDataDayDream.setEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName, binding.edgetoedge.isChecked());
             ProjectDataDayDream.setEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName, binding.windowinsetshandling.isChecked());
             ProjectDataDayDream.setDisableAutomaticPermissionRequests(Configs.currentProjectID, projectFileBean.fileName, binding.disableautomaticpermissionrequests.isChecked());
+            ProjectDataDayDream.setContentProtection(Configs.currentProjectID, projectFileBean.fileName, binding.swContentprotection.isChecked());
         } else {
             ProjectDataDayDream.setEnableEdgeToEdge(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.edgetoedge.isChecked());
             ProjectDataDayDream.setEnableWindowInsetsHandling(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.windowinsetshandling.isChecked());
             ProjectDataDayDream.setDisableAutomaticPermissionRequests(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.disableautomaticpermissionrequests.isChecked());
+            ProjectDataDayDream.setContentProtection(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swContentprotection.isChecked());
         }
     }
 

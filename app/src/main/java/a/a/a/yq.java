@@ -184,6 +184,8 @@ public class yq {
     private final oB fileUtil;
     private final Context context;
 
+    private ExportType exportingType;
+
     public final HashMap<String, Object> metadata;
 
     public jq N;
@@ -192,9 +194,10 @@ public class yq {
 
     public enum ExportType {
         AAB,
-        DEBUG_APP,
         SIGN_APP,
-        SOURCE_CODE
+        DEBUG_APP,
+        ANDROID_STUDIO,
+        SOURCE_CODE_VIEWING
     }
 
     public yq(Context context, String sc_id) {
@@ -303,12 +306,11 @@ public class yq {
         fileUtil.b(projectMyscPath + File.separator + "settings.gradle", Lx.a());
         fileUtil.b(projectMyscPath + File.separator + "build.gradle", Lx.c("8.7.0", "4.4.2"));
 
-        fileUtil.b(projectMyscPath + File.separator + "gradle.properties", ("""
+        fileUtil.b(projectMyscPath + File.separator + "gradle.properties", """
                 android.enableR8.fullMode=false
                 android.enableJetifier=true
                 android.useAndroidX=true
-                org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8 -XX:+UseParallelGC
-                """).trim());
+                """.trim());
     }
 
     /**
@@ -464,6 +466,7 @@ public class yq {
         ProjectLibraryBean appCompat = projectLibraryManager.c();
         ProjectLibraryBean firebase = projectLibraryManager.d();
         ProjectLibraryBean googleMaps = projectLibraryManager.e();
+        this.exportingType = exportingType;
         N = new jq();
         N.packageName = packageName;
         N.projectName = applicationName;
@@ -471,8 +474,8 @@ public class yq {
         N.versionName = versionName;
         N.sc_id = sc_id;
         N.isDebugBuild = exportingType == ExportType.DEBUG_APP;
-        isAndroidStudioExport = exportingType == ExportType.SOURCE_CODE;
-        generateDataBindingClasses = !(exportingType == ExportType.DEBUG_APP || exportingType == ExportType.SOURCE_CODE);
+        isAndroidStudioExport = exportingType == ExportType.ANDROID_STUDIO;
+        generateDataBindingClasses = !(exportingType == ExportType.DEBUG_APP || exportingType == ExportType.ANDROID_STUDIO);
         if (firebase.useYn.equals(ProjectLibraryBean.LIB_USE_Y)) {
             N.isFirebaseEnabled = true;
             N.addPermission(jq.PERMISSION_INTERNET);
@@ -934,7 +937,7 @@ public class yq {
 
     public String getXMLString() {
         String filePath = wq.b(sc_id) + "/files/resource/values/strings.xml";
-        if (FileUtil.isExistFile(filePath)) {
+        if (FileUtil.isExistFile(filePath) && exportingType == ExportType.SOURCE_CODE_VIEWING) {
             return FileUtil.readFile(filePath);
         }
         XmlBuilderHelper stringsFileBuilder = new XmlBuilderHelper();
@@ -944,7 +947,7 @@ public class yq {
 
     public String getXMLColor() {
         String filePath = wq.b(sc_id) + "/files/resource/values/colors.xml";
-        if (FileUtil.isExistFile(filePath)) {
+        if (FileUtil.isExistFile(filePath) && exportingType == ExportType.SOURCE_CODE_VIEWING) {
             return FileUtil.readFile(filePath);
         }
         XmlBuilderHelper colorsFileBuilder = new XmlBuilderHelper();
@@ -958,7 +961,7 @@ public class yq {
 
     public String getXMLStyle() {
         String filePath = wq.b(sc_id) + "/files/resource/values/styles.xml";
-        if (FileUtil.isExistFile(filePath)) {
+        if (FileUtil.isExistFile(filePath) && exportingType == ExportType.SOURCE_CODE_VIEWING) {
             return FileUtil.readFile(filePath);
         }
         Material3LibraryManager material3LibraryManager = new Material3LibraryManager(sc_id);

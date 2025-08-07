@@ -28,6 +28,12 @@ public class ProjectData {
         }).start();
     }
 
+    public static Map<String, Object> readMapData(String data) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, Object>>() {}.getType();
+        return gson.fromJson(data, type);
+    }
+
     @Nullable
     public static Map<String, Object> readDataWithDataType(String dataType, String data) {
         //Find the location of type

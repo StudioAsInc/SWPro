@@ -6,6 +6,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.Map;
+import java.util.Objects;
+
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.file.FileUtils;
 
@@ -15,10 +18,20 @@ public class ProjectDataBuildConfig {
         writeDataFile(projectID, "{\"dexer\":\"D8\",\"classpath\":\"\",\"enable_logcat\":\"true\",\"no_http_legacy\":\"false\",\"android_jar\":\"\",\"no_warn\":\"true\",\"java_ver\":\"11\"}");
     }
 
+    public static boolean isUseJava7(String projectID) {
+        Map<String, Object> map = getBuildConfigData(projectID);
+        if (map == null) return true;
+        return Objects.equals(map.get("java_ver"), "1.7");
+    }
+
     public static void setDataString(String projectID, String key, String value) {
         JsonObject json = JsonParser.parseString(readDataFile(projectID)).getAsJsonObject();
         json.addProperty(key, value);
         writeDataFile(projectID, new Gson().toJson(json));
+    }
+
+    public static Map<String, Object> getBuildConfigData(String projectID) {
+        return ProjectData.readMapData(readDataFile(projectID));
     }
 
     public static String readDataFile(String projectID) {

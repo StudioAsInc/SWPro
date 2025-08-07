@@ -96,6 +96,7 @@ import a.a.a.yB;
 import a.a.a.yq;
 import a.a.a.zy;
 import dev.chrisbanes.insetter.Insetter;
+import extensions.anbui.daydream.activity.UniversalProjectSettings;
 import mod.agus.jcoderz.editor.manage.permission.ManagePermissionActivity;
 import mod.agus.jcoderz.editor.manage.resource.ManageResourceActivity;
 import mod.hey.studios.activity.managers.assets.ManageAssetsActivity;
@@ -1004,6 +1005,10 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
      */
     void toXMLCommandManager() {
         launchActivity(ManageXMLCommandActivity.class, null);
+    }
+
+    void toDayDream() {
+        launchActivity(UniversalProjectSettings.class, openLibraryManager);
     }
 
     @SafeVarargs

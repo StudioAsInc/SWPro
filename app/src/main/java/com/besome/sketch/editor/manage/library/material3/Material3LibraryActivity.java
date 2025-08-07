@@ -89,11 +89,6 @@ public class Material3LibraryActivity extends BaseAppCompatActivity {
                 finish();
             }
         });
-
-        binding.enableandroidtextcolorremoval.setChecked(ProjectDataDayDream.isEnableAndroidTextColorRemoval(Configs.currentProjectID));
-        binding.enableandroidtextcolorremoval.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            ProjectDataDayDream.setEnableAndroidTextColorRemoval(Configs.currentProjectID, isChecked);
-        });
     }
 
     private CompoundButton.OnCheckedChangeListener getOnCheckedChangeListener() {
