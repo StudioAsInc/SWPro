@@ -64,6 +64,9 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.swUsemedia3.setChecked((ProjectDataDayDream.isUniversalUseMedia3(projectID)));
         binding.swUsemedia3.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseMedia3(projectID, isChecked));
 
+        binding.swDisableOnBackInvokedCallback.setChecked(ProjectDataDayDream.isUninversalDisableOnBackInvokedCallback(projectID));
+        binding.swDisableOnBackInvokedCallback.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUninversalDisableOnBackInvokedCallback(projectID, isChecked));
+
         binding.lnEnabled.setOnClickListener(v -> binding.swEnabled.toggle());
         binding.lnEdgetoedge.setOnClickListener(v -> binding.swEdgetoedge.toggle());
         binding.lnWindowinsetshandling.setOnClickListener(v -> binding.swWindowinsetshandling.toggle());
@@ -72,6 +75,7 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
         binding.lnForceaddworkmanager.setOnClickListener(v -> binding.swForceaddworkmanager.toggle());
         binding.lnUsemedia3.setOnClickListener(v -> binding.swUsemedia3.toggle());
+        binding.lnDisableOnBackInvokedCallback.setOnClickListener(v -> binding.swDisableOnBackInvokedCallback.toggle());
 
         universalUIController(binding.swEnabled.isChecked());
         initializeEdgeToEdge();
@@ -97,6 +101,8 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.lnUsemedia3.setEnabled(isEnable && ProjectDataConfig.isMinSDKNewerThan23(projectID)
                 && ProjectDataLibrary.isEnabledAppCompat(projectID)
                 && !ProjectDataBuildConfig.isUseJava7(projectID));
+
+        binding.lnDisableOnBackInvokedCallback.setEnabled(isEnable);
     }
 
     private void initializeEdgeToEdge() {

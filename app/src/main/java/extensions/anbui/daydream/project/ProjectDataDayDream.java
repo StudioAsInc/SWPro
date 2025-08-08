@@ -114,6 +114,14 @@ public class ProjectDataDayDream {
     public static void setUniversalUseMedia3(String projectID, boolean isEnable) {
         setUniversalSettings(projectID, "useMedia3", isEnable);
     }
+
+    public static boolean isUninversalDisableOnBackInvokedCallback(String projectID) {
+        return getUniversalSettings(projectID, "disableOnBackInvokedCallback");
+    }
+
+    public static void setUninversalDisableOnBackInvokedCallback(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "disableOnBackInvokedCallback", isEnable);
+    }
     //Read and write universal settings
     public static boolean getUniversalSettings(String projectID, String settingName) {
         return getDataBoolean(projectID, "Universal", settingName);

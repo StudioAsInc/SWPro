@@ -48,7 +48,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
 import mod.agus.jcoderz.dex.Dex;
 import mod.agus.jcoderz.dex.FieldId;
 import mod.agus.jcoderz.dex.MethodId;
@@ -764,9 +767,14 @@ public class ProjectBuilder {
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_COORDINATORLAYOUT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.MATERIAL);
             if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
-                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID))
+                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
+                        && ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID))
                     builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_WORK_RUNTIME);
-                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID))
+
+                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
+                        && ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)
+                        && ProjectDataConfig.isMinSDKNewerThan23(Configs.currentProjectID)
+                        && !ProjectDataBuildConfig.isUseJava7(Configs.currentProjectID))
                     builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER);
             }
         }
