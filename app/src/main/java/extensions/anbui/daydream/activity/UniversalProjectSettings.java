@@ -7,6 +7,7 @@ import androidx.activity.EdgeToEdge;
 
 import java.util.Objects;
 
+import extensions.anbui.daydream.library.LibraryUtils;
 import extensions.anbui.daydream.project.ProjectDataBuildConfig;
 import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
@@ -64,6 +65,9 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.swUsemedia3.setChecked((ProjectDataDayDream.isUniversalUseMedia3(projectID)));
         binding.swUsemedia3.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseMedia3(projectID, isChecked));
 
+        binding.swDisableOnBackInvokedCallback.setChecked(ProjectDataDayDream.isUninversalDisableOnBackInvokedCallback(projectID));
+        binding.swDisableOnBackInvokedCallback.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUninversalDisableOnBackInvokedCallback(projectID, isChecked));
+
         binding.lnEnabled.setOnClickListener(v -> binding.swEnabled.toggle());
         binding.lnEdgetoedge.setOnClickListener(v -> binding.swEdgetoedge.toggle());
         binding.lnWindowinsetshandling.setOnClickListener(v -> binding.swWindowinsetshandling.toggle());
@@ -72,6 +76,7 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
         binding.lnForceaddworkmanager.setOnClickListener(v -> binding.swForceaddworkmanager.toggle());
         binding.lnUsemedia3.setOnClickListener(v -> binding.swUsemedia3.toggle());
+        binding.lnDisableOnBackInvokedCallback.setOnClickListener(v -> binding.swDisableOnBackInvokedCallback.toggle());
 
         universalUIController(binding.swEnabled.isChecked());
         initializeEdgeToEdge();
@@ -84,19 +89,13 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.lnAllOptions.setAlpha(isEnable ? 1 : 0.5f);
 
         binding.lnEdgetoedge.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID));
-
-        binding.lnWindowinsetshandling.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID)
-                && !ProjectDataBuildConfig.isUseJava7(projectID));
-
+        binding.lnWindowinsetshandling.setEnabled(isEnable && LibraryUtils.isAllowUseWindowInsetsHandling(projectID));
         binding.lnEnableandroidtextcolorremoval.setEnabled(isEnable);
         binding.lnDisableautomaticpermissionrequests.setEnabled(isEnable);
         binding.lnContentprotection.setEnabled(isEnable);
-
         binding.lnForceaddworkmanager.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID));
-
-        binding.lnUsemedia3.setEnabled(isEnable && ProjectDataConfig.isMinSDKNewerThan23(projectID)
-                && ProjectDataLibrary.isEnabledAppCompat(projectID)
-                && !ProjectDataBuildConfig.isUseJava7(projectID));
+        binding.lnUsemedia3.setEnabled(isEnable && LibraryUtils.isAllowUseAndroidXMedia3(projectID));
+        binding.lnDisableOnBackInvokedCallback.setEnabled(isEnable);
     }
 
     private void initializeEdgeToEdge() {

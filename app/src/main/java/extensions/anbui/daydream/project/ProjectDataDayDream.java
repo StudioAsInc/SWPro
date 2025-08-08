@@ -49,6 +49,22 @@ public class ProjectDataDayDream {
         setDataBoolean(projectID, activityName, "contentProtection", isEnable);
     }
 
+    public static boolean isImportWorkManager(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importWorkManager");
+    }
+
+    public static void setImportWorkManager(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importWorkManager", isEnable);
+    }
+
+    public static boolean isImportAndroidXMedia3(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importAndroidXMedia3");
+    }
+
+    public static void setImportAndroidXMedia3(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importAndroidXMedia3", isEnable);
+    }
+
     //Universal settings
 
     public static boolean isEnableDayDream(String projectID) {
@@ -113,6 +129,14 @@ public class ProjectDataDayDream {
 
     public static void setUniversalUseMedia3(String projectID, boolean isEnable) {
         setUniversalSettings(projectID, "useMedia3", isEnable);
+    }
+
+    public static boolean isUninversalDisableOnBackInvokedCallback(String projectID) {
+        return getUniversalSettings(projectID, "disableOnBackInvokedCallback");
+    }
+
+    public static void setUninversalDisableOnBackInvokedCallback(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "disableOnBackInvokedCallback", isEnable);
     }
     //Read and write universal settings
     public static boolean getUniversalSettings(String projectID, String settingName) {

@@ -160,7 +160,7 @@ public class BuiltInLibraries {
     public static String ANDROIDX_ROOM_ROOM_KTX = "room-ktx-2.6.1";
     public static String ANDROIDX_TRACING_TRACING_KTX = "tracing-ktx-1.2.0";
 
-    //build-tools\36.0.0\d8.bat --lib platforms\android-36\android.jar media3-*-1.8.0\classes.jar --min-api 24
+    //NEW
     public static String ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER = "media3-exoplayer-1.8.0";
     public static String ANDROIDX_MEDIA3_MEDIA3_COMMON = "media3-common-1.8.0";
     public static String ANDROIDX_MEDIA3_MEDIA3_DATASOURCE = "media3-datasource-1.8.0";

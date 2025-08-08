@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
 import mod.agus.jcoderz.editor.manifest.EditorManifest;
 import mod.hey.studios.build.BuildSettings;
 import mod.hey.studios.project.ProjectSettings;
@@ -563,6 +565,10 @@ public class Ix {
                 .equals(BuildSettings.SETTING_GENERIC_VALUE_TRUE)) {
             applicationTag.addAttribute("android", "usesCleartextTraffic", "true");
         }
+
+        if (ProjectDataDayDream.isUninversalDisableOnBackInvokedCallback(Configs.currentProjectID) && ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID))
+            applicationTag.addAttribute("android", "enableOnBackInvokedCallback", "false");
+
         AndroidManifestInjector.getAppAttrs(applicationTag, c.sc_id);
 
         boolean hasDebugActivity = false;
