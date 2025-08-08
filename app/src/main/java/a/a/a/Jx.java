@@ -780,6 +780,17 @@ public class Jx {
                 addImport("androidx.core.view.ViewCompat");
                 addImport("androidx.core.view.WindowInsetsCompat");
             }
+
+            if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID))
+                    addImport("androidx.work.*");
+
+                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)) {
+                    addImport("java.net.*");
+                    addImport("androidx.media3.common.*");
+                    addImport("androidx.media3.exoplayer.*");
+                }
+            }
         }
 
         if (isViewBindingEnabled) {

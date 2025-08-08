@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
 import mod.hey.studios.build.BuildSettings;
 import mod.hey.studios.project.ProjectSettings;
 import mod.hey.studios.util.ProjectFile;
@@ -523,6 +525,10 @@ public class yq {
             N.addPermission(jq.PERMISSION_INTERNET);
             N.addPermission(jq.PERMISSION_ACCESS_NETWORK_STATE);
             N.setupGoogleMap(googleMaps);
+        }
+        if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)) {
+            N.addPermission(jq.PERMISSION_INTERNET);
+            N.addPermission(jq.PERMISSION_ACCESS_NETWORK_STATE);
         }
         for (ProjectFileBean customView : projectFileManager.c()) {
             for (ViewBean viewBean : eC.a(projectDataManager.d(customView.getXmlName()))) {
