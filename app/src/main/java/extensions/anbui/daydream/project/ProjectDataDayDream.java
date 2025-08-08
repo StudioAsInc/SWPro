@@ -106,6 +106,14 @@ public class ProjectDataDayDream {
     public static void setForceAddWorkManager(String projectID, boolean isEnable) {
         setUniversalSettings(projectID, "forceAddWorkManager", isEnable);
     }
+
+    public static boolean isUniversalUseMedia3(String projectID) {
+        return getUniversalSettings(projectID, "useMedia3");
+    }
+
+    public static void setUniversalUseMedia3(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "useMedia3", isEnable);
+    }
     //Read and write universal settings
     public static boolean getUniversalSettings(String projectID, String settingName) {
         return getDataBoolean(projectID, "Universal", settingName);

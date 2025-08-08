@@ -8,6 +8,7 @@ import androidx.activity.EdgeToEdge;
 import java.util.Objects;
 
 import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
 import extensions.anbui.daydream.project.ProjectDataLibrary;
 import pro.sketchware.databinding.ActivityUniversalProjectSettingsBinding;
@@ -60,6 +61,9 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.swForceaddworkmanager.setChecked(ProjectDataDayDream.isForceAddWorkManager(projectID));
         binding.swForceaddworkmanager.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setForceAddWorkManager(projectID, isChecked));
 
+        binding.swUsemedia3.setChecked((ProjectDataDayDream.isUniversalUseMedia3(projectID)));
+        binding.swUsemedia3.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseMedia3(projectID, isChecked));
+
         binding.lnEnabled.setOnClickListener(v -> binding.swEnabled.toggle());
         binding.lnEdgetoedge.setOnClickListener(v -> binding.swEdgetoedge.toggle());
         binding.lnWindowinsetshandling.setOnClickListener(v -> binding.swWindowinsetshandling.toggle());
@@ -67,38 +71,78 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.lnDisableautomaticpermissionrequests.setOnClickListener(v -> binding.swDisableautomaticpermissionrequests.toggle());
         binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
         binding.lnForceaddworkmanager.setOnClickListener(v -> binding.swForceaddworkmanager.toggle());
+        binding.lnUsemedia3.setOnClickListener(v -> binding.swUsemedia3.toggle());
 
         universalUIController(binding.swEnabled.isChecked());
+        initializeEdgeToEdge();
+        initializeWindowinsetshandling();
+        initializeForceAddWorkmanager();
+        initializeUseMedia3();
     }
 
     private void universalUIController(boolean isEnable) {
         binding.lnAllOptions.setAlpha(isEnable ? 1 : 0.5f);
-        if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
-            binding.lnEdgetoedge.setEnabled(false);
-            binding.lnWindowinsetshandling.setEnabled(false);
-            binding.lnForceaddworkmanager.setEnabled(false);
-            binding.lnEdgetoedge.setAlpha(isEnable ? 0.5f : 1);
-            binding.lnWindowinsetshandling.setAlpha(isEnable ? 0.5f : 1);
-            binding.lnForceaddworkmanager.setAlpha(isEnable ? 0.5f : 1);
-            if (!binding.tvEdgetoedgenote.getText().toString().contains("AppCompat")) {
-                binding.tvEdgetoedgenote.setText("To use, enable AppCompat. " + binding.tvEdgetoedgenote.getText().toString());
-                binding.tvWindowinsetshandlingnote.setText("To use, enable AppCompat. " + binding.tvWindowinsetshandlingnote.getText().toString());
-                binding.tvForceaddworkmanagernote.setText("To use, enable AppCompat. " + binding.tvForceaddworkmanagernote.getText().toString());
-            }
 
-        } else {
-            binding.lnEdgetoedge.setEnabled(isEnable);
-            if (ProjectDataBuildConfig.isUseJava7(projectID)) {
-                binding.lnWindowinsetshandling.setEnabled(false);
-                binding.lnWindowinsetshandling.setAlpha(isEnable ? 0.5f : 1);
-                if (!binding.tvWindowinsetshandlingnote.getText().toString().contains("Java"))
-                    binding.tvWindowinsetshandlingnote.setText("To use, use a newer version of Java. " + binding.tvWindowinsetshandlingnote.getText().toString());
-            } else {
-                binding.lnWindowinsetshandling.setEnabled(isEnable);
-            }
-        }
+        binding.lnEdgetoedge.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID));
+
+        binding.lnWindowinsetshandling.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID)
+                && !ProjectDataBuildConfig.isUseJava7(projectID));
+
         binding.lnEnableandroidtextcolorremoval.setEnabled(isEnable);
         binding.lnDisableautomaticpermissionrequests.setEnabled(isEnable);
         binding.lnContentprotection.setEnabled(isEnable);
+
+        binding.lnForceaddworkmanager.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID));
+
+        binding.lnUsemedia3.setEnabled(isEnable && ProjectDataConfig.isMinSDKNewerThan23(projectID)
+                && ProjectDataLibrary.isEnabledAppCompat(projectID)
+                && !ProjectDataBuildConfig.isUseJava7(projectID));
+    }
+
+    private void initializeEdgeToEdge() {
+        if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
+            binding.lnEdgetoedge.setEnabled(false);
+            binding.lnEdgetoedge.setAlpha(0.5f);
+            binding.tvEdgetoedgenote.setText("To use, enable AppCompat. " + binding.tvEdgetoedgenote.getText().toString());
+        }
+    }
+
+    private void initializeWindowinsetshandling() {
+        boolean finalstatus = true;
+        if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
+            finalstatus = false;
+            binding.tvWindowinsetshandlingnote.setText("To use, enable AppCompat. " + binding.tvWindowinsetshandlingnote.getText().toString());
+        } else if (ProjectDataBuildConfig.isUseJava7(projectID)) {
+            finalstatus = false;
+            binding.tvWindowinsetshandlingnote.setText("To use, use a newer version of Java. " + binding.tvWindowinsetshandlingnote.getText().toString());
+        }
+
+        binding.lnWindowinsetshandling.setEnabled(finalstatus);
+        binding.lnWindowinsetshandling.setAlpha(finalstatus ? 1 : 0.5f);
+    }
+
+    private void initializeForceAddWorkmanager() {
+         if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
+             binding.lnForceaddworkmanager.setEnabled(false);
+             binding.lnForceaddworkmanager.setAlpha(0.5f);
+             binding.tvForceaddworkmanagernote.setText("To use, enable AppCompat. " + binding.tvForceaddworkmanagernote.getText().toString());
+        }
+    }
+
+    private void initializeUseMedia3() {
+        boolean finalstatus = true;
+        if (!ProjectDataConfig.isMinSDKNewerThan23(projectID)) {
+            finalstatus = false;
+            binding.tvUsemedia3note.setText("To use, min SDK required is 24 or newer (Android 7+). " + binding.tvUsemedia3note.getText().toString());
+        } else if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
+            finalstatus = false;
+            binding.tvUsemedia3note.setText("To use, enable AppCompat. " + binding.tvUsemedia3note.getText().toString());
+        } else if (ProjectDataBuildConfig.isUseJava7(projectID)) {
+            finalstatus = false;
+            binding.tvUsemedia3note.setText("To use, use a newer version of Java. " + binding.tvUsemedia3note.getText().toString());
+        }
+
+        binding.lnUsemedia3.setEnabled(finalstatus);
+        binding.lnUsemedia3.setAlpha(finalstatus ? 1 : 0.5f);
     }
 }

@@ -763,8 +763,12 @@ public class ProjectBuilder {
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_APPCOMPAT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_COORDINATORLAYOUT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.MATERIAL);
-            if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID))
-                builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_WORK_RUNTIME);
+            if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_WORK_RUNTIME);
+                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER);
+            }
         }
         if (yq.N.isFirebaseEnabled) {
             builtInLibraryManager.addLibrary(BuiltInLibraries.FIREBASE_COMMON);

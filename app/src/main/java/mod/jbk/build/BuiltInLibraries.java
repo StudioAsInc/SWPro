@@ -160,6 +160,20 @@ public class BuiltInLibraries {
     public static String ANDROIDX_ROOM_ROOM_KTX = "room-ktx-2.6.1";
     public static String ANDROIDX_TRACING_TRACING_KTX = "tracing-ktx-1.2.0";
 
+    //build-tools\36.0.0\d8.bat --lib platforms\android-36\android.jar media3-*-1.8.0\classes.jar --min-api 24
+    public static String ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER = "media3-exoplayer-1.8.0";
+    public static String ANDROIDX_MEDIA3_MEDIA3_COMMON = "media3-common-1.8.0";
+    public static String ANDROIDX_MEDIA3_MEDIA3_DATASOURCE = "media3-datasource-1.8.0";
+    public static String ANDROIDX_MEDIA3_MEDIA3_CONTAINER = "media3-container-1.8.0";
+    public static String ANDROIDX_MEDIA3_MEDIA3_DATABASE = "media3-database-1.8.0";
+    public static String ANDROIDX_MEDIA3_MEDIA3_DECODER = "media3-decoder-1.8.0";
+    public static String ANDROIDX_MEDIA3_MEDIA3_EXTRACTOR = "media3-extractor-1.8.0";
+    public static String ANDROIDX_MEDIA3_MEDIA3_UI = "media3-ui-1.8.0";
+    public static String COM_GOOGLE_ERRORPRONE_ERROR_PRONE_ANNOTATIONS = "error_prone_annotations-2.41.0";
+    public static String JUNIT_JUNIT = "junit-4.13.2";
+    public static String ORG_HAMCREAST_HAMCREAST_CORE = "hamcrest-core-1.3";
+
+
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
             new BuiltInLibrary(ANDROIDX_ACTIVITY, List.of(ANDROIDX_ANNOTATION, ANDROIDX_COLLECTION, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_RUNTIME,
                     ANDROIDX_LIFECYCLE_VIEWMODEL, ANDROIDX_LIFECYCLE_VIEWMODEL_SAVEDSTATE, ANDROIDX_SAVEDSTATE, ANDROIDX_TRACING,
@@ -393,6 +407,21 @@ public class BuiltInLibraries {
             new BuiltInLibrary(ANDROIDX_CONCURRENT_CONCURRENT_FUTURES_KTX),
             new BuiltInLibrary(ANDROIDX_ROOM_ROOM_KTX, List.of(), "androidx.room.ktx"),
             new BuiltInLibrary(ANDROIDX_TRACING_TRACING_KTX, List.of(), "androidx.tracing.ktx"),
+
+            new BuiltInLibrary(ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER, List.of(ANDROIDX_MEDIA3_MEDIA3_COMMON, ANDROIDX_MEDIA3_MEDIA3_DATASOURCE,
+                    ANDROIDX_MEDIA3_MEDIA3_CONTAINER, ANDROIDX_MEDIA3_MEDIA3_DATABASE, ANDROIDX_MEDIA3_MEDIA3_DECODER,
+                    ANDROIDX_MEDIA3_MEDIA3_EXTRACTOR, ANDROIDX_MEDIA3_MEDIA3_UI), "androidx.media3.exoplayer"),
+            new BuiltInLibrary(ANDROIDX_MEDIA3_MEDIA3_COMMON, List.of(COM_GOOGLE_ERRORPRONE_ERROR_PRONE_ANNOTATIONS)),
+            new BuiltInLibrary(ANDROIDX_MEDIA3_MEDIA3_DATASOURCE),
+            new BuiltInLibrary(ANDROIDX_MEDIA3_MEDIA3_CONTAINER),
+            new BuiltInLibrary(ANDROIDX_MEDIA3_MEDIA3_DATABASE),
+            new BuiltInLibrary(ANDROIDX_MEDIA3_MEDIA3_DECODER),
+            new BuiltInLibrary(ANDROIDX_MEDIA3_MEDIA3_EXTRACTOR),
+            new BuiltInLibrary(ANDROIDX_MEDIA3_MEDIA3_UI, List.of(), "androidx.media3.ui"),
+
+            new BuiltInLibrary(COM_GOOGLE_ERRORPRONE_ERROR_PRONE_ANNOTATIONS, List.of(JUNIT_JUNIT)),
+            new BuiltInLibrary(JUNIT_JUNIT, List.of(ORG_HAMCREAST_HAMCREAST_CORE)),
+            new BuiltInLibrary(ORG_HAMCREAST_HAMCREAST_CORE),
     };
 
     public static File getLibraryPath(String libraryName) {
