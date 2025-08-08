@@ -107,7 +107,7 @@ public class PermissionManager {
 
             if (!checkPerm.isEmpty() && !addPerm.isEmpty()) {
 
-                if (ProjectDataDayDream.isDisableAutomaticPermissionRequests(sc_id, javaName)) {
+                if (ProjectDataDayDream.isDisableAutomaticPermissionRequests(sc_id, javaName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalDisableAutomaticPermissionRequests(sc_id))) {
                     permissionCode.append("initializeLogic();" + Jx.EOL);
                     permissionCode.append("}" + Jx.EOL);
                     permissionCode.append(Jx.EOL + "private void _requestPermissions() {" + Jx.EOL);
@@ -129,7 +129,7 @@ public class PermissionManager {
 
                 permissionCode.append("}, 1000);");
 
-                if (ProjectDataDayDream.isDisableAutomaticPermissionRequests(sc_id, javaName)) {
+                if (ProjectDataDayDream.isDisableAutomaticPermissionRequests(sc_id, javaName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalDisableAutomaticPermissionRequests(sc_id))) {
                     permissionCode.append(Jx.EOL + "}" + Jx.EOL);
                 } else {
                     permissionCode.append("} else {" + Jx.EOL +
@@ -167,7 +167,7 @@ public class PermissionManager {
 
             if (!checkPerm.isEmpty() && !addPerm.isEmpty()) {
 
-                if (ProjectDataDayDream.isDisableAutomaticPermissionRequests(sc_id, javaName)) {
+                if (ProjectDataDayDream.isDisableAutomaticPermissionRequests(sc_id, javaName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalDisableAutomaticPermissionRequests(sc_id))) {
                     permissionCode.append("initializeLogic();" + Jx.EOL);
                     permissionCode.append("}" + Jx.EOL);
                     permissionCode.append(Jx.EOL + "private void _requestPermissions() {" + Jx.EOL);
@@ -189,7 +189,7 @@ public class PermissionManager {
 
                 permissionCode.append("}, 1000);" + Jx.EOL);
 
-                if (ProjectDataDayDream.isDisableAutomaticPermissionRequests(sc_id, javaName)) {
+                if (ProjectDataDayDream.isDisableAutomaticPermissionRequests(sc_id, javaName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalDisableAutomaticPermissionRequests(sc_id))) {
                     permissionCode.append(Jx.EOL + "}" + Jx.EOL);
                 } else {
                     permissionCode.append("} else {" + Jx.EOL +

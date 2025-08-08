@@ -363,7 +363,7 @@ public class Jx {
             sb.append("super.onCreate(_savedInstanceState);").append(EOL);
 
             if (ProjectDataLibrary.isEnabledAppCompat(sc_id)) {
-                if (ProjectDataDayDream.isEnableEdgeToEdge(sc_id, projectFileBean.fileName))
+                if (ProjectDataDayDream.isEnableEdgeToEdge(sc_id, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalEdgeToEdge(sc_id)))
                     sb.append("EdgeToEdge.enable(this);").append(EOL);
             }
 
@@ -375,7 +375,7 @@ public class Jx {
             }
 
             if (ProjectDataLibrary.isEnabledAppCompat(sc_id)) {
-                if (ProjectDataDayDream.isEnableWindowInsetsHandling(sc_id, projectFileBean.fileName)) {
+                if (ProjectDataDayDream.isEnableWindowInsetsHandling(sc_id, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalWindowInsetsHandling(sc_id))) {
                     if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR)) {
                         sb.append("ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id._coordinator), (v, insets) -> {").append(EOL);
                     } else {
@@ -518,6 +518,8 @@ public class Jx {
         if (!onCreateEventCode.isEmpty()) {
             sb.append(onCreateEventCode).append(EOL);
         }
+        if (!isFragment && (ProjectDataDayDream.isContentProtection(sc_id, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalContentProtection(sc_id))))
+            sb.append("getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);").append(EOL);
         sb.append("}").append(EOL);
 
         String agusComponentsOnActivityResultCode = getBillingResponseCode(buildConfig.x);
@@ -770,10 +772,10 @@ public class Jx {
         }
 
         if (ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
-            if (ProjectDataDayDream.isEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName))
+            if (ProjectDataDayDream.isEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) &&  ProjectDataDayDream.isUniversalEdgeToEdge(Configs.currentProjectID)))
                 addImport("androidx.activity.EdgeToEdge");
 
-            if (ProjectDataDayDream.isEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName)) {
+            if (ProjectDataDayDream.isEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalWindowInsetsHandling(Configs.currentProjectID))) {
                 addImport("androidx.core.graphics.Insets");
                 addImport("androidx.core.view.ViewCompat");
                 addImport("androidx.core.view.WindowInsetsCompat");

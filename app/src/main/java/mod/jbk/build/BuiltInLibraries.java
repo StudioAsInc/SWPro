@@ -26,18 +26,19 @@ public class BuiltInLibraries {
 
     public static String ANDROIDX_ACTIVITY = "activity-1.10.1";
     public static String ANDROIDX_ANNOTATION = "annotation-1.5.1";
-    public static String ANDROIDX_ANNOTATION_EXPERIMENTAL = "annotation-experimental-1.4.0";
+    public static String ANDROIDX_ANNOTATION_EXPERIMENTAL = "annotation-experimental-1.4.1";
     public static String ANDROIDX_APPCOMPAT = "appcompat-1.6.1";
     public static String ANDROIDX_APPCOMPAT_RESOURCES = "appcompat-resources-1.6.1";
     public static String ANDROIDX_ASYNCLAYOUTINFLATER = "asynclayoutinflater-1.0.0";
     public static String ANDROIDX_BROWSER = "browser-1.5.0";
     public static String ANDROIDX_CARDVIEW = "cardview-1.0.0";
-    public static String ANDROIDX_COLLECTION = "collection-1.2.0";
-    public static String ANDROIDX_CONCURRENT_FUTURES = "concurrent-futures-1.1.0";
+    //collection-1.5.0.dex = collection-1.5.0.jar + collection-1.5.0-jvm.jar
+    public static String ANDROIDX_COLLECTION = "collection-1.5.0";
+    public static String ANDROIDX_CONCURRENT_FUTURES = "concurrent-futures-1.3.0";
     public static String ANDROIDX_CONSTRAINTLAYOUT = "constraintlayout-2.1.2";
     public static String ANDROIDX_CONSTRAINTLAYOUT_CORE = "constraintlayout-core-1.0.2";
     public static String ANDROIDX_COORDINATORLAYOUT = "coordinatorlayout-1.1.0";
-    public static String ANDROIDX_CORE = "core-1.13.1";
+    public static String ANDROIDX_CORE = "core-1.16.0";
     public static String ANDROIDX_CORE_KTX = "core-ktx-1.16.0";
     public static String ANDROIDX_CORE_RUNTIME = "core-runtime-2.1.0";
     public static String ANDROIDX_CURSORADAPTER = "cursoradapter-1.0.0";
@@ -69,22 +70,22 @@ public class BuiltInLibraries {
     public static String ANDROIDX_PRINT = "print-1.0.0";
     public static String ANDROIDX_RECYCLERVIEW = "recyclerview-1.2.1";
     public static String ANDROIDX_RESOURCEINSPECTION_ANNOTATION = "resourceinspection-annotation-1.0.0";
-    public static String ANDROIDX_ROOM_COMMON = "room-common-2.2.6";
-    public static String ANDROIDX_ROOM_RUNTIME = "room-runtime-2.2.6";
+    public static String ANDROIDX_ROOM_COMMON = "room-common-2.6.1";
+    public static String ANDROIDX_ROOM_RUNTIME = "room-runtime-2.6.1";
     public static String ANDROIDX_SAVEDSTATE = "savedstate-1.2.1";
     public static String ANDROIDX_SLIDINGPANELAYOUT = "slidingpanelayout-1.1.0";
-    public static String ANDROIDX_SQLITE = "sqlite-2.2.0";
-    public static String ANDROIDX_SQLITE_FRAMEWORK = "sqlite-framework-2.2.0";
+    public static String ANDROIDX_SQLITE = "sqlite-2.4.0";
+    public static String ANDROIDX_SQLITE_FRAMEWORK = "sqlite-framework-2.4.0";
     public static String ANDROIDX_STARTUP_RUNTIME = "startup-runtime-1.2.0";
     public static String ANDROIDX_SWIPEREFRESHLAYOUT = "swiperefreshlayout-1.2.0-alpha01";
-    public static String ANDROIDX_TRACING = "tracing-1.0.0";
+    public static String ANDROIDX_TRACING = "tracing-1.2.0";
     public static String ANDROIDX_TRANSITION = "transition-1.4.1";
     public static String ANDROIDX_VECTORDRAWABLE = "vectordrawable-1.1.0";
     public static String ANDROIDX_VECTORDRAWABLE_ANIMATED = "vectordrawable-animated-1.1.0";
     public static String ANDROIDX_VERSIONEDPARCELABLE = "versionedparcelable-1.1.1";
     public static String ANDROIDX_VIEWPAGER2 = "viewpager2-1.0.0";
     public static String ANDROIDX_VIEWPAGER = "viewpager-1.0.0";
-    public static String ANDROIDX_WORK_RUNTIME = "work-runtime-2.7.1";
+    public static String ANDROIDX_WORK_RUNTIME = "work-runtime-2.10.3";
     public static String ANDROIDX_COLLECTION_JVM = "collection-jvm-1.5.0";
     public static String ANDROIDX_GRAPHICS_SHAPES_ANDROID = "graphics-shapes-android-1.0.1";
     public static String FIREBASE_AUTH = "firebase-auth-19.0.0";
@@ -149,9 +150,15 @@ public class BuiltInLibraries {
     public static String ANDROIDX_CORE_CORE_VIEWTREE = "core-viewtree-1.0.0";
     public static String ANDROIDX_ARCH_CORE_CORE_COMMON = "android-arch-core-common-2.2.0";
     public static String GUAVA = "guava-33.1.0-android";
-    public static String ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_JVM = "kotlinx-coroutines-core-jvm-1.6.4";
+    public static String ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_JVM = "kotlinx-coroutines-core-jvm-1.7.3";
+    public static String ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_ANDROID = "kotlinx-coroutines-android-1.7.3";
     public static String ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_ANDROID = "kotlinx-coroutines-core-android-1.6.4";
     public static String ORG_JETBRAINS_KOTLIN_KOTLIN_STDLIB_JDK8 = "kotlin-stdlib-jdk8-1.6.21";
+    public static String ORG_JETBRAINS_ANNOTATIONS = "org-jetbrains-annotations-23.0.0";
+    public static String ORG_JSPECIFY_JSPECIFY = "jspecify-1.0.0";
+    public static String ANDROIDX_CONCURRENT_CONCURRENT_FUTURES_KTX = "concurrent-futures-ktx-1.3.0";
+    public static String ANDROIDX_ROOM_ROOM_KTX = "room-ktx-2.6.1";
+    public static String ANDROIDX_TRACING_TRACING_KTX = "tracing-ktx-1.2.0";
 
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
             new BuiltInLibrary(ANDROIDX_ACTIVITY, List.of(ANDROIDX_ANNOTATION, ANDROIDX_COLLECTION, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_RUNTIME,
@@ -264,7 +271,8 @@ public class BuiltInLibraries {
 
             new BuiltInLibrary(ANDROIDX_WORK_RUNTIME, List.of(ANDROIDX_ANNOTATION_EXPERIMENTAL, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_LIVEDATA,
                     ANDROIDX_LIFECYCLE_SERVICE, ANDROIDX_ROOM_RUNTIME, ANDROIDX_SQLITE, ANDROIDX_SQLITE_FRAMEWORK, ANDROIDX_STARTUP_RUNTIME,
-                    GUAVA_LISTENABLEFUTURE), "androidx.work"),
+                    GUAVA_LISTENABLEFUTURE, ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_ANDROID, ORG_JETBRAINS_ANNOTATIONS, ORG_JSPECIFY_JSPECIFY,
+                    ANDROIDX_CONCURRENT_CONCURRENT_FUTURES_KTX, ANDROIDX_ROOM_ROOM_KTX, ANDROIDX_TRACING_TRACING_KTX), "androidx.work"),
 
             new BuiltInLibrary(ANDROIDX_COLLECTION_JVM),
 
@@ -379,6 +387,12 @@ public class BuiltInLibraries {
             new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_JVM),
             new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_ANDROID),
             new BuiltInLibrary(ORG_JETBRAINS_KOTLIN_KOTLIN_STDLIB_JDK8),
+            new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_ANDROID),
+            new BuiltInLibrary(ORG_JETBRAINS_ANNOTATIONS),
+            new BuiltInLibrary(ORG_JSPECIFY_JSPECIFY),
+            new BuiltInLibrary(ANDROIDX_CONCURRENT_CONCURRENT_FUTURES_KTX),
+            new BuiltInLibrary(ANDROIDX_ROOM_ROOM_KTX, List.of(), "androidx.room.ktx"),
+            new BuiltInLibrary(ANDROIDX_TRACING_TRACING_KTX, List.of(), "androidx.tracing.ktx"),
     };
 
     public static File getLibraryPath(String libraryName) {

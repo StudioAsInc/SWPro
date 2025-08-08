@@ -1,5 +1,7 @@
 package extensions.anbui.daydream.project;
 
+import android.util.Log;
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -13,29 +15,107 @@ import extensions.anbui.daydream.file.FileUtils;
 
 public class ProjectDataDayDream {
 
+    //Activity settings
+
     public static boolean isEnableEdgeToEdge(String projectID, String activityName) {
-        return getDataBoolean(projectID, activityName, "isEnableEdgeToEdge");
+        return getDataBoolean(projectID, activityName, "edgeToEdge");
     }
 
     public static void setEnableEdgeToEdge(String projectID, String activityName, boolean isEnable) {
-        setDataBoolean(projectID, activityName, "isEnableEdgeToEdge", isEnable);
+        setDataBoolean(projectID, activityName, "edgeToEdge", isEnable);
     }
 
     public static boolean isEnableWindowInsetsHandling(String projectID, String activityName) {
-        return getDataBoolean(projectID, activityName, "isEnableWindowInsetsHandling");
+        return getDataBoolean(projectID, activityName, "windowInsetsHandling");
     }
 
     public static void setEnableWindowInsetsHandling(String projectID, String activityName, boolean isEnable) {
-        setDataBoolean(projectID, activityName, "isEnableWindowInsetsHandling", isEnable);
+        setDataBoolean(projectID, activityName, "windowInsetsHandling", isEnable);
     }
 
     public static boolean isDisableAutomaticPermissionRequests(String projectID, String activityName) {
-        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "isDisableAutomaticPermissionRequests");
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "disableAutomaticPermissionRequests");
     }
 
     public static void setDisableAutomaticPermissionRequests(String projectID, String activityName, boolean isEnable) {
-        setDataBoolean(projectID, activityName, "isDisableAutomaticPermissionRequests", isEnable);
+        setDataBoolean(projectID, activityName, "disableAutomaticPermissionRequests", isEnable);
     }
+
+    public static boolean isContentProtection(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "contentProtection");
+    }
+
+    public static void setContentProtection(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "contentProtection", isEnable);
+    }
+
+    //Universal settings
+
+    public static boolean isEnableDayDream(String projectID) {
+        return getUniversalSettings(projectID, "isEnable");
+    }
+
+    public static void setEnableDayDream(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "isEnable", isEnable);
+    }
+
+    public static boolean isUniversalEdgeToEdge(String projectID) {
+        return getUniversalSettings(projectID, "edgeToEgde");
+    }
+
+    public static void setUniversalEdgeToEdge(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "edgeToEgde", isEnable);
+    }
+
+    public static boolean isUniversalWindowInsetsHandling(String projectID) {
+        return getUniversalSettings(projectID, "windowInsetsHandling");
+    }
+
+    public static void setUniversalWindowInsetsHandling(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "windowInsetsHandling", isEnable);
+    }
+
+    public static boolean isUniversalContentProtection(String projectID) {
+        return getUniversalSettings(projectID, "contentProtection");
+    }
+
+    public static void setUniversalContentProtection(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "contentProtection", isEnable);
+    }
+
+    public static boolean isEnableAndroidTextColorRemoval(String projectID) {
+        return getUniversalSettings(projectID, "androidTextColorRemoval");
+    }
+
+    public static void setEnableAndroidTextColorRemoval(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "androidTextColorRemoval", isEnable);
+    }
+
+    public static boolean isUniversalDisableAutomaticPermissionRequests(String projectID) {
+        return getUniversalSettings(projectID, "disableAutomaticPermissionRequests");
+    }
+
+    public static void setUniversalDisableAutomaticPermissionRequests(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "disableAutomaticPermissionRequests", isEnable);
+    }
+
+    public static boolean isForceAddWorkManager(String projectID) {
+        return getUniversalSettings(projectID, "forceAddWorkManager");
+    }
+
+    public static void setForceAddWorkManager(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "forceAddWorkManager", isEnable);
+    }
+    //Read and write universal settings
+    public static boolean getUniversalSettings(String projectID, String settingName) {
+        return getDataBoolean(projectID, "Universal", settingName);
+    }
+
+    public static void setUniversalSettings(String projectID, String settingName, boolean isEnable) {
+        setDataBoolean(projectID, "Universal", settingName, isEnable);
+    }
+
+    //Read and write data
 
     public static boolean getDataBoolean(String projectID, String toplevelkey, String key) {
         JsonObject json = JsonParser.parseString(readDayDreamDataFile(projectID)).getAsJsonObject();

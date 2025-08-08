@@ -96,6 +96,8 @@ import a.a.a.yB;
 import a.a.a.yq;
 import a.a.a.zy;
 import dev.chrisbanes.insetter.Insetter;
+import extensions.anbui.daydream.activity.UniversalProjectSettings;
+import extensions.anbui.daydream.configs.Configs;
 import mod.agus.jcoderz.editor.manage.permission.ManagePermissionActivity;
 import mod.agus.jcoderz.editor.manage.resource.ManageResourceActivity;
 import mod.hey.studios.activity.managers.assets.ManageAssetsActivity;
@@ -148,8 +150,6 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
     private TextView fileName;
     private String currentJavaFileName;
     private ViewEditorFragment viewTabAdapter;
-    private boolean isBuilding = false;
-
     private final ActivityResultLauncher<Intent> openCollectionManager = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
             if (viewTabAdapter != null) {
@@ -450,6 +450,8 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
             sc_id = savedInstanceState.getString("sc_id");
         }
 
+        Configs.currentProjectID = sc_id;
+
         r = new DB(getApplicationContext(), "P1");
         t = new DB(getApplicationContext(), "P12");
 
@@ -470,7 +472,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
 
         btnRun = findViewById(R.id.btn_run);
         btnRun.setOnClickListener(v -> {
-            if (currentBuildTask != null && !currentBuildTask.canceled && isBuilding) {
+            if (currentBuildTask != null && !currentBuildTask.canceled && !currentBuildTask.isBuildFinished) {
                 currentBuildTask.cancelBuild();
                 return;
             }
@@ -481,14 +483,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         });
 
         btnOptions = findViewById(R.id.btn_options);
-        btnOptions.setOnClickListener(v -> {
-            Drawable icon = AppCompatResources.getDrawable(DesignActivity.this, R.drawable.ic_arrow_dropdown_down_to_up_animated);
-            btnOptions.setIcon(icon);
-            btnOptions.setChecked(true);
-            bottomPopupMenu.show();
-            assert icon != null;
-            ((AnimatedVectorDrawable) icon).start();
-        });
+        btnOptions.setOnClickListener(v -> bottomPopupMenu.show());
 
         bottomPopupMenu = new PopupMenu(this, btnOptions);
         bottomMenu = bottomPopupMenu.getMenu();
@@ -532,11 +527,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         bottomPopupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
             @Override
             public void onDismiss(PopupMenu menu) {
-                Drawable icon = AppCompatResources.getDrawable(DesignActivity.this, R.drawable.ic_arrow_dropdown_up_to_down_animated);
-                btnOptions.setIcon(icon);
                 btnOptions.setChecked(false);
-                assert icon != null;
-                ((AnimatedVectorDrawable) icon).start();
             }
         });
 
@@ -1019,6 +1010,10 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         launchActivity(ManageXMLCommandActivity.class, null);
     }
 
+    void toDayDream() {
+        launchActivity(UniversalProjectSettings.class, openLibraryManager);
+    }
+
     @SafeVarargs
     private void launchActivity(Class<? extends Activity> toLaunch, ActivityResultLauncher<Intent> optionalLauncher, Pair<String, String>... extras) {
         Intent intent = new Intent(getApplicationContext(), toLaunch);
@@ -1093,7 +1088,6 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         private void doInBackground() {
             DesignActivity activity = getActivity();
             if (activity == null) return;
-            activity.isBuilding = true;
 
             try {
                 var q = activity.q;
@@ -1248,7 +1242,6 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
                 LogUtil.e("DesignActivity$BuildTask", "Failed to build project", tr);
                 activity.indicateCompileErrorOccurred(Log.getStackTraceString(tr));
             } finally {
-                activity.isBuilding = false;
                 activity.runOnUiThread(this::onPostExecute);
             }
         }

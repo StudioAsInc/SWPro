@@ -34,11 +34,12 @@ public class DesignDrawer extends LinearLayout {
     @SuppressLint("NonConstantResourceId")
     private final View.OnClickListener drawerItemClickListener = v -> {
         Activity activity = (Activity) getContext();
-        if (!(activity instanceof DesignActivity)) return;
-        int id = v.getId();
+        int id = v.getId();        if (!(activity instanceof DesignActivity)) return;
+
 
         switch (id) {
             case R.id.item_library_manager -> ((DesignActivity) activity).toLibraryManager();
+            case R.id.item_daydream_manager -> ((DesignActivity) activity).toDayDream();
             case R.id.item_view_manager -> ((DesignActivity) activity).toViewManager();
             case R.id.item_image_manager -> ((DesignActivity) activity).toImageManager();
             case R.id.item_sound_manager -> ((DesignActivity) activity).toSoundManager();
@@ -101,6 +102,7 @@ public class DesignDrawer extends LinearLayout {
 
         addDrawerSubheaderItem(R.string.design_drawer_menu_title, content);
         addDrawerItem(R.id.item_library_manager, R.drawable.ic_mtrl_category, R.string.design_drawer_menu_title_library, R.string.design_drawer_menu_description_library, content);
+        addDrawerItem(R.id.item_daydream_manager, R.drawable.wand_stars_24px, R.string.daydream, R.string.beta, content);
         addDrawerItem(R.id.item_view_manager, R.drawable.ic_mtrl_devices, R.string.design_drawer_menu_title_view, R.string.design_drawer_menu_description_view, content);
         addDrawerItem(R.id.item_image_manager, R.drawable.ic_mtrl_image, R.string.design_drawer_menu_title_image, R.string.design_drawer_menu_description_image, content);
         addDrawerItem(R.id.item_sound_manager, R.drawable.ic_mtrl_music, R.string.design_drawer_menu_title_sound, R.string.design_drawer_menu_description_sound, content);

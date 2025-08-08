@@ -2287,5 +2287,8 @@ Please try again later"</string>
     <string name="unknown_attr">Unknown Attribute</string>
     <string name="attr_already_exist">This attribute already exists</string>
 
+    <string name="daydream">DayDream</string>
+    <string name="beta">Beta</string>
+
 
 </resources>

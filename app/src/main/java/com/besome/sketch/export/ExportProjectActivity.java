@@ -49,6 +49,7 @@ import a.a.a.wq;
 import a.a.a.xq;
 import a.a.a.yB;
 import a.a.a.yq;
+import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.fragment.FragmentUtils;
 import kellinwood.security.zipsigner.ZipSigner;
 import kellinwood.security.zipsigner.optional.CustomKeySigner;
@@ -173,6 +174,8 @@ public class ExportProjectActivity extends BaseAppCompatActivity {
         } else {
             sc_id = savedInstanceState.getString("sc_id");
         }
+
+        Configs.currentProjectID = sc_id;
 
         sc_metadata = lC.b(sc_id);
         project_metadata = new yq(getApplicationContext(), wq.d(sc_id), sc_metadata);
@@ -1246,7 +1249,7 @@ public class ExportProjectActivity extends BaseAppCompatActivity {
             });
 
             ProjectBuilder builder = new ProjectBuilder(this, project_metadata);
-            project_metadata.a(iCVar, hCVar, eCVar, yq.ExportType.SOURCE_CODE);
+            project_metadata.a(iCVar, hCVar, eCVar, yq.ExportType.ANDROID_STUDIO);
             builder.buildBuiltInLibraryInformation();
             project_metadata.b(hCVar, eCVar, iCVar, builder.getBuiltInLibraryManager());
             if (yB.a(lC.b(sc_id), "custom_icon")) {
