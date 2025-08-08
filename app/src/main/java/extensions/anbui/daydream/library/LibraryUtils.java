@@ -6,22 +6,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
+
 public class LibraryUtils {
-    private static final Set<String> FORCE_ADD_RES_BUILT_IN_LIBS_LIST = new HashSet<>(Arrays.asList(
-            "activity-1.10.1",
-            "exoplayer-1.0.0"
-    ));
 
-    public static boolean isForeAddResourcesFromBuiltInLib(String libraryName) {
-        Log.i("LibraryUtils", "isForeAddResourcesFromBuiltInLib: " + libraryName);
-        return FORCE_ADD_RES_BUILT_IN_LIBS_LIST.contains(libraryName);
+    public static boolean isAllowUseWindowInsetsHandling(String projectID) {
+        return (ProjectDataLibrary.isEnabledAppCompat(projectID)
+                && !ProjectDataBuildConfig.isUseJava7(projectID));
     }
 
-    public static String getPackageNameFromBuiltInLib(String libraryName) {
-        return switch (libraryName) {
-            case "activity-1.10.1" -> "androidx.activity";
-            case "exoplayer-1.0.0" -> "androidx.media.exoplayer";
-            default -> "";
-        };
-    }
+   public static boolean isAllowUseAndroidXMedia3(String projectID) {
+       return (ProjectDataLibrary.isEnabledAppCompat(projectID)
+               && ProjectDataConfig.isMinSDKNewerThan23(projectID)
+               && !ProjectDataBuildConfig.isUseJava7(projectID));
+   }
 }

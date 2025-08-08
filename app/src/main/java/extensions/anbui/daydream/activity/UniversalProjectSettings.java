@@ -7,6 +7,7 @@ import androidx.activity.EdgeToEdge;
 
 import java.util.Objects;
 
+import extensions.anbui.daydream.library.LibraryUtils;
 import extensions.anbui.daydream.project.ProjectDataBuildConfig;
 import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
@@ -88,20 +89,12 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.lnAllOptions.setAlpha(isEnable ? 1 : 0.5f);
 
         binding.lnEdgetoedge.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID));
-
-        binding.lnWindowinsetshandling.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID)
-                && !ProjectDataBuildConfig.isUseJava7(projectID));
-
+        binding.lnWindowinsetshandling.setEnabled(isEnable && LibraryUtils.isAllowUseWindowInsetsHandling(projectID));
         binding.lnEnableandroidtextcolorremoval.setEnabled(isEnable);
         binding.lnDisableautomaticpermissionrequests.setEnabled(isEnable);
         binding.lnContentprotection.setEnabled(isEnable);
-
         binding.lnForceaddworkmanager.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID));
-
-        binding.lnUsemedia3.setEnabled(isEnable && ProjectDataConfig.isMinSDKNewerThan23(projectID)
-                && ProjectDataLibrary.isEnabledAppCompat(projectID)
-                && !ProjectDataBuildConfig.isUseJava7(projectID));
-
+        binding.lnUsemedia3.setEnabled(isEnable && LibraryUtils.isAllowUseAndroidXMedia3(projectID));
         binding.lnDisableOnBackInvokedCallback.setEnabled(isEnable);
     }
 

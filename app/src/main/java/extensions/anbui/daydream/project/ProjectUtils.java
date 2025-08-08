@@ -12,6 +12,15 @@ public class ProjectUtils {
                     .toLowerCase()
                     .replaceFirst("_", "")
                     .replace("_activity.java", "");
+        } else if (javaName.endsWith("Activity")) {
+            //1: _Home_Plus_Activity
+            //2: _home_plus_activity
+            //3: home_plus_activity
+            //4: home_plus
+            return javaName.replaceAll("([A-Z])", "_$1")
+                    .toLowerCase()
+                    .replaceFirst("_", "")
+                    .replace("_activity", "");
         }
         return javaName;
     }

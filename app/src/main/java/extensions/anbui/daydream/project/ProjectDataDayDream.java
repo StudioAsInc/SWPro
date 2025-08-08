@@ -49,6 +49,22 @@ public class ProjectDataDayDream {
         setDataBoolean(projectID, activityName, "contentProtection", isEnable);
     }
 
+    public static boolean isImportWorkManager(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importWorkManager");
+    }
+
+    public static void setImportWorkManager(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importWorkManager", isEnable);
+    }
+
+    public static boolean isImportAndroidXMedia3(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importAndroidXMedia3");
+    }
+
+    public static void setImportAndroidXMedia3(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importAndroidXMedia3", isEnable);
+    }
+
     //Universal settings
 
     public static boolean isEnableDayDream(String projectID) {

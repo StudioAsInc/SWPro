@@ -3,6 +3,7 @@ package a.a.a;
 import static dev.aldi.sayuti.block.ExtraBlockFile.getExtraBlockData;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import com.besome.sketch.beans.BlockBean;
@@ -19,6 +20,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.library.LibraryUtils;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataLibrary;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
 import mod.agus.jcoderz.beans.ViewBeans;
@@ -374,8 +378,9 @@ public class Jx {
                 sb.append("setContentView(R.layout.").append(projectFileBean.fileName).append(");").append(EOL);
             }
 
-            if (ProjectDataLibrary.isEnabledAppCompat(sc_id)) {
-                if (ProjectDataDayDream.isEnableWindowInsetsHandling(sc_id, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalWindowInsetsHandling(sc_id))) {
+
+            if (ProjectDataDayDream.isEnableWindowInsetsHandling(sc_id, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalWindowInsetsHandling(sc_id))) {
+                if (LibraryUtils.isAllowUseWindowInsetsHandling(sc_id)) {
                     if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR)) {
                         sb.append("ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id._coordinator), (v, insets) -> {").append(EOL);
                     } else {
@@ -772,20 +777,26 @@ public class Jx {
         }
 
         if (ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
-            if (ProjectDataDayDream.isEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) &&  ProjectDataDayDream.isUniversalEdgeToEdge(Configs.currentProjectID)))
+            if (ProjectDataDayDream.isEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalEdgeToEdge(Configs.currentProjectID)))
                 addImport("androidx.activity.EdgeToEdge");
 
             if (ProjectDataDayDream.isEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalWindowInsetsHandling(Configs.currentProjectID))) {
-                addImport("androidx.core.graphics.Insets");
-                addImport("androidx.core.view.ViewCompat");
-                addImport("androidx.core.view.WindowInsetsCompat");
+                if (!ProjectDataBuildConfig.isUseJava7(Configs.currentProjectID)) {
+                    addImport("androidx.core.graphics.Insets");
+                    addImport("androidx.core.view.ViewCompat");
+                    addImport("androidx.core.view.WindowInsetsCompat");
+                }
             }
 
             if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
-                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID))
+                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.getActivityName())) {
                     addImport("androidx.work.*");
+                }
 
-                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)) {
+                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.getActivityName())) {
                     addImport("java.net.*");
                     addImport("androidx.media3.common.*");
                     addImport("androidx.media3.exoplayer.*");
