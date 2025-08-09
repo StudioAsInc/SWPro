@@ -832,6 +832,20 @@ public class Jx {
                     addImport("androidx.browser.customtabs.*");
                     addImport("androidx.browser.trusted.*");
                 }
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                    addImport("androidx.credentials.*");
+                    addImport("androidx.credentials.exceptions.*");
+                    addImport("androidx.credentials.internal.*");
+                    addImport("androidx.credentials.provider.*");
+                    addImport("androidx.credentials.webauthn.*");
+                    addImport("androidx.credentials.playservices.*");
+                    addImport("androidx.credentials.playservices.controllers.*");
+                    addImport("com.google.android.libraries.identity.googleid.*");
+                    addImport("androidx.biometric.*");
+                }
             }
         }
 

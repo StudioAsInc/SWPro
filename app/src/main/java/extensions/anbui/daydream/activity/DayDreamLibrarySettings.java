@@ -43,20 +43,24 @@ public class DayDreamLibrarySettings extends AppCompatActivity {
         binding.swForceaddworkmanager.setChecked(ProjectDataDayDream.isForceAddWorkManager(projectID));
         binding.swForceaddworkmanager.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setForceAddWorkManager(projectID, isChecked));
         binding.swUseandroixbrowser.setChecked(ProjectDataDayDream.isUniversalUseAndroidXBrowser(projectID));
+        binding.swUseandroixcredentialmanager.setChecked(ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(projectID));
 
         binding.swUsemedia3.setChecked((ProjectDataDayDream.isUniversalUseMedia3(projectID)));
         binding.swUsemedia3.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseMedia3(projectID, isChecked));
         binding.swUseandroixbrowser.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseAndroidXBrowser(projectID, isChecked));
+        binding.swUseandroixcredentialmanager.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseAndroidXCredentialManager(projectID, isChecked));
 
 
         binding.lnForceaddworkmanager.setOnClickListener(v -> binding.swForceaddworkmanager.toggle());
         binding.lnUsemedia3.setOnClickListener(v -> binding.swUsemedia3.toggle());
         binding.lnUseandroixbrowser.setOnClickListener(v -> binding.swUseandroixbrowser.toggle());
+        binding.lnUseandroixcredentialmanager.setOnClickListener(v -> binding.swUseandroixcredentialmanager.toggle());
 
 
         initializeForceAddWorkmanager();
         initializeUseMedia3();
         initializeUseAndroidXBrowser();
+        initializeUseAndroidXCredentialManager();
     }
 
     private void initializeForceAddWorkmanager() {
@@ -90,5 +94,22 @@ public class DayDreamLibrarySettings extends AppCompatActivity {
             binding.lnUseandroixbrowser.setAlpha(0.5f);
             binding.tvUseandroixbrowsernote.setText("To use, enable AppCompat. " + binding.tvForceaddworkmanagernote.getText().toString());
         }
+    }
+
+    private void initializeUseAndroidXCredentialManager() {
+        boolean finalstatus = true;
+        if (!ProjectDataConfig.isMinSDKNewerThan23(projectID)) {
+            finalstatus = false;
+            binding.tvUseandroixcredentialmanagernote.setText("To use, min SDK required is 24 or newer (Android 7+). " + binding.tvUsemedia3note.getText().toString());
+        } else if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
+            finalstatus = false;
+            binding.tvUseandroixcredentialmanagernote.setText("To use, enable AppCompat. " + binding.tvUsemedia3note.getText().toString());
+        } else if (ProjectDataBuildConfig.isUseJava7(projectID)) {
+            finalstatus = false;
+            binding.tvUseandroixcredentialmanagernote.setText("To use, use a newer version of Java. " + binding.tvUsemedia3note.getText().toString());
+        }
+
+        binding.lnUseandroixcredentialmanager.setEnabled(finalstatus);
+        binding.lnUseandroixcredentialmanager.setAlpha(finalstatus ? 1 : 0.5f);
     }
 }

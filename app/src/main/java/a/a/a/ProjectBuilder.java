@@ -779,6 +779,10 @@ public class ProjectBuilder {
                 if (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
                         && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))
                     builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_BROWSER);
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_CREDENTIALS_CREDENTIALS);
             }
         }
         if (yq.N.isFirebaseEnabled) {

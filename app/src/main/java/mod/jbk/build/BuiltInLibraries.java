@@ -173,6 +173,11 @@ public class BuiltInLibraries {
     public static String JUNIT_JUNIT = "junit-4.13.2";
     public static String ORG_HAMCREAST_HAMCREAST_CORE = "hamcrest-core-1.3";
 
+    public static String ANDROIDX_CREDENTIALS_CREDENTIALS = "credentials-1.5.0";
+    public static String ANDROIDX_BIOMETRIC_BIOMETRIC = "biometric-1.1.0";
+    public static String ANDROIDX_CREDENTIALS_CREDENTIALS_PLAY_SERVICES_AUTH = "credentials-play-services-auth-1.5.0";
+    public static String COM_GOOGLE_ANDROID_LIBRARIES_INDENTITY_GOOGLEID_GOOGLEID = "googleid-1.1.1";
+
 
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
             new BuiltInLibrary(ANDROIDX_ACTIVITY, List.of(ANDROIDX_ANNOTATION, ANDROIDX_COLLECTION, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_RUNTIME,
@@ -422,6 +427,12 @@ public class BuiltInLibraries {
             new BuiltInLibrary(COM_GOOGLE_ERRORPRONE_ERROR_PRONE_ANNOTATIONS, List.of(JUNIT_JUNIT)),
             new BuiltInLibrary(JUNIT_JUNIT, List.of(ORG_HAMCREAST_HAMCREAST_CORE)),
             new BuiltInLibrary(ORG_HAMCREAST_HAMCREAST_CORE),
+
+            new BuiltInLibrary(ANDROIDX_CREDENTIALS_CREDENTIALS, List.of(ANDROIDX_BIOMETRIC_BIOMETRIC, ANDROIDX_CREDENTIALS_CREDENTIALS_PLAY_SERVICES_AUTH,
+                    COM_GOOGLE_ANDROID_LIBRARIES_INDENTITY_GOOGLEID_GOOGLEID), "androidx.credentials"),
+            new BuiltInLibrary(ANDROIDX_BIOMETRIC_BIOMETRIC, List.of(), "androidx.biometric"),
+            new BuiltInLibrary(ANDROIDX_CREDENTIALS_CREDENTIALS_PLAY_SERVICES_AUTH, List.of(), "androidx.credentials.play.services.auth"),
+            new BuiltInLibrary(COM_GOOGLE_ANDROID_LIBRARIES_INDENTITY_GOOGLEID_GOOGLEID),
     };
 
     public static File getLibraryPath(String libraryName) {

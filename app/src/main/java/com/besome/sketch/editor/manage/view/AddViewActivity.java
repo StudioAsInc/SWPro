@@ -181,6 +181,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.swImportworkmanager.setChecked(ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.fileName));
             binding.swImportmedia3.setChecked(ProjectDataDayDream.isImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.fileName));
             binding.swImportandroixbrowser.setChecked(ProjectDataDayDream.isImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportandroixcredentialmanager.setChecked(ProjectDataDayDream.isImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.fileName));
 
             binding.lnEdgetoedge.setOnClickListener(v -> binding.edgetoedge.toggle());
             binding.lnWindowinsetshandling.setOnClickListener(v -> binding.windowinsetshandling.toggle());
@@ -189,6 +190,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.lnImportworkmanager.setOnClickListener(v -> binding.swImportworkmanager.toggle());
             binding.lnImportmedia3.setOnClickListener(v -> binding.swImportmedia3.toggle());
             binding.lnImportandroixbrowser.setOnClickListener(v -> binding.swImportandroixbrowser.toggle());
+            binding.lnImportandroixcredentialmanager.setOnClickListener(v -> binding.swImportandroixcredentialmanager.toggle());
         }
 
         if (!ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
@@ -245,6 +247,12 @@ public class AddViewActivity extends BaseAppCompatActivity {
                 && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))) {
             binding.lnImportandroixbrowser.setVisibility(View.GONE);
         }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID))) {
+            binding.lnImportandroixcredentialmanager.setVisibility(View.GONE);
+        }
     }
 
     private void saveDayDreamData() {
@@ -256,6 +264,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             ProjectDataDayDream.setImportWorkManager(Configs.currentProjectID, projectFileBean.fileName, binding.swImportworkmanager.isChecked());
             ProjectDataDayDream.setImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.fileName, binding.swImportmedia3.isChecked());
             ProjectDataDayDream.setImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.fileName, binding.swImportandroixbrowser.isChecked());
+            ProjectDataDayDream.setImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.fileName, binding.swImportandroixcredentialmanager.isChecked());
         } else {
             ProjectDataDayDream.setEnableEdgeToEdge(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.edgetoedge.isChecked());
             ProjectDataDayDream.setEnableWindowInsetsHandling(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.windowinsetshandling.isChecked());
@@ -264,6 +273,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             ProjectDataDayDream.setImportWorkManager(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportworkmanager.isChecked());
             ProjectDataDayDream.setImportAndroidXMedia3(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportmedia3.isChecked());
             ProjectDataDayDream.setImportAndroidXBrowser(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportandroixbrowser.isChecked());
+            ProjectDataDayDream.setImportAndroidXCredentialManager(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportandroixcredentialmanager.isChecked());
         }
     }
 

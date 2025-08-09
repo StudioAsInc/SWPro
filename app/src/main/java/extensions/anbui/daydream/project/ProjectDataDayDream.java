@@ -75,6 +75,14 @@ public class ProjectDataDayDream {
         setDataBoolean(projectID, activityName, "importAndroidXMedia3", isEnable);
     }
 
+    public static boolean isImportAndroidXCredentialManager(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importAndroidXCredentialManager");
+    }
+
+    public static void setImportAndroidXCredentialManager(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importAndroidXCredentialManager", isEnable);
+    }
+
     public static boolean isImportAndroidXBrowser(String projectID, String activityName) {
         return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importAndroidXBrowser");
     }
@@ -155,6 +163,14 @@ public class ProjectDataDayDream {
 
     public static void setUniversalUseAndroidXBrowser(String projectID, boolean isEnable) {
         setUniversalSettings(projectID, "useAndroidXBrowser", isEnable);
+    }
+
+    public static boolean isUniversalUseAndroidXCredentialManager(String projectID) {
+        return getUniversalSettings(projectID, "useAndroidXCredentialManager");
+    }
+
+    public static void setUniversalUseAndroidXCredentialManager(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "useAndroidXCredentialManager", isEnable);
     }
 
     public static boolean isUninversalEnableOnBackInvokedCallback(String projectID) {
