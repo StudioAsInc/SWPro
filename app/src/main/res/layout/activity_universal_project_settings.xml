@@ -337,7 +337,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/ln_disableOnBackInvokedCallback"
+                android:id="@+id/ln_enableOnBackInvokedCallback"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -349,26 +349,26 @@
                     android:layout_marginEnd="8dp"
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/sw_disableOnBackInvokedCallback"
+                    app:layout_constraintEnd_toStartOf="@id/sw_enableOnBackInvokedCallback"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Disable predictive back gesture"
+                        android:text="Predictive back gesture"
                         android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Useful when your app is targeting SDK 36 (Android 16) and you haven't replaced onBackPressed() with OnBackInvokedCallback. On Android 16 the predictive back gesture is enabled by default and anything you add to onBackPressed() will be ignored and not executed when the user presses the back key. Enable to disable the predictive back gesture and continue using onBackPressed() on Android 16."
+                        android:text="If your app is targeting SDK 36 (Android 16). You should enable this feature to use OnBackInvokedCallback because by default on Android 16 onBackPressed() will be ignored, not executed and exit the Activity."
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/sw_disableOnBackInvokedCallback"
+                    android:id="@+id/sw_enableOnBackInvokedCallback"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"

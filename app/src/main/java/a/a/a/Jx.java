@@ -25,6 +25,7 @@ import extensions.anbui.daydream.project.ProjectDataBuildConfig;
 import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataLibrary;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLogic;
 import mod.agus.jcoderz.beans.ViewBeans;
 import mod.agus.jcoderz.editor.manage.library.locallibrary.ManageLocalLibrary;
 import mod.agus.jcoderz.handle.component.ConstVarComponent;
@@ -523,8 +524,23 @@ public class Jx {
         if (!onCreateEventCode.isEmpty()) {
             sb.append(onCreateEventCode).append(EOL);
         }
-        if (!isFragment && (ProjectDataDayDream.isContentProtection(sc_id, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalContentProtection(sc_id))))
-            sb.append("getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);").append(EOL);
+        if (!isFragment) {
+            if (ProjectDataDayDream.isEnableDayDream(sc_id)) {
+                if (ProjectDataDayDream.isContentProtection(sc_id, projectFileBean.fileName) || ProjectDataDayDream.isUniversalContentProtection(sc_id))
+                    sb.append("getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);").append(EOL);
+
+                if (ProjectDataDayDream.isUninversalEnableOnBackInvokedCallback(sc_id) && ProjectDataLogic.isThisActivityHaveOnBackPressed(sc_id, projectFileBean.getActivityName())) {
+                    sb.append("if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {").append(EOL);
+                    sb.append("getOnBackInvokedDispatcher().registerOnBackInvokedCallback(").append(EOL);
+                    sb.append("OnBackInvokedDispatcher.PRIORITY_DEFAULT,").append(EOL);
+                    sb.append("() -> {").append(EOL);
+                    sb.append("onBackPressed();").append(EOL);
+                    sb.append("});").append(EOL);
+                    sb.append("}").append(EOL);
+                }
+            }
+        }
+
         sb.append("}").append(EOL);
 
         String agusComponentsOnActivityResultCode = getBillingResponseCode(buildConfig.x);
@@ -802,6 +818,11 @@ public class Jx {
                     addImport("androidx.media3.exoplayer.*");
                 }
             }
+        }
+
+        if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+            if (ProjectDataDayDream.isUninversalEnableOnBackInvokedCallback(Configs.currentProjectID) && ProjectDataLogic.isThisActivityHaveOnBackPressed(Configs.currentProjectID, projectFileBean.getActivityName()))
+                addImport("android.window.OnBackInvokedDispatcher");
         }
 
         if (isViewBindingEnabled) {

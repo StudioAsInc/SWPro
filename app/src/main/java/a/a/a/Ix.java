@@ -566,8 +566,8 @@ public class Ix {
             applicationTag.addAttribute("android", "usesCleartextTraffic", "true");
         }
 
-        if (ProjectDataDayDream.isUninversalDisableOnBackInvokedCallback(Configs.currentProjectID) && ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID))
-            applicationTag.addAttribute("android", "enableOnBackInvokedCallback", "false");
+        if (ProjectDataDayDream.isUninversalEnableOnBackInvokedCallback(Configs.currentProjectID) && ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID))
+            applicationTag.addAttribute("android", "enableOnBackInvokedCallback", "true");
 
         AndroidManifestInjector.getAppAttrs(applicationTag, c.sc_id);
 

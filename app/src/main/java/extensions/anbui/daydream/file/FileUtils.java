@@ -9,9 +9,13 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class FileUtils {
 
@@ -79,6 +83,32 @@ public class FileUtils {
             Log.i("FileUtils", "writeTextFile: " + path);
         } catch (IOException e) {
             Log.e("FileUtils", "writeTextFile: " + e.getMessage());
+        }
+    }
+
+    public static void copyFile(String sourcePath, String toPath) {
+        if (!isFileExist(sourcePath)) return;
+
+        File toFile = new File(toPath);
+        if (!toFile.exists())
+            if (!toFile.mkdirs())
+                return;
+
+        File sourceFile = new File(sourcePath);
+
+        File tempFile = new File(toPath, sourceFile.getName());
+
+        try {
+            InputStream in = new FileInputStream(sourcePath);
+            OutputStream out = new FileOutputStream(tempFile);
+
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = in.read(buffer)) > 0) {
+                out.write(buffer, 0, length);
+            }
+        } catch (IOException e) {
+            System.err.println("Error copying file: " + e.getMessage());
         }
     }
 }

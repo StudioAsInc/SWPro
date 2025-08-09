@@ -54,6 +54,6 @@ public class ProjectDataLibrary {
 
     public static Map<String, Object> readLibraryData(String projectID, String dataType) {
         String contentProjectFile = ProjectDataDecryptor.decryptProjectFile(FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + projectID + "/library");
-        return ProjectData.readDataWithDataType(dataType, contentProjectFile);
+        return ProjectData.readFirstLineDataWithDataTypeToMap(dataType, contentProjectFile);
     }
 }

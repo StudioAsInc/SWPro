@@ -9,12 +9,14 @@ import java.util.Objects;
 
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.file.FileUtils;
+import extensions.anbui.daydream.json.JsonUtils;
 
 public class ProjectDataConfig {
 
     public static boolean isMinSDKNewerThan23(String projectID) {
         Map<String, Object> map = getProjectConfigData(projectID);
         if (map == null) return false;
+        if (!map.containsKey("min_sdk")) return false;
         return Integer.parseInt(Objects.requireNonNull(map.get("min_sdk")).toString()) > 23;
     }
 
@@ -25,7 +27,7 @@ public class ProjectDataConfig {
     }
 
     public static Map<String, Object> getProjectConfigData(String projectID) {
-        return ProjectData.readMapData(readDataFile(projectID));
+        return JsonUtils.covertoMap(readDataFile(projectID));
     }
 
     public static String readDataFile(String projectID) {

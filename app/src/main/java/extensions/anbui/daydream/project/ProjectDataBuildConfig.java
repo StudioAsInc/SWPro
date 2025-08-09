@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.file.FileUtils;
+import extensions.anbui.daydream.json.JsonUtils;
 
 public class ProjectDataBuildConfig {
 
@@ -31,7 +32,7 @@ public class ProjectDataBuildConfig {
     }
 
     public static Map<String, Object> getBuildConfigData(String projectID) {
-        return ProjectData.readMapData(readDataFile(projectID));
+        return JsonUtils.covertoMap(readDataFile(projectID));
     }
 
     public static String readDataFile(String projectID) {
