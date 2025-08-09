@@ -810,7 +810,8 @@ public class Jx {
 
             if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
                 if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
-                        && ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                        && ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.getActivityName())
+                        && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID)) {
                     addImport("androidx.work.*");
                 }
 
@@ -820,6 +821,16 @@ public class Jx {
                     addImport("java.net.*");
                     addImport("androidx.media3.common.*");
                     addImport("androidx.media3.exoplayer.*");
+                }
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                    addImport("android.net.Uri");
+                    addImport("androidx.browser.auth.*");
+                    addImport("androidx.browser.browseractions.*");
+                    addImport("androidx.browser.customtabs.*");
+                    addImport("androidx.browser.trusted.*");
                 }
             }
         }

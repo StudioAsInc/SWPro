@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.library.LibraryUtils;
 import extensions.anbui.daydream.project.ProjectDataBuildConfig;
 import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
@@ -768,14 +769,16 @@ public class ProjectBuilder {
             builtInLibraryManager.addLibrary(BuiltInLibraries.MATERIAL);
             if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
                 if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
-                        && ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID))
+                        && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID))
                     builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_WORK_RUNTIME);
 
                 if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
-                        && ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)
-                        && ProjectDataConfig.isMinSDKNewerThan23(Configs.currentProjectID)
-                        && !ProjectDataBuildConfig.isUseJava7(Configs.currentProjectID))
+                        && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID))
                     builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER);
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_BROWSER);
             }
         }
         if (yq.N.isFirebaseEnabled) {

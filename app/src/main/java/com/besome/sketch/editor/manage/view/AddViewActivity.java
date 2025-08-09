@@ -180,6 +180,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.swContentprotection.setChecked(ProjectDataDayDream.isContentProtection(Configs.currentProjectID, projectFileBean.fileName));
             binding.swImportworkmanager.setChecked(ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.fileName));
             binding.swImportmedia3.setChecked(ProjectDataDayDream.isImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportandroixbrowser.setChecked(ProjectDataDayDream.isImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.fileName));
 
             binding.lnEdgetoedge.setOnClickListener(v -> binding.edgetoedge.toggle());
             binding.lnWindowinsetshandling.setOnClickListener(v -> binding.windowinsetshandling.toggle());
@@ -187,6 +188,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
             binding.lnImportworkmanager.setOnClickListener(v -> binding.swImportworkmanager.toggle());
             binding.lnImportmedia3.setOnClickListener(v -> binding.swImportmedia3.toggle());
+            binding.lnImportandroixbrowser.setOnClickListener(v -> binding.swImportandroixbrowser.toggle());
         }
 
         if (!ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
@@ -228,7 +230,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
 
         if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
                 && ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
-                && ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID))) {
+                && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID))) {
             binding.lnImportworkmanager.setVisibility(View.GONE);
         }
 
@@ -236,6 +238,12 @@ public class AddViewActivity extends BaseAppCompatActivity {
                 && ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
                 && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID))) {
             binding.lnImportmedia3.setVisibility(View.GONE);
+        }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))) {
+            binding.lnImportandroixbrowser.setVisibility(View.GONE);
         }
     }
 
@@ -247,6 +255,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             ProjectDataDayDream.setContentProtection(Configs.currentProjectID, projectFileBean.fileName, binding.swContentprotection.isChecked());
             ProjectDataDayDream.setImportWorkManager(Configs.currentProjectID, projectFileBean.fileName, binding.swImportworkmanager.isChecked());
             ProjectDataDayDream.setImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.fileName, binding.swImportmedia3.isChecked());
+            ProjectDataDayDream.setImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.fileName, binding.swImportandroixbrowser.isChecked());
         } else {
             ProjectDataDayDream.setEnableEdgeToEdge(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.edgetoedge.isChecked());
             ProjectDataDayDream.setEnableWindowInsetsHandling(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.windowinsetshandling.isChecked());
@@ -254,6 +263,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             ProjectDataDayDream.setContentProtection(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swContentprotection.isChecked());
             ProjectDataDayDream.setImportWorkManager(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportworkmanager.isChecked());
             ProjectDataDayDream.setImportAndroidXMedia3(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportmedia3.isChecked());
+            ProjectDataDayDream.setImportAndroidXBrowser(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportandroixbrowser.isChecked());
         }
     }
 

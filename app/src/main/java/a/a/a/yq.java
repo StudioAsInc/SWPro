@@ -526,7 +526,8 @@ public class yq {
             N.addPermission(jq.PERMISSION_ACCESS_NETWORK_STATE);
             N.setupGoogleMap(googleMaps);
         }
-        if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)) {
+        if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
+                || ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)) {
             N.addPermission(jq.PERMISSION_INTERNET);
             N.addPermission(jq.PERMISSION_ACCESS_NETWORK_STATE);
         }

@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,7 +30,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.NotificationCompat;
@@ -96,7 +93,7 @@ import a.a.a.yB;
 import a.a.a.yq;
 import a.a.a.zy;
 import dev.chrisbanes.insetter.Insetter;
-import extensions.anbui.daydream.activity.UniversalProjectSettings;
+import extensions.anbui.daydream.activity.DayDreamGeneralSettings;
 import extensions.anbui.daydream.configs.Configs;
 import mod.agus.jcoderz.editor.manage.permission.ManagePermissionActivity;
 import mod.agus.jcoderz.editor.manage.resource.ManageResourceActivity;
@@ -1011,7 +1008,7 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
     }
 
     void toDayDream() {
-        launchActivity(UniversalProjectSettings.class, openLibraryManager);
+        launchActivity(DayDreamGeneralSettings.class, openLibraryManager);
     }
 
     @SafeVarargs

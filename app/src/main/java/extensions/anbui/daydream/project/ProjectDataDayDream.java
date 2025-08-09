@@ -75,6 +75,14 @@ public class ProjectDataDayDream {
         setDataBoolean(projectID, activityName, "importAndroidXMedia3", isEnable);
     }
 
+    public static boolean isImportAndroidXBrowser(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importAndroidXBrowser");
+    }
+
+    public static void setImportAndroidXBrowser(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importAndroidXBrowser", isEnable);
+    }
+
     //Universal settings
 
     public static boolean isEnableDayDream(String projectID) {
@@ -139,6 +147,14 @@ public class ProjectDataDayDream {
 
     public static void setUniversalUseMedia3(String projectID, boolean isEnable) {
         setUniversalSettings(projectID, "useMedia3", isEnable);
+    }
+
+    public static boolean isUniversalUseAndroidXBrowser(String projectID) {
+        return getUniversalSettings(projectID, "useAndroidXBrowser");
+    }
+
+    public static void setUniversalUseAndroidXBrowser(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "useAndroidXBrowser", isEnable);
     }
 
     public static boolean isUninversalEnableOnBackInvokedCallback(String projectID) {
