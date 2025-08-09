@@ -24,4 +24,26 @@ public class ProjectUtils {
         }
         return javaName;
     }
+
+    public static String convertXMLNameToJavaName(String xmlName, boolean withDotJava) {
+        if (xmlName.endsWith(".java") || xmlName.endsWith("Activity")) return xmlName;
+
+        // "home_plus" -> "HomePlusActivity" or "HomePlusActivity.java"
+        String[] parts = xmlName.split("_");
+        StringBuilder javaName = new StringBuilder();
+
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                javaName.append(Character.toUpperCase(part.charAt(0)))
+                        .append(part.substring(1));
+            }
+        }
+        javaName.append("Activity");
+
+        if (withDotJava) {
+            javaName.append(".java");
+        }
+        return javaName.toString();
+    }
+
 }

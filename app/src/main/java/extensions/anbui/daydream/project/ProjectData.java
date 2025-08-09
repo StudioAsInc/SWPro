@@ -11,6 +11,8 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.json.JsonUtils;
+import shadow.bundletool.com.android.tools.r8.internal.S;
 
 public class ProjectData {
 
@@ -28,14 +30,12 @@ public class ProjectData {
         }).start();
     }
 
-    public static Map<String, Object> readMapData(String data) {
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Object>>() {}.getType();
-        return gson.fromJson(data, type);
+    public static Map<String, Object> readFirstLineDataWithDataTypeToMap(String dataType, String data) {
+        return JsonUtils.covertoMap(readFirstLineDataWithDataType(dataType, data));
     }
 
     @Nullable
-    public static Map<String, Object> readDataWithDataType(String dataType, String data) {
+    public static String readFirstLineDataWithDataType(String dataType, String data) {
         //Find the location of type
         int compatIndex = data.indexOf(dataType);
         if (compatIndex == -1) return null;
@@ -59,11 +59,26 @@ public class ProjectData {
 
         if (jsonStart == -1 || jsonEnd == -1) return null;
 
-        String jsonString = data.substring(jsonStart, jsonEnd + 1);
+        return data.substring(jsonStart, jsonEnd + 1);
+    }
 
-        //Convert JSON to Map
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Object>>() {}.getType();
-        return gson.fromJson(jsonString, type);
+    public static Map<String, Object> readFullDataWithDataTypeToMap(String dataType, String data) {
+        return JsonUtils.covertoMap(readFullDataWithDataType(dataType, data));
+    }
+
+    @Nullable
+    public static String readFullDataWithDataType(String dataType, String data) {
+        //Find the starting position of the activity
+        int startIndex = data.indexOf(dataType);
+        if (startIndex == -1) return null;
+
+        //Find the end position (when encountering a new activity or running out of data)
+        int nextActivityIndex = data.indexOf("@", startIndex + dataType.length());
+        if (nextActivityIndex == -1) {
+            nextActivityIndex = data.length(); //No new activity, get all
+        }
+
+        //Cut the entire data block of the activity
+        return data.substring(startIndex, nextActivityIndex).trim();
     }
 }

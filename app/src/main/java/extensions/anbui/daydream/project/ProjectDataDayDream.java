@@ -1,7 +1,5 @@
 package extensions.anbui.daydream.project;
 
-import android.util.Log;
-
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -131,12 +129,12 @@ public class ProjectDataDayDream {
         setUniversalSettings(projectID, "useMedia3", isEnable);
     }
 
-    public static boolean isUninversalDisableOnBackInvokedCallback(String projectID) {
-        return getUniversalSettings(projectID, "disableOnBackInvokedCallback");
+    public static boolean isUninversalEnableOnBackInvokedCallback(String projectID) {
+        return getUniversalSettings(projectID, "enableOnBackInvokedCallback");
     }
 
-    public static void setUninversalDisableOnBackInvokedCallback(String projectID, boolean isEnable) {
-        setUniversalSettings(projectID, "disableOnBackInvokedCallback", isEnable);
+    public static void setUninversalEnableOnBackInvokedCallback(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "enableOnBackInvokedCallback", isEnable);
     }
     //Read and write universal settings
     public static boolean getUniversalSettings(String projectID, String settingName) {

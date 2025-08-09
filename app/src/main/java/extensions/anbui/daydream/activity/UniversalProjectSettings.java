@@ -65,8 +65,8 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.swUsemedia3.setChecked((ProjectDataDayDream.isUniversalUseMedia3(projectID)));
         binding.swUsemedia3.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseMedia3(projectID, isChecked));
 
-        binding.swDisableOnBackInvokedCallback.setChecked(ProjectDataDayDream.isUninversalDisableOnBackInvokedCallback(projectID));
-        binding.swDisableOnBackInvokedCallback.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUninversalDisableOnBackInvokedCallback(projectID, isChecked));
+        binding.swEnableOnBackInvokedCallback.setChecked(ProjectDataDayDream.isUninversalEnableOnBackInvokedCallback(projectID));
+        binding.swEnableOnBackInvokedCallback.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUninversalEnableOnBackInvokedCallback(projectID, isChecked));
 
         binding.lnEnabled.setOnClickListener(v -> binding.swEnabled.toggle());
         binding.lnEdgetoedge.setOnClickListener(v -> binding.swEdgetoedge.toggle());
@@ -76,7 +76,7 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
         binding.lnForceaddworkmanager.setOnClickListener(v -> binding.swForceaddworkmanager.toggle());
         binding.lnUsemedia3.setOnClickListener(v -> binding.swUsemedia3.toggle());
-        binding.lnDisableOnBackInvokedCallback.setOnClickListener(v -> binding.swDisableOnBackInvokedCallback.toggle());
+        binding.lnEnableOnBackInvokedCallback.setOnClickListener(v -> binding.swEnableOnBackInvokedCallback.toggle());
 
         universalUIController(binding.swEnabled.isChecked());
         initializeEdgeToEdge();
@@ -95,7 +95,7 @@ public class UniversalProjectSettings extends AppCompatActivity {
         binding.lnContentprotection.setEnabled(isEnable);
         binding.lnForceaddworkmanager.setEnabled(isEnable && ProjectDataLibrary.isEnabledAppCompat(projectID));
         binding.lnUsemedia3.setEnabled(isEnable && LibraryUtils.isAllowUseAndroidXMedia3(projectID));
-        binding.lnDisableOnBackInvokedCallback.setEnabled(isEnable);
+        binding.lnEnableOnBackInvokedCallback.setEnabled(isEnable);
     }
 
     private void initializeEdgeToEdge() {
