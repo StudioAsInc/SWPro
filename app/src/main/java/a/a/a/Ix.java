@@ -573,7 +573,9 @@ public class Ix {
 
         boolean hasDebugActivity = false;
         for (ProjectFileBean projectFileBean : b) {
-            if (!projectFileBean.fileName.contains("_fragment")) {
+            if (!(projectFileBean.fileName.contains("_fragment")
+                    || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment"))) {
+
                 XmlBuilder activityTag = new XmlBuilder("activity");
 
                 String javaName = projectFileBean.getJavaName();
