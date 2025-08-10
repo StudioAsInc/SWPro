@@ -26,6 +26,7 @@ import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataLibrary;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
 import extensions.anbui.daydream.project.ProjectDataLogic;
+import extensions.anbui.daydream.project.ProjectUtils;
 import mod.agus.jcoderz.beans.ViewBeans;
 import mod.agus.jcoderz.editor.manage.library.locallibrary.ManageLocalLibrary;
 import mod.agus.jcoderz.handle.component.ConstVarComponent;
@@ -542,6 +543,13 @@ public class Jx {
                     sb.append("});").append(EOL);
                     sb.append("}").append(EOL);
                 }
+
+                if (ProjectUtils.convertJavaNameToXMLName(projectFileBean.getActivityName()).equals("main")) {
+                    if (ProjectDataDayDream.isUseGoogleAnalytics(Configs.currentProjectID)
+                            && LibraryUtils.isAllowUseGoogleAnalytics(Configs.currentProjectID)) {
+                        sb.append("FirebaseAnalytics.getInstance(this);").append(EOL);
+                    }
+                }
             }
         }
 
@@ -845,6 +853,13 @@ public class Jx {
                     addImport("androidx.credentials.playservices.controllers.*");
                     addImport("com.google.android.libraries.identity.googleid.*");
                     addImport("androidx.biometric.*");
+                }
+
+                if (ProjectUtils.convertJavaNameToXMLName(projectFileBean.getActivityName()).equals("main")) {
+                    if (ProjectDataDayDream.isUseGoogleAnalytics(Configs.currentProjectID)
+                            && LibraryUtils.isAllowUseGoogleAnalytics(Configs.currentProjectID)) {
+                        addImport("com.google.firebase.analytics.FirebaseAnalytics");
+                    }
                 }
             }
         }

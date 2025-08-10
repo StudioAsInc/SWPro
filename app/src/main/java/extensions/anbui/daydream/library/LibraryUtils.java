@@ -38,4 +38,8 @@ public class LibraryUtils {
                 && ProjectDataConfig.isMinSDKNewerThan23(projectID)
                 && !ProjectDataBuildConfig.isUseJava7(projectID));
     }
+
+    public static boolean isAllowUseGoogleAnalytics(String projectID) {
+        return ProjectDataLibrary.isEnabledFirebase(projectID);
+    }
 }

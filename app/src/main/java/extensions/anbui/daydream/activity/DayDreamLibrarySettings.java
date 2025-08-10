@@ -100,13 +100,13 @@ public class DayDreamLibrarySettings extends AppCompatActivity {
         boolean finalstatus = true;
         if (!ProjectDataConfig.isMinSDKNewerThan23(projectID)) {
             finalstatus = false;
-            binding.tvUseandroixcredentialmanagernote.setText("To use, min SDK required is 24 or newer (Android 7+). " + binding.tvUsemedia3note.getText().toString());
+            binding.tvUseandroixcredentialmanagernote.setText("To use, min SDK required is 24 or newer (Android 7+). " + binding.tvUseandroixcredentialmanagernote.getText().toString());
         } else if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
             finalstatus = false;
-            binding.tvUseandroixcredentialmanagernote.setText("To use, enable AppCompat. " + binding.tvUsemedia3note.getText().toString());
+            binding.tvUseandroixcredentialmanagernote.setText("To use, enable AppCompat. " + binding.tvUseandroixcredentialmanagernote.getText().toString());
         } else if (ProjectDataBuildConfig.isUseJava7(projectID)) {
             finalstatus = false;
-            binding.tvUseandroixcredentialmanagernote.setText("To use, use a newer version of Java. " + binding.tvUsemedia3note.getText().toString());
+            binding.tvUseandroixcredentialmanagernote.setText("To use, use a newer version of Java. " + binding.tvUseandroixcredentialmanagernote.getText().toString());
         }
 
         binding.lnUseandroixcredentialmanager.setEnabled(finalstatus);

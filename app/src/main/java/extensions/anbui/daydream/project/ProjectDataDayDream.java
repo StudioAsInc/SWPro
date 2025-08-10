@@ -180,6 +180,14 @@ public class ProjectDataDayDream {
     public static void setUninversalEnableOnBackInvokedCallback(String projectID, boolean isEnable) {
         setUniversalSettings(projectID, "enableOnBackInvokedCallback", isEnable);
     }
+
+    public static boolean isUseGoogleAnalytics(String projectID) {
+        return getUniversalSettings(projectID, "useGoogleAnalytics");
+    }
+
+    public static void setUseGoogleAnalytics(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "useGoogleAnalytics", isEnable);
+    }
     //Read and write universal settings
     public static boolean getUniversalSettings(String projectID, String settingName) {
         return getDataBoolean(projectID, "Universal", settingName);

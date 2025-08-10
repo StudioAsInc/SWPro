@@ -73,7 +73,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingHorizontal="8dp"
-                    android:paddingBottom="2dp"
                     android:visibility="gone"
                     tools:visibility="visible">
 
@@ -101,7 +100,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingVertical="8dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="8dp"
                     android:paddingLeft="8dp"
                     android:paddingRight="4dp">
 

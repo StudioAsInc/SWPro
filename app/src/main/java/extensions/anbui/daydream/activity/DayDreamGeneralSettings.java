@@ -59,6 +59,10 @@ public class DayDreamGeneralSettings extends AppCompatActivity {
             goToSettings(DayDreamPermissionSettings.class);
         });
 
+        binding.lnGooglesettings.setOnClickListener(v -> {
+            goToSettings(DayDreamGoogleSettings.class);
+        });
+
         universalUIController(binding.swEnabled.isChecked());
     }
 
@@ -67,6 +71,7 @@ public class DayDreamGeneralSettings extends AppCompatActivity {
 
         binding.lnUisettings.setEnabled(isEnable);
         binding.lnLibrarysettings.setEnabled(isEnable);
+        binding.lnGooglesettings.setEnabled(isEnable);
         binding.lnPermissionsettings.setEnabled(isEnable);
         binding.lnSecuritysettings.setEnabled(isEnable);
     }
