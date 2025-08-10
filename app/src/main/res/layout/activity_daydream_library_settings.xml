@@ -198,7 +198,7 @@
                         android:id="@+id/tv_useandroixcredentialmanagernote"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="How to sign in with a new account on Android for Google and more."
+                        android:text="The modern new way to sign in for Google accounts and more."
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>

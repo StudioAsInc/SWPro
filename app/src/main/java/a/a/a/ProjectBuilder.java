@@ -783,6 +783,10 @@ public class ProjectBuilder {
                 if (ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
                         && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID))
                     builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_CREDENTIALS_CREDENTIALS);
+
+                if (ProjectDataDayDream.isUseGoogleAnalytics(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseGoogleAnalytics(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_API);
             }
         }
         if (yq.N.isFirebaseEnabled) {

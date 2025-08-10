@@ -90,14 +90,14 @@ public class BuiltInLibraries {
     public static String ANDROIDX_GRAPHICS_SHAPES_ANDROID = "graphics-shapes-android-1.0.1";
     public static String FIREBASE_AUTH = "firebase-auth-19.0.0";
     public static String FIREBASE_AUTH_INTEROP = "firebase-auth-interop-18.0.0";
-    public static String FIREBASE_COMMON = "firebase-common-19.3.1";
-    public static String FIREBASE_COMPONENTS = "firebase-components-16.0.0";
+    public static String FIREBASE_COMMON = "firebase-common-20.1.0";
+    public static String FIREBASE_COMPONENTS = "firebase-components-18.0.0";
     public static String FIREBASE_DATABASE = "firebase-database-19.3.1";
     public static String FIREBASE_DATABASE_COLLECTION = "firebase-database-collection-17.0.0";
     public static String FIREBASE_DYNAMIC_LINKS = "firebase-dynamic-links-19.0.0";
     public static String FIREBASE_IID = "firebase-iid-19.0.0";
     public static String FIREBASE_IID_INTEROP = "firebase-iid-interop-17.0.0";
-    public static String FIREBASE_MEASUREMENT_CONNECTOR = "firebase-measurement-connector-18.0.0";
+    public static String FIREBASE_MEASUREMENT_CONNECTOR = "firebase-measurement-connector-19.0.0";
     public static String FIREBASE_MESSAGING = "firebase-messaging-19.0.0";
     public static String FIREBASE_STORAGE = "firebase-storage-19.0.0";
     public static String CIRCLE_IMAGEVIEW = "circleimageview-3.1.0";
@@ -124,24 +124,24 @@ public class BuiltInLibraries {
     public static String PATTERN_LOCK_VIEW = "pattern-lock-view";
     public static String PLAY_SERVICES_ADS = "play-services-ads-22.2.0";
     public static String PLAY_SERVICES_ADS_BASE = "play-services-ads-base-22.2.0";
-    public static String PLAY_SERVICES_ADS_IDENTIFIER = "play-services-ads-identifier-18.0.1";
+    public static String PLAY_SERVICES_ADS_IDENTIFIER = "play-services-ads-identifier-18.2.0";
     public static String PLAY_SERVICES_ADS_LITE = "play-services-ads-lite-22.2.0";
     public static String PLAY_SERVICES_APPSET = "play-services-appset-16.0.2";
     public static String PLAY_SERVICES_AUTH = "play-services-auth-19.0.0";
     public static String PLAY_SERVICES_AUTH_API_PHONE = "play-services-auth-api-phone-17.0.5";
     public static String PLAY_SERVICES_AUTH_BASE = "play-services-auth-base-17.1.2";
     public static String PLAY_SERVICES_BASE = "play-services-base-18.2.0";
-    public static String PLAY_SERVICES_BASEMENT = "play-services-basement-18.2.0";
+    public static String PLAY_SERVICES_BASEMENT = "play-services-basement-18.7.1";
     public static String PLAY_SERVICES_GASS = "play-services-gass-20.0.0";
     public static String PLAY_SERVICES_GCM = "play-services-gcm-17.0.0";
     public static String PLAY_SERVICES_IID = "play-services-iid-17.0.0";
     public static String PLAY_SERVICES_LOCATION = "play-services-location-18.0.0";
     public static String PLAY_SERVICES_MAPS = "play-services-maps-17.0.1";
-    public static String PLAY_SERVICES_MEASUREMENT_BASE = "play-services-measurement-base-20.1.2";
-    public static String PLAY_SERVICES_MEASUREMENT_SDK_API = "play-services-measurement-sdk-api-20.1.2";
+    public static String PLAY_SERVICES_MEASUREMENT_BASE = "play-services-measurement-base-23.0.0";
+    public static String PLAY_SERVICES_MEASUREMENT_SDK_API = "play-services-measurement-sdk-api-23.0.0";
     public static String PLAY_SERVICES_PLACES_PLACEREPORT = "play-services-places-placereport-17.0.0";
     public static String PLAY_SERVICES_STATS = "play-services-stats-17.0.0";
-    public static String PLAY_SERVICES_TASKS = "play-services-tasks-18.0.2";
+    public static String PLAY_SERVICES_TASKS = "play-services-tasks-18.3.2";
     public static String UMP_USER_MESSAGING_PLATFORM = "user-messaging-platform-2.0.0";
     public static String WAVE_SIDE_BAR = "wave-side-bar";
     public static String YOUTUBE_PLAYER = "android-youtube-player-10.0.5";
@@ -177,6 +177,20 @@ public class BuiltInLibraries {
     public static String ANDROIDX_BIOMETRIC_BIOMETRIC = "biometric-1.1.0";
     public static String ANDROIDX_CREDENTIALS_CREDENTIALS_PLAY_SERVICES_AUTH = "credentials-play-services-auth-1.5.0";
     public static String COM_GOOGLE_ANDROID_LIBRARIES_INDENTITY_GOOGLEID_GOOGLEID = "googleid-1.1.1";
+    public static String COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT = "play-services-measurement-23.0.0";
+    //play-services-measurement-api inclue Firebase Analytics
+    public static String COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_API = "play-services-measurement-api-23.0.0";
+    public static String COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_IMPL = "play-services-measurement-impl-23.0.0";
+    public static String COM_GOOGLE_ANDROID_GMS_PLAY_SERVIVES_BASE = "play-services-base-18.7.2";
+    public static String COM_GOOGLE_ANDROID_GMS_PLAY_SERVIVES_STATS = "play-services-stats-17.1.0";
+    public static String ANDROIDX_PRIVACYSANDBOX_ADS_ADS_ADSERVICES = "ads-adservices-1.1.0-beta12";
+    public static String ANDROIDX_PRIVACYSANDBOX_ADS_ADS_ADSERVICES_JAVA = "ads-adservices-java-1.1.0-beta12";
+
+    public static String COM_GOOGLE_FIREBASE_FIREBASE_ANNOTATIONS = "firebase-annotations-16.2.0";
+    public static String JAKARTA_INJECT_JAKARTA_INJECT_API = "firebase-annotations-16.2.0";
+
+    public static String COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS = "firebase-installations-17.0.1";
+    public static String COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP = "firebase-installations-interop-17.2.0";
 
 
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
@@ -305,7 +319,7 @@ public class BuiltInLibraries {
 
             new BuiltInLibrary(FIREBASE_AUTH_INTEROP, List.of(FIREBASE_COMMON, PLAY_SERVICES_BASE, PLAY_SERVICES_BASEMENT, PLAY_SERVICES_TASKS)),
             new BuiltInLibrary(FIREBASE_COMMON, List.of(FIREBASE_COMPONENTS, PLAY_SERVICES_BASEMENT, PLAY_SERVICES_TASKS)),
-            new BuiltInLibrary(FIREBASE_COMPONENTS, List.of(ANDROIDX_ANNOTATION)),
+            new BuiltInLibrary(FIREBASE_COMPONENTS, List.of(COM_GOOGLE_FIREBASE_FIREBASE_ANNOTATIONS, ANDROIDX_ANNOTATION, COM_GOOGLE_ERRORPRONE_ERROR_PRONE_ANNOTATIONS)),
             new BuiltInLibrary(FIREBASE_DATABASE, List.of(FIREBASE_AUTH_INTEROP, FIREBASE_COMMON, FIREBASE_COMPONENTS, FIREBASE_DATABASE_COLLECTION, ANDROIDX_ANNOTATION,
                     PLAY_SERVICES_BASE, PLAY_SERVICES_BASEMENT, PLAY_SERVICES_TASKS)),
 
@@ -317,7 +331,7 @@ public class BuiltInLibraries {
                     ANDROIDX_LEGACY_SUPPORT_CORE_UTILS, PLAY_SERVICES_BASEMENT, PLAY_SERVICES_STATS, PLAY_SERVICES_TASKS)),
 
             new BuiltInLibrary(FIREBASE_IID_INTEROP, List.of(PLAY_SERVICES_BASE, PLAY_SERVICES_BASEMENT)),
-            new BuiltInLibrary(FIREBASE_MEASUREMENT_CONNECTOR, List.of(PLAY_SERVICES_BASEMENT)),
+            new BuiltInLibrary(FIREBASE_MEASUREMENT_CONNECTOR, List.of(PLAY_SERVICES_BASEMENT, COM_GOOGLE_FIREBASE_FIREBASE_ANNOTATIONS)),
             new BuiltInLibrary(FIREBASE_MESSAGING, List.of(FIREBASE_COMMON, FIREBASE_IID, FIREBASE_MEASUREMENT_CONNECTOR, ANDROIDX_COLLECTION,
                     ANDROIDX_CORE, PLAY_SERVICES_BASEMENT, PLAY_SERVICES_TASKS), "com.google.firebase.messaging"),
 
@@ -433,6 +447,26 @@ public class BuiltInLibraries {
             new BuiltInLibrary(ANDROIDX_BIOMETRIC_BIOMETRIC, List.of(), "androidx.biometric"),
             new BuiltInLibrary(ANDROIDX_CREDENTIALS_CREDENTIALS_PLAY_SERVICES_AUTH, List.of(), "androidx.credentials.play.services.auth"),
             new BuiltInLibrary(COM_GOOGLE_ANDROID_LIBRARIES_INDENTITY_GOOGLEID_GOOGLEID),
+
+            new BuiltInLibrary(COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT, List.of(PLAY_SERVICES_MEASUREMENT_BASE, COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_IMPL,
+                    PLAY_SERVICES_MEASUREMENT_SDK_API, PLAY_SERVICES_ADS_IDENTIFIER, COM_GOOGLE_ANDROID_GMS_PLAY_SERVIVES_BASE,
+                    PLAY_SERVICES_BASEMENT, PLAY_SERVICES_TASKS, COM_GOOGLE_ANDROID_GMS_PLAY_SERVIVES_STATS,
+                    ANDROIDX_PRIVACYSANDBOX_ADS_ADS_ADSERVICES, ANDROIDX_PRIVACYSANDBOX_ADS_ADS_ADSERVICES_JAVA)),
+            new BuiltInLibrary(COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_IMPL),
+            new BuiltInLibrary(COM_GOOGLE_ANDROID_GMS_PLAY_SERVIVES_BASE, List.of(), "com.google.android.gms.base"),
+            new BuiltInLibrary(COM_GOOGLE_ANDROID_GMS_PLAY_SERVIVES_STATS),
+            new BuiltInLibrary(ANDROIDX_PRIVACYSANDBOX_ADS_ADS_ADSERVICES, List.of(), "androidx.privacysandbox.ads.adservices"),
+            new BuiltInLibrary(ANDROIDX_PRIVACYSANDBOX_ADS_ADS_ADSERVICES_JAVA, List.of(), "androidx.privacysandbox.ads.adservices.java"),
+
+            new BuiltInLibrary(COM_GOOGLE_FIREBASE_FIREBASE_ANNOTATIONS, List.of(JAKARTA_INJECT_JAKARTA_INJECT_API)),
+            new BuiltInLibrary(JAKARTA_INJECT_JAKARTA_INJECT_API),
+
+            new BuiltInLibrary(COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_API, List.of(PLAY_SERVICES_ADS_IDENTIFIER, PLAY_SERVICES_BASEMENT, PLAY_SERVICES_MEASUREMENT_BASE,
+                    PLAY_SERVICES_MEASUREMENT_SDK_API, PLAY_SERVICES_TASKS, FIREBASE_COMMON, FIREBASE_COMPONENTS, COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS,
+                    COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP, FIREBASE_MEASUREMENT_CONNECTOR, GUAVA, KOTLIN_STDLIB)),
+
+            new BuiltInLibrary(COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS, List.of(PLAY_SERVICES_TASKS, FIREBASE_COMMON, FIREBASE_COMPONENTS, COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP)),
+            new BuiltInLibrary(COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP, List.of(PLAY_SERVICES_TASKS, ANDROIDX_ANNOTATION)),
     };
 
     public static File getLibraryPath(String libraryName) {
