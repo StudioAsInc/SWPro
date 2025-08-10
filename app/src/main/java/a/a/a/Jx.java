@@ -178,9 +178,13 @@ public class Jx {
      * @return Generated Java code of the current View (not Widget)
      */
     public String generateCode(boolean isAndroidStudioExport, String sc_id) {
-        boolean isDialogFragment = projectFileBean.fileName.contains("_dialog_fragment");
-        boolean isBottomDialogFragment = projectFileBean.fileName.contains("_bottomdialog_fragment");
-        boolean isFragment = projectFileBean.fileName.contains("_fragment");
+        boolean isDialogFragment = (projectFileBean.fileName.contains("_dialog_fragment")
+                || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_dialog_fragment"));
+
+        boolean isBottomDialogFragment = (projectFileBean.fileName.contains("_bottomdialog_fragment")
+                || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_bottomdialog_fragment"));
+        boolean isFragment = (projectFileBean.fileName.contains("_fragment")
+                || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment"));
 
         extraVariables();
         handleAppCompat();
@@ -806,7 +810,8 @@ public class Jx {
 
             if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
                 if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
-                        && ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                        && ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.getActivityName())
+                        && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID)) {
                     addImport("androidx.work.*");
                 }
 
@@ -816,6 +821,30 @@ public class Jx {
                     addImport("java.net.*");
                     addImport("androidx.media3.common.*");
                     addImport("androidx.media3.exoplayer.*");
+                }
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                    addImport("android.net.Uri");
+                    addImport("androidx.browser.auth.*");
+                    addImport("androidx.browser.browseractions.*");
+                    addImport("androidx.browser.customtabs.*");
+                    addImport("androidx.browser.trusted.*");
+                }
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                    addImport("androidx.credentials.*");
+                    addImport("androidx.credentials.exceptions.*");
+                    addImport("androidx.credentials.internal.*");
+                    addImport("androidx.credentials.provider.*");
+                    addImport("androidx.credentials.webauthn.*");
+                    addImport("androidx.credentials.playservices.*");
+                    addImport("androidx.credentials.playservices.controllers.*");
+                    addImport("com.google.android.libraries.identity.googleid.*");
+                    addImport("androidx.biometric.*");
                 }
             }
         }
@@ -830,7 +859,7 @@ public class Jx {
         }
 
         if (buildConfig.g) {
-            if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR) && !projectFileBean.fileName.contains("_fragment")) {
+            if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR) && !projectFileBean.fileName.contains("_fragment") && !ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment")) {
                 addImport(
                         (materialLibraryManager.isMaterial3Enabled()) ? "com.google.android.material.appbar.MaterialToolbar" : "androidx.appcompat.widget.Toolbar"
                 );
@@ -878,11 +907,13 @@ public class Jx {
                 if (!isViewBindingEnabled) {
                     fields.add("private FloatingActionButton _fab;");
                     initializeMethodCode.add("_fab = " +
-                            (projectFileBean.fileName.contains("_fragment") ? "_view." : "") +
+                            (projectFileBean.fileName.contains("_fragment")
+                                    || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment")
+                                    ? "_view." : "") +
                             "findViewById(R.id._fab);");
                 }
             }
-            if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_DRAWER) && !projectFileBean.fileName.contains("_fragment")) {
+            if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_DRAWER) && !projectFileBean.fileName.contains("_fragment") && !ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment")) {
                 addImport("androidx.core.view.GravityCompat");
                 addImport("androidx.drawerlayout.widget.DrawerLayout");
                 addImport("androidx.appcompat.app.ActionBarDrawerToggle");
@@ -974,7 +1005,7 @@ public class Jx {
         if (replaceAll.isEmpty()) {
             replaceAll = viewBean.getClassInfo().a();
         }
-        if (projectFileBean.fileName.contains("_fragment")) {
+        if (projectFileBean.fileName.contains("_fragment") || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment")) {
             return Lx.getViewInitializer(replaceAll, viewBean.id, true, isViewBindingEnabled);
         }
         return Lx.getViewInitializer(replaceAll, viewBean.id, false, isViewBindingEnabled);

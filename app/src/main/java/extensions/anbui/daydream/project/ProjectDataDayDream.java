@@ -13,6 +13,18 @@ import extensions.anbui.daydream.file.FileUtils;
 
 public class ProjectDataDayDream {
 
+    //Activity type
+
+    public static String getActivityType(String projectID, String activityName) {
+        String result = getDataString(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "activityType");
+        if (result == null) return "";
+        return result;
+    }
+
+    public static void setActivityType(String projectID, String activityName, String value) {
+        setDataString(projectID, activityName, "activityType", value);
+    }
+
     //Activity settings
 
     public static boolean isEnableEdgeToEdge(String projectID, String activityName) {
@@ -61,6 +73,22 @@ public class ProjectDataDayDream {
 
     public static void setImportAndroidXMedia3(String projectID, String activityName, boolean isEnable) {
         setDataBoolean(projectID, activityName, "importAndroidXMedia3", isEnable);
+    }
+
+    public static boolean isImportAndroidXCredentialManager(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importAndroidXCredentialManager");
+    }
+
+    public static void setImportAndroidXCredentialManager(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importAndroidXCredentialManager", isEnable);
+    }
+
+    public static boolean isImportAndroidXBrowser(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importAndroidXBrowser");
+    }
+
+    public static void setImportAndroidXBrowser(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importAndroidXBrowser", isEnable);
     }
 
     //Universal settings
@@ -129,6 +157,22 @@ public class ProjectDataDayDream {
         setUniversalSettings(projectID, "useMedia3", isEnable);
     }
 
+    public static boolean isUniversalUseAndroidXBrowser(String projectID) {
+        return getUniversalSettings(projectID, "useAndroidXBrowser");
+    }
+
+    public static void setUniversalUseAndroidXBrowser(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "useAndroidXBrowser", isEnable);
+    }
+
+    public static boolean isUniversalUseAndroidXCredentialManager(String projectID) {
+        return getUniversalSettings(projectID, "useAndroidXCredentialManager");
+    }
+
+    public static void setUniversalUseAndroidXCredentialManager(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "useAndroidXCredentialManager", isEnable);
+    }
+
     public static boolean isUninversalEnableOnBackInvokedCallback(String projectID) {
         return getUniversalSettings(projectID, "enableOnBackInvokedCallback");
     }
@@ -160,6 +204,31 @@ public class ProjectDataDayDream {
     }
 
     public static void setDataBoolean(String projectID, String toplevelkey, String key, boolean value) {
+        JsonObject json = JsonParser.parseString(readDayDreamDataFile(projectID)).getAsJsonObject();
+        if (!json.has(toplevelkey)) {
+            JsonObject edge = new JsonObject();
+            edge.addProperty(key, value);
+            json.add(toplevelkey, edge);
+        } else {
+            JsonObject edge = json.getAsJsonObject(toplevelkey);
+            edge.addProperty(key, value);
+        }
+        writeDayDreamDataFile(projectID, new Gson().toJson(json));
+    }
+
+    public static String getDataString(String projectID, String toplevelkey, String key) {
+        JsonObject json = JsonParser.parseString(readDayDreamDataFile(projectID)).getAsJsonObject();
+        if (json.has(toplevelkey)) {
+            JsonObject edge = json.getAsJsonObject(toplevelkey);
+            try {
+                return edge.get(key).getAsString();
+            } catch (Exception ignored) {
+            }
+        }
+        return "";
+    }
+
+    public static void setDataString(String projectID, String toplevelkey, String key, String value) {
         JsonObject json = JsonParser.parseString(readDayDreamDataFile(projectID)).getAsJsonObject();
         if (!json.has(toplevelkey)) {
             JsonObject edge = new JsonObject();

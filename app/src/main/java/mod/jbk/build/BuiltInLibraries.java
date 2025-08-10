@@ -30,7 +30,7 @@ public class BuiltInLibraries {
     public static String ANDROIDX_APPCOMPAT = "appcompat-1.6.1";
     public static String ANDROIDX_APPCOMPAT_RESOURCES = "appcompat-resources-1.6.1";
     public static String ANDROIDX_ASYNCLAYOUTINFLATER = "asynclayoutinflater-1.0.0";
-    public static String ANDROIDX_BROWSER = "browser-1.5.0";
+    public static String ANDROIDX_BROWSER = "browser-1.9.0";
     public static String ANDROIDX_CARDVIEW = "cardview-1.0.0";
     //collection-1.5.0.dex = collection-1.5.0.jar + collection-1.5.0-jvm.jar
     public static String ANDROIDX_COLLECTION = "collection-1.5.0";
@@ -48,7 +48,7 @@ public class BuiltInLibraries {
     public static String ANDROIDX_DYNAMIC_ANIMATION = "dynamic-animation-1.1.0-alpha03";
     public static String ANDROIDX_EMOJI2 = "emoji2-1.0.1";
     public static String ANDROIDX_EMOJI2_VIEWS_HELPER = "emoji2-views-helper-1.0.1";
-    public static String ANDROIDX_EXIFINTERFACE = "exifinterface-1.0.0";
+    public static String ANDROIDX_EXIFINTERFACE = "exifinterface-1.3.6";
     public static String ANDROIDX_FRAGMENT = "fragment-1.3.6";
     public static String ANDROIDX_INTERPOLATOR = "interpolator-1.0.0";
     public static String ANDROIDX_LEGACY_SUPPORT_CORE_UI = "legacy-support-core-ui-1.0.0";
@@ -103,15 +103,16 @@ public class BuiltInLibraries {
     public static String CIRCLE_IMAGEVIEW = "circleimageview-3.1.0";
     public static String CODE_VIEW = "CodeView-0.4.0";
     public static String FACEBOOK_ADS_AUDIENCE_NETWORK_SDK = "audience-network-sdk-5.9.0";
-    public static String GLIDE_ANNOTATIONS = "annotations-4.11.0";
-    public static String GLIDE_DISKLRUCACHE = "disklrucache-4.11.0";
-    public static String GLIDE_GIFDECODER = "gifdecoder-4.11.0";
-    public static String GLIDE = "glide-4.11.0";
+    public static String GLIDE_ANNOTATIONS = "annotations-4.16.0";
+    public static String GLIDE_DISKLRUCACHE = "disklrucache-4.16.0";
+    public static String GLIDE_GIFDECODER = "gifdecoder-4.16.0";
+    public static String GLIDE = "glide-4.16.0";
+    public static String GLIDE_COMPILER = "compiler-4.16.0";
     public static String GOOGLE_AUTO_VALUE_ANNOTATIONS = "auto-value-annotations-1.6.5";
     public static String GSON = "gson-2.8.7";
     public static String GUAVA_LISTENABLEFUTURE = "listenablefuture-1.0.0";
     public static String HTTP_LEGACY_ANDROID_28 = "http-legacy-android-28";
-    public static String JETBRAINS_ANNOTATIONS = "annotations-13.0";
+    public static String JETBRAINS_ANNOTATIONS = "org-jetbrains-annotations-23.0.0";
     public static String KOTLIN_STDLIB = "kotlin-stdlib-2.0.0";
     public static String KOTLIN_STDLIB_JDK7 = "kotlin-stdlib-jdk7-1.6.21";
     public static String LOTTIE = "lottie-3.4.0";
@@ -154,7 +155,6 @@ public class BuiltInLibraries {
     public static String ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_ANDROID = "kotlinx-coroutines-android-1.7.3";
     public static String ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_ANDROID = "kotlinx-coroutines-core-android-1.6.4";
     public static String ORG_JETBRAINS_KOTLIN_KOTLIN_STDLIB_JDK8 = "kotlin-stdlib-jdk8-1.6.21";
-    public static String ORG_JETBRAINS_ANNOTATIONS = "org-jetbrains-annotations-23.0.0";
     public static String ORG_JSPECIFY_JSPECIFY = "jspecify-1.0.0";
     public static String ANDROIDX_CONCURRENT_CONCURRENT_FUTURES_KTX = "concurrent-futures-ktx-1.3.0";
     public static String ANDROIDX_ROOM_ROOM_KTX = "room-ktx-2.6.1";
@@ -172,6 +172,11 @@ public class BuiltInLibraries {
     public static String COM_GOOGLE_ERRORPRONE_ERROR_PRONE_ANNOTATIONS = "error_prone_annotations-2.41.0";
     public static String JUNIT_JUNIT = "junit-4.13.2";
     public static String ORG_HAMCREAST_HAMCREAST_CORE = "hamcrest-core-1.3";
+
+    public static String ANDROIDX_CREDENTIALS_CREDENTIALS = "credentials-1.5.0";
+    public static String ANDROIDX_BIOMETRIC_BIOMETRIC = "biometric-1.1.0";
+    public static String ANDROIDX_CREDENTIALS_CREDENTIALS_PLAY_SERVICES_AUTH = "credentials-play-services-auth-1.5.0";
+    public static String COM_GOOGLE_ANDROID_LIBRARIES_INDENTITY_GOOGLEID_GOOGLEID = "googleid-1.1.1";
 
 
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
@@ -285,7 +290,7 @@ public class BuiltInLibraries {
 
             new BuiltInLibrary(ANDROIDX_WORK_RUNTIME, List.of(ANDROIDX_ANNOTATION_EXPERIMENTAL, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_LIVEDATA,
                     ANDROIDX_LIFECYCLE_SERVICE, ANDROIDX_ROOM_RUNTIME, ANDROIDX_SQLITE, ANDROIDX_SQLITE_FRAMEWORK, ANDROIDX_STARTUP_RUNTIME,
-                    GUAVA_LISTENABLEFUTURE, ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_ANDROID, ORG_JETBRAINS_ANNOTATIONS, ORG_JSPECIFY_JSPECIFY,
+                    GUAVA_LISTENABLEFUTURE, ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_ANDROID, JETBRAINS_ANNOTATIONS, ORG_JSPECIFY_JSPECIFY,
                     ANDROIDX_CONCURRENT_CONCURRENT_FUTURES_KTX, ANDROIDX_ROOM_ROOM_KTX, ANDROIDX_TRACING_TRACING_KTX), "androidx.work"),
 
             new BuiltInLibrary(ANDROIDX_COLLECTION_JVM),
@@ -320,11 +325,12 @@ public class BuiltInLibraries {
                     PLAY_SERVICES_TASKS)),
 
             new BuiltInLibrary(GLIDE, List.of(GLIDE_ANNOTATIONS, GLIDE_DISKLRUCACHE, GLIDE_GIFDECODER, ANDROIDX_EXIFINTERFACE, ANDROIDX_FRAGMENT,
-                    ANDROIDX_VECTORDRAWABLE_ANIMATED), "com.bumptech.glide"),
+                    ANDROIDX_VECTORDRAWABLE_ANIMATED, GLIDE_COMPILER), "com.bumptech.glide"),
 
             new BuiltInLibrary(GLIDE_ANNOTATIONS),
             new BuiltInLibrary(GLIDE_DISKLRUCACHE),
             new BuiltInLibrary(GLIDE_GIFDECODER, List.of(ANDROIDX_ANNOTATION)),
+            new BuiltInLibrary(GLIDE_COMPILER),
             new BuiltInLibrary(GOOGLE_AUTO_VALUE_ANNOTATIONS),
             new BuiltInLibrary(GSON),
             new BuiltInLibrary(GUAVA_LISTENABLEFUTURE),
@@ -402,7 +408,6 @@ public class BuiltInLibraries {
             new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_ANDROID),
             new BuiltInLibrary(ORG_JETBRAINS_KOTLIN_KOTLIN_STDLIB_JDK8),
             new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_ANDROID),
-            new BuiltInLibrary(ORG_JETBRAINS_ANNOTATIONS),
             new BuiltInLibrary(ORG_JSPECIFY_JSPECIFY),
             new BuiltInLibrary(ANDROIDX_CONCURRENT_CONCURRENT_FUTURES_KTX),
             new BuiltInLibrary(ANDROIDX_ROOM_ROOM_KTX, List.of(), "androidx.room.ktx"),
@@ -422,6 +427,12 @@ public class BuiltInLibraries {
             new BuiltInLibrary(COM_GOOGLE_ERRORPRONE_ERROR_PRONE_ANNOTATIONS, List.of(JUNIT_JUNIT)),
             new BuiltInLibrary(JUNIT_JUNIT, List.of(ORG_HAMCREAST_HAMCREAST_CORE)),
             new BuiltInLibrary(ORG_HAMCREAST_HAMCREAST_CORE),
+
+            new BuiltInLibrary(ANDROIDX_CREDENTIALS_CREDENTIALS, List.of(ANDROIDX_BIOMETRIC_BIOMETRIC, ANDROIDX_CREDENTIALS_CREDENTIALS_PLAY_SERVICES_AUTH,
+                    COM_GOOGLE_ANDROID_LIBRARIES_INDENTITY_GOOGLEID_GOOGLEID), "androidx.credentials"),
+            new BuiltInLibrary(ANDROIDX_BIOMETRIC_BIOMETRIC, List.of(), "androidx.biometric"),
+            new BuiltInLibrary(ANDROIDX_CREDENTIALS_CREDENTIALS_PLAY_SERVICES_AUTH, List.of(), "androidx.credentials.play.services.auth"),
+            new BuiltInLibrary(COM_GOOGLE_ANDROID_LIBRARIES_INDENTITY_GOOGLEID_GOOGLEID),
     };
 
     public static File getLibraryPath(String libraryName) {

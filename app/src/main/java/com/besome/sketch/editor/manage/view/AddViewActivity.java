@@ -180,6 +180,8 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.swContentprotection.setChecked(ProjectDataDayDream.isContentProtection(Configs.currentProjectID, projectFileBean.fileName));
             binding.swImportworkmanager.setChecked(ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.fileName));
             binding.swImportmedia3.setChecked(ProjectDataDayDream.isImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportandroixbrowser.setChecked(ProjectDataDayDream.isImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportandroixcredentialmanager.setChecked(ProjectDataDayDream.isImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.fileName));
 
             binding.lnEdgetoedge.setOnClickListener(v -> binding.edgetoedge.toggle());
             binding.lnWindowinsetshandling.setOnClickListener(v -> binding.windowinsetshandling.toggle());
@@ -187,6 +189,8 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
             binding.lnImportworkmanager.setOnClickListener(v -> binding.swImportworkmanager.toggle());
             binding.lnImportmedia3.setOnClickListener(v -> binding.swImportmedia3.toggle());
+            binding.lnImportandroixbrowser.setOnClickListener(v -> binding.swImportandroixbrowser.toggle());
+            binding.lnImportandroixcredentialmanager.setOnClickListener(v -> binding.swImportandroixcredentialmanager.toggle());
         }
 
         if (!ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
@@ -228,7 +232,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
 
         if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
                 && ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
-                && ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID))) {
+                && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID))) {
             binding.lnImportworkmanager.setVisibility(View.GONE);
         }
 
@@ -236,6 +240,18 @@ public class AddViewActivity extends BaseAppCompatActivity {
                 && ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
                 && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID))) {
             binding.lnImportmedia3.setVisibility(View.GONE);
+        }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))) {
+            binding.lnImportandroixbrowser.setVisibility(View.GONE);
+        }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID))) {
+            binding.lnImportandroixcredentialmanager.setVisibility(View.GONE);
         }
     }
 
@@ -247,6 +263,8 @@ public class AddViewActivity extends BaseAppCompatActivity {
             ProjectDataDayDream.setContentProtection(Configs.currentProjectID, projectFileBean.fileName, binding.swContentprotection.isChecked());
             ProjectDataDayDream.setImportWorkManager(Configs.currentProjectID, projectFileBean.fileName, binding.swImportworkmanager.isChecked());
             ProjectDataDayDream.setImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.fileName, binding.swImportmedia3.isChecked());
+            ProjectDataDayDream.setImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.fileName, binding.swImportandroixbrowser.isChecked());
+            ProjectDataDayDream.setImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.fileName, binding.swImportandroixcredentialmanager.isChecked());
         } else {
             ProjectDataDayDream.setEnableEdgeToEdge(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.edgetoedge.isChecked());
             ProjectDataDayDream.setEnableWindowInsetsHandling(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.windowinsetshandling.isChecked());
@@ -254,6 +272,8 @@ public class AddViewActivity extends BaseAppCompatActivity {
             ProjectDataDayDream.setContentProtection(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swContentprotection.isChecked());
             ProjectDataDayDream.setImportWorkManager(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportworkmanager.isChecked());
             ProjectDataDayDream.setImportAndroidXMedia3(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportmedia3.isChecked());
+            ProjectDataDayDream.setImportAndroidXBrowser(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportandroixbrowser.isChecked());
+            ProjectDataDayDream.setImportAndroidXCredentialManager(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportandroixcredentialmanager.isChecked());
         }
     }
 
@@ -336,7 +356,10 @@ public class AddViewActivity extends BaseAppCompatActivity {
                 finish();
             } else if (isValid(nameValidator)) {
                 String var4 = Helper.getText(binding.edName);
+
                 if (binding.cbAddSuffix.isChecked()) var4 += getSuffix(binding.viewTypeSelector);
+                ProjectDataDayDream.setActivityType(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), getSuffix(binding.viewTypeSelector));
+
                 ProjectFileBean projectFileBean = new ProjectFileBean(ProjectFileBean.PROJECT_FILE_TYPE_ACTIVITY, var4, getSelectedButtonIndex(binding.screenOrientationSelector), getSelectedButtonIndex(binding.keyboardSettingsSelector), featureToolbar, !featureStatusBar, featureFab, featureDrawer);
                 Intent intent = new Intent();
                 intent.putExtra("project_file", projectFileBean);
@@ -365,7 +388,8 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.edName.setBackgroundResource(R.color.transparent);
             initItem(projectFileBean.options);
             binding.addViewTypeSelectorLayout.setVisibility(View.GONE);
-            if (projectFileBean.fileName.endsWith("_fragment")) {
+            if (projectFileBean.fileName.endsWith("_fragment")
+                    || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.fileName).contains("_fragment")) {
                 binding.viewOrientationSelectorLayout.setVisibility(View.GONE);
                 binding.viewKeyboardSettingsSelectorLayout.setVisibility(View.GONE);
                 binding.lnDaydreamfeaturesforactivity.setVisibility(View.GONE);
@@ -499,16 +523,16 @@ public class AddViewActivity extends BaseAppCompatActivity {
 
     private void setManifestViewState(boolean vis) {
         if (vis) {
-            resetTranslationX(binding.viewOrientationSelectorLayout);
-            resetTranslationX(binding.viewKeyboardSettingsSelectorLayout);
-            resetTranslationX(binding.lnDaydreamfeaturesforactivity);
-//            binding.cbAddSuffix.setVisibility(View.GONE);
+            binding.viewOrientationSelectorLayout.setVisibility(View.VISIBLE);
+            binding.viewKeyboardSettingsSelectorLayout.setVisibility(View.VISIBLE);
+            binding.lnDaydreamfeaturesforactivity.setVisibility(View.VISIBLE);
+            binding.lnAddSuffix.setVisibility(View.GONE);
         } else {
-            slideOutHorizontally(binding.viewOrientationSelectorLayout, "left");
-            slideOutHorizontally(binding.viewKeyboardSettingsSelectorLayout, "left");
-            slideOutHorizontally(binding.lnDaydreamfeaturesforactivity, "left");
-//            binding.cbAddSuffix.setVisibility(View.VISIBLE);
-//            binding.cbAddSuffix.setText("Add " + getSuffix(binding.viewTypeSelector) + " suffix.");
+            binding.viewOrientationSelectorLayout.setVisibility(View.GONE);
+            binding.viewKeyboardSettingsSelectorLayout.setVisibility(View.GONE);
+            binding.lnDaydreamfeaturesforactivity.setVisibility(View.GONE);
+            binding.lnAddSuffix.setVisibility(View.VISIBLE);
+            binding.cbAddSuffix.setText("Add " + getSuffix(binding.viewTypeSelector) + " suffix.");
         }
     }
 }

@@ -19,9 +19,23 @@ public class LibraryUtils {
                 && !ProjectDataBuildConfig.isUseJava7(projectID));
     }
 
+    public static boolean isAllowUseAndroidXWorkManager(String projectID) {
+        return ProjectDataLibrary.isEnabledAppCompat(projectID);
+    }
+
    public static boolean isAllowUseAndroidXMedia3(String projectID) {
        return (ProjectDataLibrary.isEnabledAppCompat(projectID)
                && ProjectDataConfig.isMinSDKNewerThan23(projectID)
                && !ProjectDataBuildConfig.isUseJava7(projectID));
    }
+
+    public static boolean isAllowUseAndroidXBrowser(String projectID) {
+        return ProjectDataLibrary.isEnabledAppCompat(projectID);
+    }
+
+    public static boolean isAllowUseAndroidXCredentialManager(String projectID) {
+        return (ProjectDataLibrary.isEnabledAppCompat(projectID)
+                && ProjectDataConfig.isMinSDKNewerThan23(projectID)
+                && !ProjectDataBuildConfig.isUseJava7(projectID));
+    }
 }
