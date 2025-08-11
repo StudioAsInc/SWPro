@@ -3,6 +3,7 @@ package extensions.anbui.daydream.java;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 
 import extensions.anbui.daydream.configs.Configs;
 import pro.sketchware.utility.FileUtil;
@@ -16,9 +17,9 @@ public class JavaFileUtils {
 
         isAdded = false;
 
-        File dir = new File(FileUtil.getExternalStorageDir() + Configs.projectDataFolderDir + projectID + "/files/java/");
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) return;
+        File dir = new File(FileUtil.getExternalStorageDir() + Configs.projectDataFolderDir + projectID + "/files/java/" + fileName);
+        if (!Objects.requireNonNull(dir.getParentFile()).exists()) {
+            if (!dir.getParentFile().mkdirs()) return;
         }
 
         try (FileWriter writer = new FileWriter(FileUtil.getExternalStorageDir() + Configs.projectDataFolderDir + projectID + "/files/java/" + fileName)) {

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.library.LibraryUtils;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
 import mod.hey.studios.build.BuildSettings;
 import mod.hey.studios.project.ProjectSettings;
@@ -526,11 +527,14 @@ public class yq {
             N.addPermission(jq.PERMISSION_ACCESS_NETWORK_STATE);
             N.setupGoogleMap(googleMaps);
         }
-        if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
-                || ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
-                || ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)) {
-            N.addPermission(jq.PERMISSION_INTERNET);
-            N.addPermission(jq.PERMISSION_ACCESS_NETWORK_STATE);
+
+        if(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+            if ((ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID) && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID))
+                    || (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID) && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))
+                    || (ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)) && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID)) {
+                N.addPermission(jq.PERMISSION_INTERNET);
+                N.addPermission(jq.PERMISSION_ACCESS_NETWORK_STATE);
+            }
         }
         for (ProjectFileBean customView : projectFileManager.c()) {
             for (ViewBean viewBean : eC.a(projectDataManager.d(customView.getXmlName()))) {

@@ -91,6 +91,14 @@ public class ProjectDataDayDream {
         setDataBoolean(projectID, activityName, "importAndroidXBrowser", isEnable);
     }
 
+    public static boolean isImportShizuku(String projectID, String activityName) {
+        return getDataBoolean(projectID, ProjectUtils.convertJavaNameToXMLName(activityName), "importShizuku");
+    }
+
+    public static void setImportShizuku(String projectID, String activityName, boolean isEnable) {
+        setDataBoolean(projectID, activityName, "importShizuku", isEnable);
+    }
+
     //Universal settings
 
     public static boolean isEnableDayDream(String projectID) {
@@ -187,6 +195,14 @@ public class ProjectDataDayDream {
 
     public static void setUseGoogleAnalytics(String projectID, boolean isEnable) {
         setUniversalSettings(projectID, "useGoogleAnalytics", isEnable);
+    }
+
+    public static boolean isUseShizuku(String projectID) {
+        return getUniversalSettings(projectID, "useShizuku");
+    }
+
+    public static void setUseShizuku(String projectID, boolean isEnable) {
+        setUniversalSettings(projectID, "useShizuku", isEnable);
     }
     //Read and write universal settings
     public static boolean getUniversalSettings(String projectID, String settingName) {

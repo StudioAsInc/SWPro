@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.library.LibraryUtils;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
 import mod.agus.jcoderz.editor.manifest.EditorManifest;
 import mod.hey.studios.build.BuildSettings;
@@ -262,6 +263,21 @@ public class Ix {
         }
     }
 
+    private void writeShizukuProvider(XmlBuilder applicationTag) {
+        XmlBuilder providerTag = new XmlBuilder("provider");
+        providerTag.addAttribute("android", "name", "rikka.shizuku.ShizukuProvider");
+        providerTag.addAttribute("android", "authorities", "${applicationId}.shizuku");
+        providerTag.addAttribute("android", "multiprocess", "false");
+        providerTag.addAttribute("android", "enabled", "true");
+        providerTag.addAttribute("android", "exported", "true");
+        providerTag.addAttribute("android", "permission", "android.permission.INTERACT_ACROSS_USERS_FULL");
+        XmlBuilder metadataTag = new XmlBuilder("meta-data");
+        metadataTag.addAttribute("android", "name", "moe.shizuku.client.V3_SUPPORT");
+        metadataTag.addAttribute("android", "value", "true");
+        providerTag.addChildNode(metadataTag);
+        applicationTag.addChildNode(providerTag);
+    }
+
     private void writeAndroidxWorkRuntimeTags(XmlBuilder application) {
         XmlBuilder alarmService = new XmlBuilder("service");
         alarmService.addAttribute("android", "name", "androidx.work.impl.background.systemalarm.SystemAlarmService");
@@ -478,6 +494,13 @@ public class Ix {
             writePermission(a, "android.permission.RECEIVE_BOOT_COMPLETED");
             writePermission(a, "android.permission.FOREGROUND_SERVICE");
         }
+
+        if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+            if (ProjectDataDayDream.isUseShizuku(Configs.currentProjectID) && LibraryUtils.isAllowUseShizuku(Configs.currentProjectID)) {
+                writePermission(a, "moe.shizuku.manager.permission.API_V23");
+            }
+        }
+
         if (c.x.isFCMUsed) {
             writePermission(a, Manifest.permission.WAKE_LOCK);
             writePermission(a, "com.google.android.c2dm.permission.RECEIVE");
@@ -729,6 +752,12 @@ public class Ix {
             }
         }
         a.addChildNode(applicationTag);
+
+        if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+            if (ProjectDataDayDream.isUseShizuku(Configs.currentProjectID) && LibraryUtils.isAllowUseShizuku(Configs.currentProjectID)) {
+                writeShizukuProvider(applicationTag);
+            }
+        }
         // Needed, as crashing on my SM-A526B with Android 12 / One UI 4.1 / firmware build A526BFXXS1CVD1 otherwise
         //noinspection RegExpRedundantEscape
         return AndroidManifestInjector.mHolder(a.toCode(), c.sc_id).replaceAll("\\$\\{applicationId\\}", packageName);

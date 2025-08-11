@@ -861,6 +861,12 @@ public class Jx {
                         addImport("com.google.firebase.analytics.FirebaseAnalytics");
                     }
                 }
+
+                if (ProjectDataDayDream.isUseShizuku(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportShizuku(Configs.currentProjectID, projectFileBean.getActivityName())
+                        && LibraryUtils.isAllowUseShizuku(Configs.currentProjectID)) {
+                    addImport("rikka.shizuku.*");
+                }
             }
         }
 

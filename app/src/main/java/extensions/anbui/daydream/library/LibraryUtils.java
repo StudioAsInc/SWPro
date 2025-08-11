@@ -40,6 +40,13 @@ public class LibraryUtils {
     }
 
     public static boolean isAllowUseGoogleAnalytics(String projectID) {
-        return ProjectDataLibrary.isEnabledFirebase(projectID);
+        return (ProjectDataLibrary.isEnabledAppCompat(projectID)
+                && ProjectDataConfig.isMinSDKNewerThan23(projectID)
+                && !ProjectDataBuildConfig.isUseJava7(projectID)
+                && ProjectDataLibrary.isEnabledFirebase(projectID));
+    }
+
+    public static boolean isAllowUseShizuku(String projectID) {
+        return ProjectDataLibrary.isEnabledAppCompat(projectID);
     }
 }
