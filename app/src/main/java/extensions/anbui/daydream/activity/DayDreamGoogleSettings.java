@@ -8,7 +8,10 @@ import androidx.activity.EdgeToEdge;
 import java.util.Objects;
 
 import extensions.anbui.daydream.library.LibraryUtils;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
 import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
 import pro.sketchware.databinding.ActivityDaydreamGoogleSettingsBinding;
 
 public class DayDreamGoogleSettings extends AppCompatActivity {
@@ -44,10 +47,21 @@ public class DayDreamGoogleSettings extends AppCompatActivity {
     }
 
     public void initializeAnalytics() {
-        if (!LibraryUtils.isAllowUseGoogleAnalytics(projectID)) {
+        boolean finalstatus = true;
+        if (!ProjectDataConfig.isMinSDKNewerThan23(projectID)) {
+            finalstatus = false;
+            binding.tvAnalyticsnote.setText("To use, min SDK required is 24 or newer (Android 7+). " + binding.tvAnalyticsnote.getText().toString());
+        }  else if (ProjectDataBuildConfig.isUseJava7(projectID)) {
+            finalstatus = false;
+            binding.tvAnalyticsnote.setText("To use, use a newer version of Java. " + binding.tvAnalyticsnote.getText().toString());
+        } else if (!LibraryUtils.isAllowUseGoogleAnalytics(projectID)) {
+            finalstatus = false;
+            binding.tvAnalyticsnote.setText("To use, turn on Firebase. " + binding.tvAnalyticsnote.getText().toString());
+        }
+
+        if (!finalstatus) {
             binding.lnAnalytics.setEnabled(false);
             binding.lnAnalytics.setAlpha(0.5f);
-            binding.tvAnalyticsnote.setText("To use, turn on Firebase. " + binding.tvAnalyticsnote.getText().toString());
         }
     }
 }

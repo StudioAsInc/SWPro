@@ -23,6 +23,7 @@ public class ProjectData {
             try {
                 Thread.sleep(1000);
                 ProjectDataBuildConfig.setDataForFirstTimeProjectCreation(projectID);
+                ProjectDataConfig.setDataForFirstTimeProjectCreation(projectID);
 //                ProjectDataLocalLibraryConfig.setDataForFirstTimeProjectCreation(projectID);
             } catch (InterruptedException e) {
                 Log.e("LibraryUtils", "ProjectDataLocalLibraryConfig: " + e.getMessage());

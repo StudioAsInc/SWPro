@@ -13,6 +13,10 @@ import extensions.anbui.daydream.json.JsonUtils;
 
 public class ProjectDataConfig {
 
+    public static void setDataForFirstTimeProjectCreation(String projectID) {
+        writeDataFile(projectID, "{\"min_sdk\":\"24\",\"enable_viewbinding\":\"true\",\"xml_command\":\"true\"}");
+    }
+
     public static boolean isMinSDKNewerThan23(String projectID) {
         Map<String, Object> map = getProjectConfigData(projectID);
         if (map == null) return false;
