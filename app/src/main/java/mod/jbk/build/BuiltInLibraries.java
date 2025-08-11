@@ -192,6 +192,11 @@ public class BuiltInLibraries {
     public static String COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS = "firebase-installations-17.0.1";
     public static String COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP = "firebase-installations-interop-17.2.0";
 
+    public static String DEV_RIKKA_SHIZUKU_PROVIDER = "shizuku-provider-12.2.0";
+    public static String DEV_RIKKA_SHIZUKU_API = "shizuku-api-12.2.0";
+    public static String DEV_RIKKA_SHIZUKU_AIDL = "shizuku-aidl-12.2.0";
+    public static String DEV_RIKKA_SHIZUKU_SHARED = "shizuku-shared-12.2.0";
+
 
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
             new BuiltInLibrary(ANDROIDX_ACTIVITY, List.of(ANDROIDX_ANNOTATION, ANDROIDX_COLLECTION, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_RUNTIME,
@@ -467,6 +472,11 @@ public class BuiltInLibraries {
 
             new BuiltInLibrary(COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS, List.of(PLAY_SERVICES_TASKS, FIREBASE_COMMON, FIREBASE_COMPONENTS, COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP)),
             new BuiltInLibrary(COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP, List.of(PLAY_SERVICES_TASKS, ANDROIDX_ANNOTATION)),
+
+            new BuiltInLibrary(DEV_RIKKA_SHIZUKU_PROVIDER, List.of(ANDROIDX_ANNOTATION, DEV_RIKKA_SHIZUKU_API)),
+            new BuiltInLibrary(DEV_RIKKA_SHIZUKU_API, List.of(DEV_RIKKA_SHIZUKU_AIDL, DEV_RIKKA_SHIZUKU_SHARED, ANDROIDX_ANNOTATION)),
+            new BuiltInLibrary(DEV_RIKKA_SHIZUKU_AIDL, List.of()),
+            new BuiltInLibrary(DEV_RIKKA_SHIZUKU_SHARED, List.of(DEV_RIKKA_SHIZUKU_AIDL, ANDROIDX_ANNOTATION)),
     };
 
     public static File getLibraryPath(String libraryName) {

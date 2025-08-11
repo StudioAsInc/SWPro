@@ -44,23 +44,27 @@ public class DayDreamLibrarySettings extends AppCompatActivity {
         binding.swForceaddworkmanager.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setForceAddWorkManager(projectID, isChecked));
         binding.swUseandroixbrowser.setChecked(ProjectDataDayDream.isUniversalUseAndroidXBrowser(projectID));
         binding.swUseandroixcredentialmanager.setChecked(ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(projectID));
+        binding.swUseshizuku.setChecked(ProjectDataDayDream.isUseShizuku(projectID));
 
         binding.swUsemedia3.setChecked((ProjectDataDayDream.isUniversalUseMedia3(projectID)));
         binding.swUsemedia3.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseMedia3(projectID, isChecked));
         binding.swUseandroixbrowser.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseAndroidXBrowser(projectID, isChecked));
         binding.swUseandroixcredentialmanager.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUniversalUseAndroidXCredentialManager(projectID, isChecked));
+        binding.swUseshizuku.setOnCheckedChangeListener((buttonView, isChecked) -> ProjectDataDayDream.setUseShizuku(projectID, isChecked));
 
 
         binding.lnForceaddworkmanager.setOnClickListener(v -> binding.swForceaddworkmanager.toggle());
         binding.lnUsemedia3.setOnClickListener(v -> binding.swUsemedia3.toggle());
         binding.lnUseandroixbrowser.setOnClickListener(v -> binding.swUseandroixbrowser.toggle());
         binding.lnUseandroixcredentialmanager.setOnClickListener(v -> binding.swUseandroixcredentialmanager.toggle());
+        binding.lnUseshizuku.setOnClickListener(v -> binding.swUseshizuku.toggle());
 
 
         initializeForceAddWorkmanager();
         initializeUseMedia3();
         initializeUseAndroidXBrowser();
         initializeUseAndroidXCredentialManager();
+        initializeUseShizuku();
     }
 
     private void initializeForceAddWorkmanager() {
@@ -111,5 +115,13 @@ public class DayDreamLibrarySettings extends AppCompatActivity {
 
         binding.lnUseandroixcredentialmanager.setEnabled(finalstatus);
         binding.lnUseandroixcredentialmanager.setAlpha(finalstatus ? 1 : 0.5f);
+    }
+
+    private void initializeUseShizuku() {
+        if (!LibraryUtils.isAllowUseShizuku(Configs.currentProjectID)) {
+            binding.lnUseshizuku.setEnabled(false);
+            binding.lnUseshizuku.setAlpha(0.5f);
+            binding.tvUseshizukunote.setText("To use, enable AppCompat. " + binding.tvUseshizukunote.getText().toString());
+        }
     }
 }

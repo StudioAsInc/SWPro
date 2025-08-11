@@ -787,6 +787,10 @@ public class ProjectBuilder {
                 if (ProjectDataDayDream.isUseGoogleAnalytics(Configs.currentProjectID)
                         && LibraryUtils.isAllowUseGoogleAnalytics(Configs.currentProjectID))
                     builtInLibraryManager.addLibrary(BuiltInLibraries.COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_API);
+
+                if (ProjectDataDayDream.isUseShizuku(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseShizuku(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.DEV_RIKKA_SHIZUKU_PROVIDER);
             }
         }
         if (yq.N.isFirebaseEnabled) {

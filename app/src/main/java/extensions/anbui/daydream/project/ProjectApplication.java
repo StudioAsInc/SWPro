@@ -36,9 +36,9 @@ public class ProjectApplication {
                 "\n" +
                 "import android.app.Application;\n" +
                 "import android.content.Context;\n" +
-                "import android.content.Intent;\n" +
-                "import android.os.Process;\n" +
-                "import android.util.Log;\n" +
+                "//import android.content.Intent;\n" +
+                "//import android.os.Process;\n" +
+                "//import android.util.Log;\n" +
                 "\n" +
                 //Example: .app.MyApplication
                 //1: MyApplication
@@ -54,20 +54,20 @@ public class ProjectApplication {
                 "    public void onCreate() {\n" +
                 "        mApplicationContext = getApplicationContext();\n" +
                 "\n" +
-                "        Thread.setDefaultUncaughtExceptionHandler(\n" +
-                "                new Thread.UncaughtExceptionHandler() {\n" +
-                "                    @Override\n" +
-                "                    public void uncaughtException(Thread thread, Throwable throwable) {\n" +
-                "                        Intent intent = new Intent(getApplicationContext(), DebugActivity.class);\n" +
-                "                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);\n" +
-                "                        intent.putExtra(\"error\", Log.getStackTraceString(throwable));\n" +
-                "                        startActivity(intent);\n" +
-                "                        SketchLogger.broadcastLog(Log.getStackTraceString(throwable));\n" +
-                "                        Process.killProcess(Process.myPid());\n" +
-                "                        System.exit(1);\n" +
-                "                    }\n" +
-                "                });\n" +
-                "        SketchLogger.startLogging();\n" +
+                "//        Thread.setDefaultUncaughtExceptionHandler(\n" +
+                "//                new Thread.UncaughtExceptionHandler() {\n" +
+                "//                    @Override\n" +
+                "//                    public void uncaughtException(Thread thread, Throwable throwable) {\n" +
+                "//                        Intent intent = new Intent(getApplicationContext(), DebugActivity.class);\n" +
+                "//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);\n" +
+                "//                        intent.putExtra(\"error\", Log.getStackTraceString(throwable));\n" +
+                "//                        startActivity(intent);\n" +
+                "//                        SketchLogger.broadcastLog(Log.getStackTraceString(throwable));\n" +
+                "//                        Process.killProcess(Process.myPid());\n" +
+                "//                        System.exit(1);\n" +
+                "//                    }\n" +
+                "//                });\n" +
+                "//        SketchLogger.startLogging();\n" +
                 "        super.onCreate();\n" +
                 "    }\n" +
                 "}";

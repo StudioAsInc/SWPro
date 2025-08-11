@@ -45,4 +45,8 @@ public class LibraryUtils {
                 && !ProjectDataBuildConfig.isUseJava7(projectID)
                 && ProjectDataLibrary.isEnabledFirebase(projectID));
     }
+
+    public static boolean isAllowUseShizuku(String projectID) {
+        return ProjectDataLibrary.isEnabledAppCompat(projectID);
+    }
 }

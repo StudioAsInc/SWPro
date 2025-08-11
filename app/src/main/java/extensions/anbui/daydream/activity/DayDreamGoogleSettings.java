@@ -54,7 +54,7 @@ public class DayDreamGoogleSettings extends AppCompatActivity {
         }  else if (ProjectDataBuildConfig.isUseJava7(projectID)) {
             finalstatus = false;
             binding.tvAnalyticsnote.setText("To use, use a newer version of Java. " + binding.tvAnalyticsnote.getText().toString());
-        } else if (!LibraryUtils.isAllowUseGoogleAnalytics(projectID)) {
+        } else if (!ProjectDataLibrary.isEnabledFirebase(projectID)) {
             finalstatus = false;
             binding.tvAnalyticsnote.setText("To use, turn on Firebase. " + binding.tvAnalyticsnote.getText().toString());
         }
