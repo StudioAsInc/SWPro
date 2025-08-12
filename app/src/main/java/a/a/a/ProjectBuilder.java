@@ -773,8 +773,11 @@ public class ProjectBuilder {
                     builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_WORK_RUNTIME);
 
                 if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
-                        && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID))
+                        && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID)) {
                     builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER);
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER_HLS);
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_UI);
+                }
 
                 if (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
                         && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))

@@ -47,6 +47,7 @@ public class LibraryUtils {
     }
 
     public static boolean isAllowUseShizuku(String projectID) {
-        return ProjectDataLibrary.isEnabledAppCompat(projectID);
+        return (ProjectDataLibrary.isEnabledAppCompat(projectID)
+                && ProjectDataConfig.isMinSDKNewerThan23(projectID));
     }
 }
