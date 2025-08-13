@@ -18,6 +18,25 @@ public class DayDreamTool {
         FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir));
     }
 
+    public static int cleanUpTemporaryFiles() {
+        int cleaned = 0;
+        ArrayList<String> filelist = new ArrayList<>();
+        FileUtils.getFileListInDirectory(
+                FileUtils.getInternalStorageDir() + Configs.projectMySourceFolderDir,
+                filelist
+        );
+
+        for (String filePath : filelist) {
+            if (FileUtils.isFileExist(filePath)) {
+                if (!filePath.contains("list")) {
+                    FileUtils.deleteRecursive(new File(filePath));
+                    cleaned++;
+                }
+            }
+        }
+        return cleaned;
+    }
+
     public static int cleanupLocalLib() {
         int moved = 0;
         String allUsingLocalLib = getAllUsingLocalLib();

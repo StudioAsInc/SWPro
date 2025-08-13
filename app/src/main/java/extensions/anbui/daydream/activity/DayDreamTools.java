@@ -3,6 +3,7 @@ package extensions.anbui.daydream.activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -36,6 +37,7 @@ public class DayDreamTools extends AppCompatActivity {
     }
 
     private void initialize() {
+        binding.lnCleanuptemporaryfiles.setOnClickListener(v -> cleanUpTemporaryFiles());
         binding.lnCleanuplocallibrary.setOnClickListener(v -> cleanUpLocalLib());
         binding.lnCleanouttherecyclingbin.setOnClickListener(v -> cleanOutTheRecyclingBin());
     }
@@ -54,6 +56,8 @@ public class DayDreamTools extends AppCompatActivity {
 
     private void startleanUpLocalLib() {
         View progressView = LayoutInflater.from(this).inflate(R.layout.progress_msg_box, null);
+        LinearLayout linear_progress = progressView.findViewById(R.id.layout_progress);
+        linear_progress.setPadding(0,0,0,0);
         TextView progress_text = progressView.findViewById(R.id.tv_progress);
         progress_text.setText("Cleaning up...");
         AlertDialog progressDialog = new MaterialAlertDialogBuilder(this)
@@ -87,9 +91,9 @@ public class DayDreamTools extends AppCompatActivity {
 
     private void cleanOutTheRecyclingBin() {
         DialogUtils.twoDialog(DayDreamTools.this,
-                "Clean out the recycling bin",
-                "All files in the recycling bin will be permanently deleted.",
-                "Clean out",
+                "Clean up the recycle bin",
+                "All files in the recycle bin will be permanently deleted.",
+                "Clean up",
                 "Cancel",
                 true,
                 R.drawable.ic_mtrl_delete,
@@ -99,6 +103,8 @@ public class DayDreamTools extends AppCompatActivity {
 
     private void startcleanOutTheRecyclingBin() {
         View progressView = LayoutInflater.from(this).inflate(R.layout.progress_msg_box, null);
+        LinearLayout linear_progress = progressView.findViewById(R.id.layout_progress);
+        linear_progress.setPadding(0,0,0,0);
         TextView progress_text = progressView.findViewById(R.id.tv_progress);
         progress_text.setText("Cleaning up...");
         AlertDialog progressDialog = new MaterialAlertDialogBuilder(this)
@@ -114,12 +120,57 @@ public class DayDreamTools extends AppCompatActivity {
                 progressDialog.dismiss();
                 DialogUtils.oneDialog(DayDreamTools.this,
                         "Done",
-                        "Cleaned the recycling bin.",
+                        "Cleaned the recycle bin.",
                         "OK",
                         true,
                         R.drawable.ic_mtrl_check,
                         true, null, null);
-                binding.lnCleanouttherecyclingbin.setVisibility(View.GONE);
+//                binding.lnCleanouttherecyclingbin.setVisibility(View.GONE);
+            });
+        }).start();
+    }
+
+    private void cleanUpTemporaryFiles() {
+        DialogUtils.twoDialog(DayDreamTools.this,
+                "Clean up temporary files",
+                "Clean up temporary files generated during build in all projects to free up storage space.",
+                "Clean up",
+                "Cancel",
+                true,
+                R.drawable.ic_mtrl_android,
+                true,
+                this::startcleanUpTemporaryFiles, null, null);
+    }
+
+    private void startcleanUpTemporaryFiles() {
+        View progressView = LayoutInflater.from(this).inflate(R.layout.progress_msg_box, null);
+        LinearLayout linear_progress = progressView.findViewById(R.id.layout_progress);
+        linear_progress.setPadding(0,0,0,0);
+        TextView progress_text = progressView.findViewById(R.id.tv_progress);
+        progress_text.setText("Cleaning up...");
+        AlertDialog progressDialog = new MaterialAlertDialogBuilder(this)
+                .setView(progressView)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+
+        new Thread(() -> {
+            String message;
+            int cleared = DayDreamTool.cleanUpTemporaryFiles();
+            if (cleared > 0)
+                message = "Cleaned up temporary files in " + cleared + " projects";
+            else {
+                message = "There is nothing to clean up.";
+            }
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+                DialogUtils.oneDialog(DayDreamTools.this,
+                        "Done",
+                        message,
+                        "OK",
+                        true,
+                        R.drawable.ic_mtrl_check,
+                        true, null, null);
             });
         }).start();
     }
