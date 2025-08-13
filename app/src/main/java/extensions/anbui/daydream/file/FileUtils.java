@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class FileUtils {
 
@@ -86,29 +87,92 @@ public class FileUtils {
         }
     }
 
-    public static void copyFile(String sourcePath, String toPath) {
-        if (!isFileExist(sourcePath)) return;
+    public static void copyDirectory(File sourceDir, File destDir) throws IOException {
+        if (!destDir.exists()) {
+            destDir.mkdirs();
+        }
 
-        File toFile = new File(toPath);
-        if (!toFile.exists())
-            if (!toFile.mkdirs())
-                return;
+        for (File file : sourceDir.listFiles()) {
+            File destFile = new File(destDir, file.getName());
+            if (file.isDirectory()) {
+                copyDirectory(file, destFile);
+            } else {
+                copyFile(file.getPath(), destFile.getPath());
+            }
+        }
+    }
 
-        File sourceFile = new File(sourcePath);
-
-        File tempFile = new File(toPath, sourceFile.getName());
+    public static void copyFile(String source, String dest) {
+        File sourceFile = new File(source);
+        if (!sourceFile.exists()) {
+            return;
+        }
 
         try {
-            InputStream in = new FileInputStream(sourcePath);
-            OutputStream out = new FileOutputStream(tempFile);
-
-            byte[] buffer = new byte[8192];
-            int length;
-            while ((length = in.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
+            File destFile = new File(dest);
+            File parentDir = destFile.getParentFile();
+            if (parentDir != null && !parentDir.exists() && !parentDir.mkdirs()) {
+                return;
             }
-        } catch (IOException e) {
-            System.err.println("Error copying file: " + e.getMessage());
+
+            try (InputStream in = new FileInputStream(sourceFile);
+                 OutputStream out = new FileOutputStream(destFile)) {
+                byte[] buffer = new byte[8192];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void moveAFile(String from, String to) {
+        File filefrom = new File(from);
+        File finalTarget = filefrom.isDirectory() ? new File(to, filefrom.getName()) : new File(to);
+
+        File parentDir = finalTarget.getParentFile();
+        if (!parentDir.exists() && !parentDir.mkdirs()) return;
+
+        if (filefrom.renameTo(finalTarget)) {
+            Log.d("FileUtils", "Done!");
+            return;
+        }
+
+        try {
+            if (filefrom.isDirectory()) {
+                copyDirectory(filefrom, finalTarget);
+                deleteFile(filefrom.getAbsolutePath());
+            } else {
+                copyFile(filefrom.getAbsolutePath(), finalTarget.getAbsolutePath());
+                filefrom.delete();
+            }
+            Log.d("FileUtils", "Moved by copy+delete!");
+        } catch (Exception e) {
+            Log.e("FileUtils", "Failed to move: " + e.getMessage());
+        }
+    }
+
+    public static void deleteFile(String path) {
+        if (!isFileExist(path)) return;
+
+        File file = new File(path);
+        file.delete();
+    }
+
+    public static void getFileListInDirectory(String path, ArrayList<String> list) {
+        File dir = new File(path);
+        if (!dir.exists() || dir.isFile()) return;
+
+        File[] listFiles = dir.listFiles();
+        if (listFiles == null || listFiles.length <= 0) return;
+
+        if (list == null) return;
+        list.clear();
+        for (File file : listFiles) {
+            list.add(file.getAbsolutePath());
         }
     }
 }

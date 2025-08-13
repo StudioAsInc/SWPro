@@ -90,11 +90,7 @@ public class Lx {
         if (isLibraryNotExcluded(BuiltInLibraries.ANDROIDX_APPCOMPAT, excludedLibraries) && metadata.g) {
             content.append("""
                     implementation 'androidx.appcompat:appcompat:1.7.0'\r
-                    implementation 'com.google.android.material:material:1.14.0-alpha03'\r
-                    implementation 'androidx.graphics:graphics-shapes:1.0.1'\r
-                    implementation 'androidx.graphics:graphics-shapes-android:1.0.1'\r
-                    implementation 'androidx.collection:collection-jvm:1.5.0'\r
-                    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.2.0'\r
+                    implementation 'com.google.android.material:material:1.12.0'\r
                     """);
         }
 
@@ -250,7 +246,7 @@ public class Lx {
         if (!bean.convert.isEmpty()) {
             type = bean.convert;
         } else {
-            type = bean.getClassInfo().a();
+            type = bean.getClassInfo().getClassName();
         }
 
         return "final " + type + " " + bean.id + " = _view.findViewById(R.id." + bean.id + ");";
@@ -3229,7 +3225,7 @@ public class Lx {
             stringBuilder.append('\t');
         }
     }
-    
+
     public static String pagerAdapter(Ox ox, String pagerName, String pagerItemLayoutName, ArrayList<ViewBean> pagerItemViews, String onBindCustomViewLogic, boolean isViewBindingEnabled) {
         String adapterName = a(pagerName, isViewBindingEnabled);
 
