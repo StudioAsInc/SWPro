@@ -105,30 +105,38 @@ public class FileUtils {
 
     public static void copyFile(String source, String dest) {
         File sourceFile = new File(source);
-        if (!sourceFile.exists()) {
+        if (!sourceFile.exists() || !sourceFile.isFile()) {
+            System.err.println("Source file not found: " + source);
             return;
         }
 
         try {
             File destFile = new File(dest);
+
+            if (destFile.exists() && destFile.isDirectory() || dest.endsWith("/")) {
+                destFile = new File(destFile, sourceFile.getName());
+            }
+
             File parentDir = destFile.getParentFile();
             if (parentDir != null && !parentDir.exists() && !parentDir.mkdirs()) {
+                System.err.println("Failed to create directory: " + parentDir);
                 return;
             }
 
             try (InputStream in = new FileInputStream(sourceFile);
                  OutputStream out = new FileOutputStream(destFile)) {
+
                 byte[] buffer = new byte[8192];
                 int length;
                 while ((length = in.read(buffer)) > 0) {
                     out.write(buffer, 0, length);
                 }
             }
+
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.err.println("Error copying file: " + e.getMessage());
         }
     }
-
 
     public static void moveAFile(String from, String to) {
         File filefrom = new File(from);
@@ -138,7 +146,7 @@ public class FileUtils {
         if (!parentDir.exists() && !parentDir.mkdirs()) return;
 
         if (filefrom.renameTo(finalTarget)) {
-            Log.d("FileUtils", "Done!");
+            Log.d("FileUtils", "Moved " + from + " to " + to);
             return;
         }
 

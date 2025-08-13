@@ -45,7 +45,7 @@ public class DayDreamTools extends AppCompatActivity {
     private void cleanUpLocalLib() {
         DialogUtils.twoDialog(DayDreamTools.this,
                 "Clean up local library",
-                "Find and move unused local libraries to the recycling bin.",
+                "Find and move unused local libraries to the recycle bin.",
                 "Clean up",
                 "Cancel",
                 true,
@@ -71,7 +71,7 @@ public class DayDreamTools extends AppCompatActivity {
             int cleared = DayDreamTool.cleanupLocalLib();
             if (cleared > 0)
                 message = "Cleaned up " + cleared + " local libraries. And those libraries have been moved to"
-                        + FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_library.";
+                        + FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_libs.";
             else {
                 message = "No libraries need to be cleaned.";
             }
@@ -158,7 +158,7 @@ public class DayDreamTools extends AppCompatActivity {
             String message;
             int cleared = DayDreamTool.cleanUpTemporaryFiles();
             if (cleared > 0)
-                message = "Cleaned up temporary files in " + cleared + " projects";
+                message = "Cleaned up temporary files in " + cleared + " projects.";
             else {
                 message = "There is nothing to clean up.";
             }

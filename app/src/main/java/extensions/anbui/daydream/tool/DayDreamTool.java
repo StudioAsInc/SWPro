@@ -49,7 +49,7 @@ public class DayDreamTool {
         for (String filePath : filelist) {
             if (FileUtils.isFileExist(filePath)) {
                 if (!allUsingLocalLib.contains(filePath)) {
-                    FileUtils.moveAFile(filePath, FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_libs");
+                    FileUtils.moveAFile(filePath, FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_libs/");
                     moved++;
                 }
             }
