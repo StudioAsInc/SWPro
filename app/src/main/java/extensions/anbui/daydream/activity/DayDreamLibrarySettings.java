@@ -118,10 +118,18 @@ public class DayDreamLibrarySettings extends AppCompatActivity {
     }
 
     private void initializeUseShizuku() {
-        if (!LibraryUtils.isAllowUseShizuku(Configs.currentProjectID)) {
+        boolean finalstatus = true;
+        if (!ProjectDataConfig.isMinSDKNewerThan23(projectID)) {
+            finalstatus = false;
+            binding.tvUseshizukunote.setText("To use, min SDK required is 24 or newer (Android 7+). " + binding.tvUseshizukunote.getText().toString());
+        } else if (!ProjectDataLibrary.isEnabledAppCompat(projectID)) {
+            finalstatus = false;
+            binding.tvUseshizukunote.setText("To use, enable AppCompat. " + binding.tvUseshizukunote.getText().toString());
+        }
+
+        if (!finalstatus) {
             binding.lnUseshizuku.setEnabled(false);
             binding.lnUseshizuku.setAlpha(0.5f);
-            binding.tvUseshizukunote.setText("To use, enable AppCompat. " + binding.tvUseshizukunote.getText().toString());
         }
     }
 }

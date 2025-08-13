@@ -24,6 +24,7 @@ import com.google.android.material.navigation.NavigationView;
 import a.a.a.mB;
 import dev.chrisbanes.insetter.Insetter;
 import dev.chrisbanes.insetter.Side;
+import extensions.anbui.daydream.activity.DayDreamTools;
 import mod.hilal.saif.activities.tools.AppSettings;
 import pro.sketchware.R;
 import pro.sketchware.activities.about.AboutActivity;
@@ -97,6 +98,10 @@ public class MainDrawer extends NavigationView {
             Intent intent = new Intent(activity, ProgramInfoActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             activity.startActivityForResult(intent, 105);
+        } else if (id == R.id.daydream_tools) {
+            Intent intent = new Intent(activity, DayDreamTools.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            activity.startActivity(intent);
         } else if (id == R.id.app_settings) {
             Intent intent = new Intent(activity, AppSettings.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
