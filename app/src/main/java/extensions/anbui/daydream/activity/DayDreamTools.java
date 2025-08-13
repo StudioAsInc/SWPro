@@ -1,9 +1,15 @@
 package extensions.anbui.daydream.activity;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Objects;
 
@@ -31,6 +37,7 @@ public class DayDreamTools extends AppCompatActivity {
 
     private void initialize() {
         binding.lnCleanuplocallibrary.setOnClickListener(v -> cleanUpLocalLib());
+        binding.lnCleanouttherecyclingbin.setOnClickListener(v -> cleanOutTheRecyclingBin());
     }
 
     private void cleanUpLocalLib() {
@@ -46,16 +53,74 @@ public class DayDreamTools extends AppCompatActivity {
     }
 
     private void startleanUpLocalLib() {
-        String message = "No libraries need to be cleaned.";
-        int cleared = DayDreamTool.cleanupLocalLib();
-        if (cleared > 0 ) message = "Cleaned up " + cleared + " local libraries. And those libraries have been moved to"
-                + FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_library.";
-        DialogUtils.oneDialog(DayDreamTools.this,
-                "Done",
-                message,
-                "OK",
+        View progressView = LayoutInflater.from(this).inflate(R.layout.progress_msg_box, null);
+        TextView progress_text = progressView.findViewById(R.id.tv_progress);
+        progress_text.setText("Cleaning up...");
+        AlertDialog progressDialog = new MaterialAlertDialogBuilder(this)
+                .setView(progressView)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+
+        new Thread(() -> {
+            String message;
+            int cleared = DayDreamTool.cleanupLocalLib();
+            if (cleared > 0)
+                message = "Cleaned up " + cleared + " local libraries. And those libraries have been moved to"
+                        + FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_library.";
+            else {
+                message = "No libraries need to be cleaned.";
+            }
+
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+                DialogUtils.oneDialog(DayDreamTools.this,
+                        "Done",
+                        message,
+                        "OK",
+                        true,
+                        R.drawable.ic_mtrl_check,
+                        true, null, null);
+            });
+        }).start();
+    }
+
+    private void cleanOutTheRecyclingBin() {
+        DialogUtils.twoDialog(DayDreamTools.this,
+                "Clean out the recycling bin",
+                "All files in the recycling bin will be permanently deleted.",
+                "Clean out",
+                "Cancel",
                 true,
-                R.drawable.ic_mtrl_check,
-                true, null, null);
+                R.drawable.ic_mtrl_delete,
+                true,
+                this::startcleanOutTheRecyclingBin, null, null);
+    }
+
+    private void startcleanOutTheRecyclingBin() {
+        View progressView = LayoutInflater.from(this).inflate(R.layout.progress_msg_box, null);
+        TextView progress_text = progressView.findViewById(R.id.tv_progress);
+        progress_text.setText("Cleaning up...");
+        AlertDialog progressDialog = new MaterialAlertDialogBuilder(this)
+                .setView(progressView)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+
+        new Thread(() -> {
+            DayDreamTool.cleanOutTheRecyclingBin();
+
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+                DialogUtils.oneDialog(DayDreamTools.this,
+                        "Done",
+                        "Cleaned the recycling bin.",
+                        "OK",
+                        true,
+                        R.drawable.ic_mtrl_check,
+                        true, null, null);
+                binding.lnCleanouttherecyclingbin.setVisibility(View.GONE);
+            });
+        }).start();
     }
 }

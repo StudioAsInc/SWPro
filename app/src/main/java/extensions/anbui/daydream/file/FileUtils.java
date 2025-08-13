@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FileUtils {
 
@@ -89,7 +90,7 @@ public class FileUtils {
 
     public static void copyDirectory(File sourceDir, File destDir) throws IOException {
         if (!destDir.exists()) {
-            destDir.mkdirs();
+            if(!destDir.mkdirs()) return;
         }
 
         for (File file : sourceDir.listFiles()) {
@@ -144,10 +145,10 @@ public class FileUtils {
         try {
             if (filefrom.isDirectory()) {
                 copyDirectory(filefrom, finalTarget);
-                deleteFile(filefrom.getAbsolutePath());
+                deleteRecursive(filefrom);
             } else {
                 copyFile(filefrom.getAbsolutePath(), finalTarget.getAbsolutePath());
-                filefrom.delete();
+                deleteRecursive(filefrom);
             }
             Log.d("FileUtils", "Moved by copy+delete!");
         } catch (Exception e) {
@@ -160,6 +161,15 @@ public class FileUtils {
 
         File file = new File(path);
         file.delete();
+    }
+
+    public static boolean deleteRecursive(File fileOrDir) {
+        if (fileOrDir.isDirectory()) {
+            for (File child : fileOrDir.listFiles()) {
+                deleteRecursive(child);
+            }
+        }
+        return fileOrDir.delete();
     }
 
     public static void getFileListInDirectory(String path, ArrayList<String> list) {
