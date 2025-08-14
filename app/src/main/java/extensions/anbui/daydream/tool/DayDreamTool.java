@@ -14,6 +14,29 @@ public class DayDreamTool {
         return FileUtils.getInternalStorageDir() + Configs.tempDayDreamFolderDir + path;
     }
 
+    public static void cleanOutTheRecyclingBin() {
+        FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir));
+    }
+
+    public static int cleanUpTemporaryFiles() {
+        int cleaned = 0;
+        ArrayList<String> filelist = new ArrayList<>();
+        FileUtils.getFileListInDirectory(
+                FileUtils.getInternalStorageDir() + Configs.projectMySourceFolderDir,
+                filelist
+        );
+
+        for (String filePath : filelist) {
+            if (FileUtils.isFileExist(filePath)) {
+                if (!filePath.contains("list")) {
+                    FileUtils.deleteRecursive(new File(filePath));
+                    cleaned++;
+                }
+            }
+        }
+        return cleaned;
+    }
+
     public static int cleanupLocalLib() {
         int moved = 0;
         String allUsingLocalLib = getAllUsingLocalLib();
@@ -26,7 +49,7 @@ public class DayDreamTool {
         for (String filePath : filelist) {
             if (FileUtils.isFileExist(filePath)) {
                 if (!allUsingLocalLib.contains(filePath)) {
-                    FileUtils.moveAFile(filePath, FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_library");
+                    FileUtils.moveAFile(filePath, FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_libs/");
                     moved++;
                 }
             }

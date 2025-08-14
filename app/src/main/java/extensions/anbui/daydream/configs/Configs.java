@@ -7,6 +7,7 @@ import pro.sketchware.SketchApplication;
 public class Configs {
 
     public static final String mainDataDir = "/.sketchware/";
+    public static final String projectMySourceFolderDir = mainDataDir + "mysc/";
     public static final String projectInfoFolderDir = mainDataDir + "mysc/list/";
     public static final String projectDataFolderDir = mainDataDir + "data/";
     public static final String projectLocalLibFolderDir = mainDataDir + "libs/local_libs/";
