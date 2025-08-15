@@ -16,14 +16,14 @@ import shadow.bundletool.com.android.tools.r8.internal.S;
 
 public class ProjectData {
 
-    public static void setDataForFirstTimeProjectCreation(String projectID) {
+    public static void setDataForFirstTimeProjectCreation(String projectID, boolean enableViewBinding, boolean minsdk24) {
         Configs.currentProjectID = projectID;
         //There is some code that will temporarily block after the project is created so wait a second.
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
                 ProjectDataBuildConfig.setDataForFirstTimeProjectCreation(projectID);
-                ProjectDataConfig.setDataForFirstTimeProjectCreation(projectID);
+                ProjectDataConfig.setDataForFirstTimeProjectCreation(projectID, enableViewBinding, minsdk24);
 //                ProjectDataLocalLibraryConfig.setDataForFirstTimeProjectCreation(projectID);
             } catch (InterruptedException e) {
                 Log.e("LibraryUtils", "ProjectDataLocalLibraryConfig: " + e.getMessage());

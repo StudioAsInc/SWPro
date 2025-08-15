@@ -239,7 +239,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
-                android:layout_marginBottom="64dp"
                 app:strokeColor="?attr/colorOutline">
 
                 <LinearLayout
@@ -321,6 +320,38 @@
                             android:text="Version name"
                             android:textSize="12sp" />
                     </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_quick_project_conf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="64dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Quick project configurations"
+                        android:textSize="18sp"/>
+                    <CheckBox
+                        android:id="@+id/cb_enable_viewbinding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Enable ViewBinding"
+                        android:checked="true" />
+                    <CheckBox
+                        android:id="@+id/cb_set_min_sdk_24"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Set Minimum SDK version to 24 (Android 7+)"
+                        android:checked="true" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
