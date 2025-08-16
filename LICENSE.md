@@ -13,3 +13,7 @@ Still, feel free to fork this and improve it for personal purposes or just makin
 Since compiling Kotlin code in Sketchware Pro projects was supported, two new modules were added to the codebase: `build-logic` and
 `kotlinc`, both taken from [CodeAssist](https://github.com/tyron12233/CodeAssist). The upstream project's licensed under GPL-3.0,
 so these modules are licensed under the same license.
+
+## DayDream
+
+DayDream (extensions.anbui.daydream) uses Apache License Version 2.0: https://github.com/AnBui2004/Sketchware-Pro/blob/main/Apache%20License%20Version%202.0.
