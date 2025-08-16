@@ -34,6 +34,12 @@ public class FileUtils {
         return file.exists();
     }
 
+    public static boolean createDirectory(String path) {
+        File file = new File(path);
+        if (file.exists()) return true;
+        return file.mkdirs();
+    }
+
     //Get file path from uri.
     public static String getFilePathFromUri(Context context, Uri uri) {
         String filePath = null;

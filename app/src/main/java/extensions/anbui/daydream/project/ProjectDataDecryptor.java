@@ -1,9 +1,12 @@
 package extensions.anbui.daydream.project;
 
+import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 
 import javax.crypto.Cipher;
@@ -11,6 +14,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.file.FileUtils;
 
 public class ProjectDataDecryptor {
 
@@ -47,6 +51,29 @@ public class ProjectDataDecryptor {
         } catch (Exception e) {
             Log.e("DecryptError", "Decryption failed: " + e.getMessage(), e);
             return "";
+        }
+    }
+
+    public static byte[] encryptRaw(String plain) throws Exception {
+        Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec sk = new SecretKeySpec(Configs.encryptionKey.getBytes(), "AES");
+        IvParameterSpec iv = new IvParameterSpec(Configs.encryptionKey.getBytes());
+        c.init(Cipher.ENCRYPT_MODE, sk, iv);
+        return c.doFinal(plain.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static void saveEncryptedFile(String path, String plain) {
+        FileUtils.deleteFile(path);
+        try {
+            byte[] encrypted = encryptRaw(plain);
+            File outFile = new File(path);
+            outFile.getParentFile().mkdirs();
+
+            try (FileOutputStream fos = new FileOutputStream(outFile)) {
+                fos.write(encrypted);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
