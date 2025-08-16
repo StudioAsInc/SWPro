@@ -2,12 +2,17 @@ package extensions.anbui.daydream.tool;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.file.FileUtils;
+import extensions.anbui.daydream.project.ProjectDataDecryptor;
 
 public class DayDreamTool {
     public static void copyToTemp(String path) {
@@ -76,5 +81,31 @@ public class DayDreamTool {
             }
         }
         return result.toString();
+    }
+
+    public static int getLastID() {
+        int result = 0;
+        ArrayList<String> filelist = new ArrayList<>();
+        FileUtils.getFileListInDirectory(
+                FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir,
+                filelist
+        );
+
+        for (String filePath : filelist) {
+            if (FileUtils.isFileExist(filePath)) {
+                String folderName = new File(filePath).getName().replaceAll("/", "");
+                if (folderName.matches("\\d+") && Integer.parseInt(folderName) > result) {
+                    result = Integer.parseInt(folderName);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static void fixID(String projectID) {
+        String projectInfo = ProjectDataDecryptor.decryptProjectFile(FileUtils.getInternalStorageDir() + Configs.projectInfoFolderDir + projectID + "/project");
+        JsonObject json = JsonParser.parseString(projectInfo).getAsJsonObject();
+        json.addProperty("sc_id", projectID);
+        ProjectDataDecryptor.saveEncryptedFile(FileUtils.getInternalStorageDir() + Configs.projectInfoFolderDir + projectID + "/project", new Gson().toJson(json));
     }
 }

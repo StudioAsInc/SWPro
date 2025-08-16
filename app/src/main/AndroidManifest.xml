@@ -27,6 +27,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="p">
         <activity
+            android:name="extensions.anbui.daydream.activity.DayDreamProjectTool"
+            android:exported="false" />
+        <activity
             android:name="extensions.anbui.daydream.activity.DayDreamBackupTool"
             android:exported="false" />
         <activity

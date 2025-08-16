@@ -20,7 +20,7 @@
             app:collapsedTitleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
             app:expandedTitleTextAppearance="@style/TextAppearance.Material3.DisplaySmall"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title="Backup project"
+            app:title="Tools"
             app:subtitle="Beta">
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -44,21 +44,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Backup file name"
-                app:startIconDrawable="@drawable/ic_mtrl_edit"
-                android:padding="16dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_backupfilename"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/ln_locallibraries"
+                android:id="@+id/ln_backup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -70,38 +57,26 @@
                     android:layout_marginEnd="8dp"
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/sw_locallibraries"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Local libraries"
+                        android:text="Backup"
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/tv_locallibrariesnote"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add the local libraries this project is using to the backup file."
+                        android:text="Backup your project."
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/sw_locallibraries"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:checked="true"
-                    android:clickable="false"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/ln_customblocks"
+                android:id="@+id/ln_clone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -113,38 +88,26 @@
                     android:layout_marginEnd="8dp"
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/sw_customblocks"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Custom blocks"
+                        android:text="Clone"
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/tv_customblocksnote"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add the custom blocks this project is using to the backup file."
+                        android:text="Clone your project."
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/sw_customblocks"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:checked="true"
-                    android:clickable="false"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/ln_apis"
+                android:id="@+id/ln_cleanuptemporaryfiles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -156,35 +119,43 @@
                     android:layout_marginEnd="8dp"
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/sw_apis"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Including API keys"
+                        android:text="Clean up temporary files"
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/tv_apissnote"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Firebase, Admob and Google Map API keys will be included in this backup. Turn this off if you don't want the person you share this backup with to know about them."
+                        android:text="Helps save storage space."
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
                 </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/sw_apis"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginRight="8dp"
+                    android:padding="4dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_mtrl_info" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:checked="true"
-                    android:clickable="false"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:text="Please backup all your projects before using any feature." />
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

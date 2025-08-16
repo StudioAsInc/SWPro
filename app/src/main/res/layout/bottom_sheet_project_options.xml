@@ -75,34 +75,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/project_backupdaydream"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:srcCompat="@drawable/restore_page_24px" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:gravity="center_vertical"
-            android:text="Backup project (DayDream)"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            app:drawableEndCompat="@drawable/ic_mtrl_arrow_right" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/export_sign"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -153,6 +125,34 @@
             android:layout_marginStart="16dp"
             android:gravity="center_vertical"
             android:text="Project configuration"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            app:drawableEndCompat="@drawable/ic_mtrl_arrow_right" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/project_daydream"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/wand_stars_24px" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="center_vertical"
+            android:text="DayDream tools"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             app:drawableEndCompat="@drawable/ic_mtrl_arrow_right" />
 
