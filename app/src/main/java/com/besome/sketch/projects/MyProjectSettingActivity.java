@@ -168,6 +168,8 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
             for (int i = 0; i < themeColorKeys.length; i++) {
                 projectThemeColors[i] = yB.a(metadata, themeColorKeys[i], projectThemeColors[i]);
             }
+
+            binding.cardViewQuickProjectConf.setVisibility(View.GONE);
         } else {
             /* Set the dialog's title & create button label */
             String newProjectName = getIntent().getStringExtra("my_ws_name");
@@ -233,7 +235,7 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
             if (isInputValid()) {
                 new SaveProjectAsyncTask(getApplicationContext()).execute();
                 if (icon != null) saveBitmapTo(icon, getCustomIconPath());
-                if (!updatingExistingProject) ProjectData.setDataForFirstTimeProjectCreation(sc_id);
+                if (!updatingExistingProject) ProjectData.setDataForFirstTimeProjectCreation(sc_id, binding.cbEnableViewbinding.isChecked(), binding.cbSetMinSdk24.isChecked());
             }
         } else if (id == R.id.cancel) {
             finish();

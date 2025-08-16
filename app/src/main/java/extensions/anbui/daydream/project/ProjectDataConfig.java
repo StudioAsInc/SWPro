@@ -13,8 +13,21 @@ import extensions.anbui.daydream.json.JsonUtils;
 
 public class ProjectDataConfig {
 
-    public static void setDataForFirstTimeProjectCreation(String projectID) {
-        writeDataFile(projectID, "{\"min_sdk\":\"24\",\"enable_viewbinding\":\"true\",\"xml_command\":\"true\"}");
+    public static void setDataForFirstTimeProjectCreation(String projectID, boolean enableViewBinding, boolean minsdk24) {
+        String finalresult = "{";
+        if (minsdk24) {
+            finalresult += "\"min_sdk\":\"24\"";
+        } else {
+            finalresult += "\"min_sdk\":\"21\"";
+        }
+        if (enableViewBinding) {
+            finalresult += ",\"enable_viewbinding\":\"true\"";
+        } else {
+            finalresult += ",\"enable_viewbinding\":\"false\"";
+        }
+        finalresult += ",\"xml_command\":\"true\"}";
+        writeDataFile(projectID, finalresult);
+
     }
 
     public static boolean isMinSDKNewerThan23(String projectID) {
