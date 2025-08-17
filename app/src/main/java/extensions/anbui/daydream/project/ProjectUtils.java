@@ -1,6 +1,13 @@
 package extensions.anbui.daydream.project;
 
+import android.util.Log;
+
+import extensions.anbui.daydream.configs.Configs;
+
 public class ProjectUtils {
+
+    public static String TAG = Configs.universalTAG + "ProjectUtils";
+
     public static String convertJavaNameToXMLName(String javaName) {
         //Example: HomePlusActivity.java
         if (javaName.endsWith(".java")) {
@@ -22,6 +29,7 @@ public class ProjectUtils {
                     .replaceFirst("_", "")
                     .replace("_activity", "");
         }
+        Log.e(TAG, "convertJavaNameToXMLName: " + javaName);
         return javaName;
     }
 
@@ -43,6 +51,7 @@ public class ProjectUtils {
         if (withDotJava) {
             javaName.append(".java");
         }
+        Log.i(TAG, "convertXMLNameToJavaName: " + xmlName + " -> " + javaName);
         return javaName.toString();
     }
 

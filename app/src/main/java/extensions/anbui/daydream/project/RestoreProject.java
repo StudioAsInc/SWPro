@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.net.Uri;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 
@@ -17,8 +18,10 @@ import mod.hey.studios.project.backup.BackupFactory;
 import pro.sketchware.R;
 
 public class RestoreProject {
-    public static void withFilePath(Activity activity, String filepath) {
 
+    public static String TAG = Configs.universalTAG + "RestoreProject";
+    public static void withFilePath(Activity activity, String filepath) {
+        Log.i(TAG, "withFilePath: " + filepath);
         if (!FileUtils.isFileExist(filepath)) return;
 
         if (Configs.mainActivity == null) return;
@@ -32,13 +35,15 @@ public class RestoreProject {
                     .setNegativeButton("Don't copy", (dialog, which) -> universalDoRestore(Configs.mainActivity, filepath, false))
                     .setNeutralButton(R.string.common_word_cancel, null)
                     .show();
-
+            Log.i(TAG, "withFilePath: " + filepath + " with local_libs.");
         } else {
             universalDoRestore(Configs.mainActivity, filepath, false);
+            Log.i(TAG, "withFilePath: " + filepath);
         }
     }
 
     public static void setupDropFileTo(Activity activity, View view) {
+        Log.i(TAG, "setupDropFileTo: Setuped.");
         view.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {

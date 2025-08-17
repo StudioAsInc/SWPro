@@ -80,6 +80,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
     private ProjectsStoreFragment projectsStoreFragment;
     private Fragment activeFragment;
     private BackupRestoreManager backupRestoreManager;
+    public static boolean needRefreshProjectList = false;
     @IdRes
     private int currentNavItemId = R.id.item_projects;
 
@@ -419,6 +420,11 @@ public class MainActivity extends BasePermissionAppCompatActivity {
         bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, "MainActivity");
         bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity");
         mAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
+
+        if (needRefreshProjectList) {
+            projectsFragment.refreshProjectsList();
+            needRefreshProjectList = false;
+        }
     }
 
     private void allFilesAccessCheck() {

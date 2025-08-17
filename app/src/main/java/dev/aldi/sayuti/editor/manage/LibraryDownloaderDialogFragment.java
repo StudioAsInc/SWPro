@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException; // Added for parsing error handling
 
 import org.cosmic.ide.dependency.resolver.api.Artifact;
 
@@ -51,7 +52,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
     private BuildSettings buildSettings;
 
     private boolean notAssociatedWithProject;
-    private String dependencyName;
+    private String dependencyName; // Stores the user-entered dependency string (e.g., "group:artifact:version")
     private String localLibFile;
     private OnLibraryDownloadedTask onLibraryDownloadedTask;
 
@@ -131,7 +132,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
     }
 
     private void initDownloadFlow() {
-        dependencyName = Helper.getText(binding.dependencyInput);
+        dependencyName = Helper.getText(binding.dependencyInput); // Set the class-level dependencyName
         if (dependencyName.isEmpty()) {
             binding.dependencyInputLayout.setError("Please enter a dependency");
             binding.dependencyInputLayout.setErrorEnabled(true);
@@ -140,22 +141,28 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
 
         var parts = dependencyName.split(":");
         if (parts.length != 3) {
-            binding.dependencyInputLayout.setError("Invalid dependency format");
+            binding.dependencyInputLayout.setError("Invalid dependency format. Expected: group:artifact:version");
             binding.dependencyInputLayout.setErrorEnabled(true);
             return;
         }
 
-        showDownloadConfirmationDialog(parts[0], parts[1], parts[2]);
+        // Extract parts to pass to the confirmation dialog
+        String group = parts[0];
+        String artifact = parts[1];
+        String version = parts[2];
+
+        showDownloadConfirmationDialog(group, artifact, version);
     }
 
     private void showDownloadConfirmationDialog(String group, String artifact, String version) {
         boolean skipSubdependencies = binding.cbSkipSubdependencies.isChecked();
+        String fullDependencyName = group + ":" + artifact + ":" + version; // Use a local variable for clarity
 
         String message;
         if (skipSubdependencies) {
-            message = "Are you sure you want to download " + dependencyName;
+            message = "Are you sure you want to download " + fullDependencyName + " (without sub-dependencies)?";
         } else {
-            message = "Are you sure you want to download " + dependencyName + " and its sub-dependencies?";
+            message = "Are you sure you want to download " + fullDependencyName + " and its sub-dependencies?";
         }
 
         new MaterialAlertDialogBuilder(requireContext())
@@ -175,8 +182,12 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
 
         setDownloadState(true);
 
+        // Corrected DependencyResolver constructor:
+        // Use the one that takes minApiLevel based on cbMinapi24 state.
         var resolver = new DependencyResolver(group, artifact, version,
-                binding.cbSkipSubdependencies.isChecked(), buildSettings);
+                binding.cbSkipSubdependencies.isChecked(), buildSettings,
+                binding.cbMinapi24.isChecked() ? 24 : 1); // D8 default Min API Level is 1, otherwise 24
+
         var handler = new Handler(Looper.getMainLooper());
 
         downloadExecutor.execute(() -> {
@@ -211,7 +222,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                 public void onSkippingResolution(@NonNull Artifact dep) {
                     handler.post(() -> {
                         DependencyDownloadItem item = findOrCreateDependencyItem(dep);
-                        item.setState(DependencyDownloadItem.DownloadState.COMPLETED);
+                        item.setState(DependencyDownloadItem.DownloadState.COMPLETED); // Mark as completed if skipped
                         dependencyAdapter.updateDependency(item);
                     });
                 }
@@ -255,7 +266,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                 @Override
                 public void onDownloadStart(@NonNull Artifact dep) {
                     handler.post(() -> {
-                        setDownloadState(true);
+                        setDownloadState(true); // Ensure state is downloading
                         DependencyDownloadItem item = findOrCreateDependencyItem(dep);
                         item.setState(DependencyDownloadItem.DownloadState.DOWNLOADING);
                         dependencyAdapter.updateDependency(item);
@@ -277,7 +288,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                         DependencyDownloadItem item = findOrCreateDependencyItem(dep);
                         item.setError(e.getMessage());
                         dependencyAdapter.updateDependency(item);
-                        setDownloadState(false);
+                        setDownloadState(false); // Stop download process on error
                         SketchwareUtil.showAnErrorOccurredDialog(getActivity(),
                                 "Downloading dependency '" + dep + "' failed: " + Log.getStackTraceString(e));
                     });
@@ -299,7 +310,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                         DependencyDownloadItem item = findOrCreateDependencyItem(dependency);
                         item.setError("Dexing failed: " + e.getMessage());
                         dependencyAdapter.updateDependency(item);
-                        setDownloadState(false);
+                        setDownloadState(false); // Stop download process on error
                         SketchwareUtil.showAnErrorOccurredDialog(getActivity(),
                                 "Dexing dependency '" + dependency + "' failed: " + Log.getStackTraceString(e));
                     });
@@ -310,11 +321,40 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                     handler.post(() -> {
                         SketchwareUtil.toast("Library downloaded successfully");
                         if (!notAssociatedWithProject) {
-                            var fileContent = FileUtil.readFile(localLibFile);
-                            var enabledLibs = gson.fromJson(fileContent, Helper.TYPE_MAP_LIST);
-                            enabledLibs.addAll(dependencies.stream()
-                                    .map(name -> createLibraryMap(name, dependencyName))
-                                    .toList());
+                            String fileContent = FileUtil.readFile(localLibFile);
+                            List<java.util.Map<String, String>> enabledLibs;
+
+                            if (fileContent == null || fileContent.trim().isEmpty()) {
+                                enabledLibs = new ArrayList<>();
+                            } else {
+                                try {
+                                    // Helper.TYPE_MAP_LIST is expected to be a Type for List<Map<String, String>>
+                                    enabledLibs = gson.fromJson(fileContent, Helper.TYPE_MAP_LIST);
+                                    if (enabledLibs == null) { // If JSON is "null" or malformed but not an exception
+                                        enabledLibs = new ArrayList<>();
+                                    }
+                                } catch (JsonParseException e) {
+                                    Log.e("LibraryDownloader", "Error parsing existing local libraries JSON for " + localLibFile, e);
+                                    SketchwareUtil.toast("Error parsing existing libraries. New libraries will be added.");
+                                    enabledLibs = new ArrayList<>(); // Fallback to empty list on parsing error
+                                }
+                            }
+
+                            // Add only unique dependencies from the resolved list
+                            for (String resolvedDepName : dependencies) {
+                                boolean alreadyExists = false;
+                                for (java.util.Map<String, String> existingLib : enabledLibs) {
+                                    // Check if a library with the same 'name' (artifact name) already exists
+                                    if (existingLib.containsKey("name") && resolvedDepName.equals(existingLib.get("name"))) {
+                                        alreadyExists = true;
+                                        break;
+                                    }
+                                }
+                                if (!alreadyExists) {
+                                    // Use 'this.dependencyName' which is the original user-entered dependency string
+                                    enabledLibs.add(createLibraryMap(resolvedDepName, LibraryDownloaderDialogFragment.this.dependencyName));
+                                }
+                            }
                             FileUtil.writeFile(localLibFile, gson.toJson(enabledLibs));
                         }
                         if (getActivity() == null) return;
@@ -334,7 +374,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
         }
         DependencyDownloadItem newItem = new DependencyDownloadItem(artifact);
         downloadItems.add(newItem);
-        dependencyAdapter.addDependency(newItem);
+        dependencyAdapter.addDependency(newItem); // Notify adapter a new item has been added
         return newItem;
     }
 
@@ -357,6 +397,9 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
         if (!downloadItems.isEmpty()) {
             binding.overallProgress.setIndeterminate(false);
             binding.overallProgress.setProgress((completed * 100) / downloadItems.size());
+        } else {
+            // If downloadItems is empty, perhaps keep indeterminate or set to 0
+            binding.overallProgress.setIndeterminate(true); // Or false, depending on desired initial state
         }
     }
 
@@ -365,12 +408,13 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
             binding.btnDownload.setVisibility(View.GONE);
         } else {
             binding.btnDownload.setVisibility(View.VISIBLE);
-            binding.btnDownload.setEnabled(true);
+            binding.btnDownload.setEnabled(isNetworkAvailable()); // Re-enable based on network state
         }
 
         binding.dependencyInput.setEnabled(!downloading);
         binding.cbSkipSubdependencies.setEnabled(!downloading);
-        setCancelable(!downloading);
+        binding.cbMinapi24.setEnabled(!downloading);
+        setCancelable(!downloading); // Allow dismissing dialog when not downloading
 
         if (!downloading) {
             binding.dependencyInfo.setVisibility(View.VISIBLE);
@@ -378,6 +422,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
             binding.dependenciesRecyclerView.setVisibility(View.GONE);
             binding.dependencyInfo.setText(R.string.local_library_manager_dependency_info);
 
+            // Clear the list and update adapter when download process is complete/reset
             downloadItems.clear();
             dependencyAdapter.setDependencies(new ArrayList<>());
         }

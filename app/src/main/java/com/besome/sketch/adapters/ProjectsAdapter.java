@@ -29,6 +29,8 @@ import a.a.a.lC;
 import a.a.a.mB;
 import a.a.a.wq;
 import a.a.a.yB;
+import extensions.anbui.daydream.activity.DayDreamBackupTool;
+import extensions.anbui.daydream.activity.DayDreamProjectTool;
 import extensions.anbui.daydream.configs.Configs;
 import mod.hey.studios.project.ProjectSettingsDialog;
 import mod.hey.studios.project.backup.BackupRestoreManager;
@@ -256,6 +258,13 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
 
         binding.projectConfig.setOnClickListener(v -> {
             showProjectSettingDialog(projectMap);
+            projectOptionsBSD.dismiss();
+        });
+
+        binding.projectDaydream.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, DayDreamProjectTool.class);
+            intent.putExtra("sc_id", yB.c(projectMap, "sc_id"));
+            activity.startActivity(intent);
             projectOptionsBSD.dismiss();
         });
 

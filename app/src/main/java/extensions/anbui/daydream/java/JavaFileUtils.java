@@ -1,5 +1,7 @@
 package extensions.anbui.daydream.java;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import pro.sketchware.utility.FileUtil;
 
 public class JavaFileUtils {
 
+    public static String TAG = Configs.universalTAG + "JavaFileUtils";
     public static boolean isAdded = false;
 
     //Add files to project's java directory
@@ -25,8 +28,9 @@ public class JavaFileUtils {
         try (FileWriter writer = new FileWriter(FileUtil.getExternalStorageDir() + Configs.projectDataFolderDir + projectID + "/files/java/" + fileName)) {
             writer.write(Content);
             isAdded = true;
+            Log.i(TAG, "addJavaFileToProject: " + fileName);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "addJavaFileToProject: " + e.getMessage());
         }
     }
 
@@ -49,13 +53,15 @@ public class JavaFileUtils {
         try (FileWriter writer = new FileWriter(FileUtil.getExternalStorageDir() + Configs.projectDataFolderDir + projectID + "/files/java/lab/" + fileName)) {
             writer.write(Content);
             isAdded = true;
+            Log.i(TAG, "addJavaFileToProjectLab: " + fileName);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "addJavaFileToProjectLab: " + e.getMessage());
         }
     }
 
     //Check if Java exists in the project's java/lab directory.
     public static boolean isJavaFileExistInProjectLab(String projectID, String fileName) {
+        Log.i(TAG, "isJavaFileExistInProjectLab: " + fileName);
         File dir = new File(FileUtil.getExternalStorageDir() + Configs.projectDataFolderDir + projectID + "/files/java/lab/" + fileName);
         return dir.exists();
     }

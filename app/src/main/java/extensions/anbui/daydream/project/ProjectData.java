@@ -16,6 +16,8 @@ import shadow.bundletool.com.android.tools.r8.internal.S;
 
 public class ProjectData {
 
+    public static String TAG = Configs.universalTAG + "ProjectData";
+
     public static void setDataForFirstTimeProjectCreation(String projectID, boolean enableViewBinding, boolean minsdk24) {
         Configs.currentProjectID = projectID;
         //There is some code that will temporarily block after the project is created so wait a second.
@@ -25,18 +27,21 @@ public class ProjectData {
                 ProjectDataBuildConfig.setDataForFirstTimeProjectCreation(projectID);
                 ProjectDataConfig.setDataForFirstTimeProjectCreation(projectID, enableViewBinding, minsdk24);
 //                ProjectDataLocalLibraryConfig.setDataForFirstTimeProjectCreation(projectID);
+                Log.i(TAG, "setDataForFirstTimeProjectCreation: Done");
             } catch (InterruptedException e) {
-                Log.e("LibraryUtils", "ProjectDataLocalLibraryConfig: " + e.getMessage());
+                Log.e(TAG, "setDataForFirstTimeProjectCreation: ", e);
             }
         }).start();
     }
 
     public static Map<String, Object> readFirstLineDataWithDataTypeToMap(String dataType, String data) {
+        Log.i(TAG, "readFirstLineDataWithDataTypeToMap: " + dataType + " " + data);
         return JsonUtils.covertoMap(readFirstLineDataWithDataType(dataType, data));
     }
 
     @Nullable
     public static String readFirstLineDataWithDataType(String dataType, String data) {
+        Log.i(TAG, "readFirstLineDataWithDataType: " + dataType + " " + data);
         //Find the location of type
         int compatIndex = data.indexOf(dataType);
         if (compatIndex == -1) return null;
@@ -64,11 +69,13 @@ public class ProjectData {
     }
 
     public static Map<String, Object> readFullDataWithDataTypeToMap(String dataType, String data) {
+        Log.i(TAG, "readFullDataWithDataTypeToMap: " + dataType + " " + data);
         return JsonUtils.covertoMap(readFullDataWithDataType(dataType, data));
     }
 
     @Nullable
     public static String readFullDataWithDataType(String dataType, String data) {
+        Log.i(TAG, "readFullDataWithDataType: " + dataType + " " + data);
         //Find the starting position of the activity
         int startIndex = data.indexOf(dataType);
         if (startIndex == -1) return null;
