@@ -6,7 +6,9 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:liftOnScroll="false"
+        app:liftOnScrollColor="@android:color/transparent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -47,8 +49,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/default_icon"
-                        app:shapeAppearanceOverlay="@style/roundedImageViewRounded" />
+                        android:src="@drawable/ic_mtrl_android"
+                        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full" />
                 </FrameLayout>
 
                 <TextView
@@ -177,7 +179,66 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
-                android:layout_marginBottom="64dp"
+                app:strokeColor="?attr/colorOutline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:src="@drawable/ic_mtrl_palette"
+                            app:tint="?attr/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/theme_section_title"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/btn_generate_random_theme"
+                            style="@style/Widget.Material3Expressive.Button.ElevatedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/theme_generate_random"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="@string/theme_section_description"
+                        android:textSize="14sp"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/layout_theme_presets"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingHorizontal="8dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
                 app:strokeColor="?attr/colorOutline">
 
                 <LinearLayout
@@ -261,6 +322,38 @@
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_quick_project_conf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="64dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="Quick project configurations"
+                        android:textSize="18sp"/>
+                    <CheckBox
+                        android:id="@+id/cb_enable_viewbinding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Enable ViewBinding"
+                        android:checked="true" />
+                    <CheckBox
+                        android:id="@+id/cb_set_min_sdk_24"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Set Minimum SDK version to 24 (Android 7+)"
+                        android:checked="true" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </ScrollView>
 
@@ -270,27 +363,24 @@
         android:layout_gravity="bottom"
         android:background="?attr/colorSurface"
         android:orientation="horizontal"
-        android:paddingBottom="12dp">
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp">
 
         <Button
             android:id="@+id/cancel"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.Material3Expressive.Button.TonalButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_weight="1"
-            android:text="@string/common_word_cancel"
-            android:textSize="@dimen/text_size_button_material" />
+            android:text="@string/common_word_cancel" />
 
         <Button
             android:id="@+id/ok_button"
+            style="@style/Widget.Material3Expressive.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="16dp"
             android:layout_weight="1"
-            android:text="@string/myprojects_list_menu_title_create_a_new_project"
-            android:textSize="@dimen/text_size_button_material" />
+            android:text="@string/common_word_create" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

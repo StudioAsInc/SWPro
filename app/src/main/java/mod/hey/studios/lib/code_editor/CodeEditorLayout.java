@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Layout;
@@ -124,7 +123,7 @@ public class CodeEditorLayout extends LinearLayout implements TextWatcher {
     }
 
     public void onCreateOptionsMenu(View v) {
-        final PopupMenu popup = new PopupMenu(context, v);
+        PopupMenu popup = new PopupMenu(context, v);
         Menu menu = popup.getMenu();
 
         menu.add("Font size")
@@ -158,7 +157,7 @@ public class CodeEditorLayout extends LinearLayout implements TextWatcher {
                 case "Font size":
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                    final NumberPicker numPicker = new NumberPicker(context);
+                    NumberPicker numPicker = new NumberPicker(context);
                     numPicker.setMinValue(5);
                     numPicker.setMaxValue(20);
                     numPicker.setValue((int) editText.getTextSize());
@@ -323,10 +322,10 @@ public class CodeEditorLayout extends LinearLayout implements TextWatcher {
     }
 
     private void initEditorColors(ColorTheme colorTheme) {
-        scrollView.setBackgroundColor(colorTheme.BACKGROUND_COLOR);
-        editText.setTextColor(colorTheme.TEXT_COLOR);
-        editText.setLineHighlightColor(colorTheme.LINE_HIGHLIGHT_COLOR);
-        editText.setLineNumbersColor(colorTheme.LINE_NUMBERS_COLOR);
+        scrollView.setBackgroundColor(colorTheme.backgroundColor());
+        editText.setTextColor(colorTheme.textColor());
+        editText.setLineHighlightColor(colorTheme.lineHighlightColor());
+        editText.setLineNumbersColor(colorTheme.lineNumbersColor());
     }
 
     private int getCurrentCursorLine() {
@@ -399,7 +398,7 @@ public class CodeEditorLayout extends LinearLayout implements TextWatcher {
             String charSeq = s.toString();
 
             // if the last character entered is a line break:
-            final String substring = charSeq.substring(start, start + count);
+            String substring = charSeq.substring(start, start + count);
             if (substring.equals("\n")) {
 
                 String previousLine = getLine(getCurrentCursorLine() - 1, false);
@@ -535,7 +534,7 @@ public class CodeEditorLayout extends LinearLayout implements TextWatcher {
     }
 
     private void setListeners() {
-        final EditText textView = editText;
+        EditText textView = editText;
 
         if (textView != null) {
 
@@ -584,25 +583,14 @@ public class CodeEditorLayout extends LinearLayout implements TextWatcher {
         }
 
         if (scrollView != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // onScrollChange
-                scrollView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                    if (updateHighlight != null) {
-                        textView.removeCallbacks(updateHighlight);
-                        textView.postDelayed(updateHighlight, UPDATE_DELAY);
-                    }
-                });
+            // onScrollChange
+            scrollView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                if (updateHighlight != null) {
+                    textView.removeCallbacks(updateHighlight);
+                    textView.postDelayed(updateHighlight, UPDATE_DELAY);
+                }
+            });
 
-            } else {
-                // onScrollChange
-                scrollView.getViewTreeObserver()
-                        .addOnScrollChangedListener(() -> {
-                            if (updateHighlight != null) {
-                                textView.removeCallbacks(updateHighlight);
-                                textView.postDelayed(updateHighlight, UPDATE_DELAY);
-                            }
-                        });
-            }
         }
     }
 

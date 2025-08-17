@@ -3,7 +3,6 @@ package pro.sketchware.activities.editor.component;
 import static pro.sketchware.utility.GsonUtils.getGson;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,20 +11,23 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import androidx.activity.EdgeToEdge;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
-import com.github.angads25.filepicker.model.DialogConfigs;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import a.a.a.wq;
+import dev.pranav.filepicker.FilePickerCallback;
+import dev.pranav.filepicker.FilePickerDialogFragment;
+import dev.pranav.filepicker.FilePickerOptions;
 import mod.hey.studios.util.Helper;
 import mod.hilal.saif.activities.tools.IconSelectorDialog;
 import mod.hilal.saif.components.ComponentsHandler;
@@ -45,11 +47,10 @@ public class AddCustomComponentActivity extends BaseAppCompatActivity implements
 
     @Override
     public void onCreate(Bundle _savedInstanceState) {
-        EdgeToEdge.enable(this);
+        enableEdgeToEdgeNoContrast();
         super.onCreate(_savedInstanceState);
         binding = ManageCustomComponentAddBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        handleInsetts(binding.getRoot());
         init();
     }
 
@@ -70,6 +71,34 @@ public class AddCustomComponentActivity extends BaseAppCompatActivity implements
         } else {
             setTitle(Helper.getResString(R.string.event_title_add_new_component));
             initializeHelper();
+        }
+
+        {
+            View view = binding.content;
+            int left = view.getPaddingLeft();
+            int top = view.getPaddingTop();
+            int right = view.getPaddingRight();
+            int bottom = view.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.ime() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
+
+        {
+            View view = binding.appBarLayout;
+            int left = view.getPaddingLeft();
+            int top = view.getPaddingTop();
+            int right = view.getPaddingRight();
+            int bottom = view.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top + insets.top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
         }
     }
 
@@ -183,21 +212,19 @@ public class AddCustomComponentActivity extends BaseAppCompatActivity implements
     }
 
     private void showFilePickerDialog() {
-        DialogProperties properties = new DialogProperties();
+        FilePickerOptions options = new FilePickerOptions();
+        options.setExtensions(new String[]{"json"});
+        options.setTitle("Select json file");
 
-        properties.selection_mode = DialogConfigs.SINGLE_MODE;
-        properties.selection_type = DialogConfigs.FILE_SELECT;
-        properties.root = Environment.getExternalStorageDirectory();
-        properties.error_dir = Environment.getExternalStorageDirectory();
-        properties.offset = Environment.getExternalStorageDirectory();
-        properties.extensions = new String[]{"json"};
+        FilePickerCallback callback = new FilePickerCallback() {
+            @Override
+            public void onFileSelected(File file) {
+                selectComponentToImport(file.getAbsolutePath());
+            }
+        };
 
-        FilePickerDialog pickerDialog = new FilePickerDialog(this, properties, R.style.RoundedCornersDialog);
-
-        pickerDialog.setTitle("Select json file");
-        pickerDialog.setDialogSelectionListener(selections -> selectComponentToImport(selections[0]));
-
-        pickerDialog.show();
+        FilePickerDialogFragment dialogFragment = new FilePickerDialogFragment(options, callback);
+        dialogFragment.show(getSupportFragmentManager(), "filePickerDialog");
     }
 
     private void selectComponentToImport(String path) {
@@ -221,9 +248,7 @@ public class AddCustomComponentActivity extends BaseAppCompatActivity implements
             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             listView.setDivider(null);
             listView.setDividerHeight(0);
-            listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> {
-                choiceToImport.set(position);
-            });
+            listView.setOnItemClickListener((AdapterView<?> parent, View view, int position, long id) -> choiceToImport.set(position));
             dialog.setView(listView);
             dialog.setPositiveButton(Helper.getResString(R.string.common_word_import), (v, which) -> {
                 int position = choiceToImport.get();

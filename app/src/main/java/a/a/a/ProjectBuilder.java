@@ -47,6 +47,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.library.LibraryUtils;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
 import mod.agus.jcoderz.dex.Dex;
 import mod.agus.jcoderz.dex.FieldId;
 import mod.agus.jcoderz.dex.MethodId;
@@ -761,6 +767,34 @@ public class ProjectBuilder {
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_APPCOMPAT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_COORDINATORLAYOUT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.MATERIAL);
+            if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_WORK_RUNTIME);
+
+                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID)) {
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER);
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER_HLS);
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_UI);
+                }
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_BROWSER);
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_CREDENTIALS_CREDENTIALS);
+
+                if (ProjectDataDayDream.isUseGoogleAnalytics(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseGoogleAnalytics(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_API);
+
+                if (ProjectDataDayDream.isUseShizuku(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseShizuku(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.DEV_RIKKA_SHIZUKU_PROVIDER);
+            }
         }
         if (yq.N.isFirebaseEnabled) {
             builtInLibraryManager.addLibrary(BuiltInLibraries.FIREBASE_COMMON);

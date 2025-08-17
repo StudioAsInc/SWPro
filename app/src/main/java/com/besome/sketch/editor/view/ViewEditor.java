@@ -363,11 +363,7 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
             lol:
             if (dummyView.getAllow()) {
                 if (D && r instanceof sy widget) {
-                    ArrayList<ViewBean> b2 = jC.a(a).b(b, widget.getBean());
-                    for (int size = b2.size() - 1; size >= 0; size--) {
-                        jC.a(a).a(projectFileBean, b2.get(size));
-                    }
-                    b(b2, true);
+                    deleteWidget(widget.getBean());
                     break lol;
                 }
                 if (D && r instanceof uy collectionWidget) {
@@ -461,6 +457,14 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
             t = false;
             return true;
         }
+    }
+
+    public void deleteWidget(ViewBean viewBean) {
+        ArrayList<ViewBean> b2 = jC.a(a).b(b, viewBean);
+        for (int size = b2.size() - 1; size >= 0; size--) {
+            jC.a(a).a(projectFileBean, b2.get(size));
+        }
+        b(b2, true);
     }
 
     public void setFavoriteData(ArrayList<WidgetCollectionBean> arrayList) {
@@ -829,6 +833,9 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
     public void a(String str, ProjectFileBean projectFileBean) {
         a = str;
         setPreviewColors(str);
+        if (viewPane != null) {
+            viewPane.initialize(str, false);
+        }
         this.projectFileBean = projectFileBean;
         b = projectFileBean.getXmlName();
         if (projectFileBean.fileType == ProjectFileBean.PROJECT_FILE_TYPE_DRAWER) {
@@ -848,9 +855,6 @@ public class ViewEditor extends RelativeLayout implements View.OnClickListener, 
             T = false;
         }
         isLayoutChanged = true;
-        if (viewPane != null) {
-            viewPane.setScId(str);
-        }
     }
 
     public void updateSelection(String tag) {

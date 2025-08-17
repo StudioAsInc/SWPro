@@ -1,6 +1,7 @@
 package pro.sketchware.activities.main.fragments.projects_store;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,24 +13,49 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
+import com.google.android.material.transition.MaterialFadeThrough;
 
 import pro.sketchware.BuildConfig;
-import pro.sketchware.R;
 import pro.sketchware.activities.main.fragments.projects_store.adapters.StorePagerProjectsAdapter;
 import pro.sketchware.activities.main.fragments.projects_store.adapters.StoreProjectsAdapter;
-import pro.sketchware.activities.main.fragments.projects_store.api.SketchHubAPI;
+import pro.sketchware.activities.main.fragments.projects_store.api.SketchubAPI;
 import pro.sketchware.activities.main.fragments.projects_store.classes.CenterZoomListener;
-import pro.sketchware.activities.main.fragments.projects_store.classes.HorizontalItemDecoration;
 import pro.sketchware.databinding.FragmentProjectsStoreBinding;
+import pro.sketchware.utility.UI;
 
 public class ProjectsStoreFragment extends Fragment {
     private FragmentProjectsStoreBinding binding;
-    private SketchHubAPI sketchHubAPI;
+    private SketchubAPI sketchubAPI;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setEnterTransition(new MaterialFadeThrough());
+        setReturnTransition(new MaterialFadeThrough());
+        setExitTransition(new MaterialFadeThrough());
+        setReenterTransition(new MaterialFadeThrough());
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentProjectsStoreBinding.inflate(inflater, container, false);
-        sketchHubAPI = new SketchHubAPI(BuildConfig.SKETCHUB_API_KEY);
+        sketchubAPI = new SketchubAPI(BuildConfig.SKETCHUB_API_KEY);
+        sketchubAPI.setOnCompleteListener(new SketchubAPI.OnCompleteListener() {
+            @Override
+            public void onComplete(boolean validdata) {
+                binding.loading.setVisibility(View.GONE);
+                if (!validdata) {
+                    binding.error.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        binding.tryagainbutton.setOnClickListener(v -> {
+            binding.loading.setVisibility(View.VISIBLE);
+            binding.error.setVisibility(View.GONE);
+            fetchData();
+        });
+
         return binding.getRoot();
     }
 
@@ -37,13 +63,22 @@ public class ProjectsStoreFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.storeSideNote.setSelected(true);
-
-        var activity = getActivity();
-        if (activity == null) return;
-
         setupRecyclerView(binding.editorsChoiceProjectsRecyclerView);
         fetchData();
+
+        UI.addSystemWindowInsetToPadding(binding.textEditorsChoice, true, false, true, false);
+        UI.addSystemWindowInsetToPadding(binding.editorsChoiceProjectsRecyclerView, true, false, true, false);
+        UI.addSystemWindowInsetToPadding(binding.textRecent, true, false, true, false);
+        UI.addSystemWindowInsetToPadding(binding.recentProjectsRecyclerView, true, false, true, false);
+        UI.addSystemWindowInsetToPadding(binding.textMostDownloaded, true, false, true, false);
+        UI.addSystemWindowInsetToPadding(binding.mostDownloadedProjectsRecyclerView, true, false, true, true);
+        UI.addSystemWindowInsetToMargin(binding.cardWarning, true, false, true, false);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // avoid memory leaks
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
@@ -55,9 +90,6 @@ public class ProjectsStoreFragment extends Fragment {
 
         recyclerView.addOnScrollListener(new CenterZoomListener());
 
-        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.recycler_view_item_spacing);
-        recyclerView.addItemDecoration(new HorizontalItemDecoration(spacingInPixels));
-
         recyclerView.setClipToPadding(false);
         recyclerView.setClipChildren(false);
 
@@ -66,24 +98,22 @@ public class ProjectsStoreFragment extends Fragment {
             ((ViewGroup) parent).setClipChildren(false);
             ((ViewGroup) parent).setClipToPadding(false);
         }
-
-        int sidePadding = getResources().getDimensionPixelSize(R.dimen.recycler_view_item_spacing);
-        recyclerView.setPadding(sidePadding, 0, sidePadding, 0);
     }
 
     private void fetchData() {
+        Log.d("ProjectsStoreFragment", "Fetching data...");
         var activity = getActivity();
-        sketchHubAPI.getEditorsChoicerProjects(1, projectModel -> {
+        sketchubAPI.getEditorsChoicerProjects(1, projectModel -> {
             if (projectModel != null) {
                 binding.editorsChoiceProjectsRecyclerView.setAdapter(new StorePagerProjectsAdapter(projectModel.getProjects(), activity));
             }
         });
-        sketchHubAPI.getMostDownloadedProjects(1, projectModel -> {
+        sketchubAPI.getMostDownloadedProjects(1, projectModel -> {
             if (projectModel != null) {
                 binding.mostDownloadedProjectsRecyclerView.setAdapter(new StoreProjectsAdapter(projectModel.getProjects(), activity));
             }
         });
-        sketchHubAPI.getRecentProjects(1, projectModel -> {
+        sketchubAPI.getRecentProjects(1, projectModel -> {
             if (projectModel != null) {
                 binding.recentProjectsRecyclerView.setAdapter(new StoreProjectsAdapter(projectModel.getProjects(), activity));
             }

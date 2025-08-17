@@ -2,7 +2,6 @@ package com.besome.sketch.editor.property;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -106,9 +105,13 @@ public class PropertyIndentItem extends RelativeLayout implements View.OnClickLi
         if (orientationItem == 0) {
             propertyItem.setVisibility(GONE);
             propertyMenuItem.setVisibility(VISIBLE);
+            propertyItem.setOnClickListener(null);
+            propertyMenuItem.setOnClickListener(this);
         } else {
             propertyItem.setVisibility(VISIBLE);
             propertyMenuItem.setVisibility(GONE);
+            propertyItem.setOnClickListener(this);
+            propertyMenuItem.setOnClickListener(null);
         }
     }
 
@@ -120,10 +123,10 @@ public class PropertyIndentItem extends RelativeLayout implements View.OnClickLi
         imgLeftIcon = findViewById(R.id.img_left_icon);
         propertyItem = findViewById(R.id.property_item);
         propertyMenuItem = findViewById(R.id.property_menu_item);
-        if (z) {
-            setSoundEffectsEnabled(true);
-            setOnClickListener(this);
-        }
+//        if (z) {
+//            propertyMenuItem.setSoundEffectsEnabled(true);
+//            propertyMenuItem.setOnClickListener(this);
+//        }
     }
 
     public void a(int left, int top, int right, int bottom) {
@@ -200,19 +203,17 @@ public class PropertyIndentItem extends RelativeLayout implements View.OnClickLi
             }
         });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            binding.tvDpAll.setVisibility(View.GONE);
-            binding.tvDpBottom.setVisibility(View.GONE);
-            binding.tvDpLeft.setVisibility(View.GONE);
-            binding.tvDpRight.setVisibility(View.GONE);
-            binding.tvDpTop.setVisibility(View.GONE);
+        binding.tvDpAll.setVisibility(View.GONE);
+        binding.tvDpBottom.setVisibility(View.GONE);
+        binding.tvDpLeft.setVisibility(View.GONE);
+        binding.tvDpRight.setVisibility(View.GONE);
+        binding.tvDpTop.setVisibility(View.GONE);
 
-            binding.tiAll.setSuffixText("dp");
-            binding.tiBottom.setSuffixText("dp");
-            binding.tiLeft.setSuffixText("dp");
-            binding.tiRight.setSuffixText("dp");
-            binding.tiTop.setSuffixText("dp");
-        }
+        binding.tiAll.setSuffixText("dp");
+        binding.tiBottom.setSuffixText("dp");
+        binding.tiLeft.setSuffixText("dp");
+        binding.tiRight.setSuffixText("dp");
+        binding.tiTop.setSuffixText("dp");
 
         dialog.setView(view);
         dialog.setPositiveButton(Helper.getResString(R.string.common_word_save), (v, which) -> {

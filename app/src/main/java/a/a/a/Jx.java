@@ -3,12 +3,14 @@ package a.a.a;
 import static dev.aldi.sayuti.block.ExtraBlockFile.getExtraBlockData;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import com.besome.sketch.beans.BlockBean;
 import com.besome.sketch.beans.ComponentBean;
 import com.besome.sketch.beans.ProjectFileBean;
 import com.besome.sketch.beans.ViewBean;
+import com.besome.sketch.editor.manage.library.material3.Material3LibraryManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +19,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.library.LibraryUtils;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLogic;
+import extensions.anbui.daydream.project.ProjectUtils;
 import mod.agus.jcoderz.beans.ViewBeans;
 import mod.agus.jcoderz.editor.manage.library.locallibrary.ManageLocalLibrary;
 import mod.agus.jcoderz.handle.component.ConstVarComponent;
@@ -83,6 +93,7 @@ public class Jx {
     private Hx eventManager;
     private ArrayList<String> imports = new ArrayList<>();
     private String onCreateEventCode = "";
+    private Material3LibraryManager materialLibraryManager;
 
     public Jx(jq jqVar, ProjectFileBean projectFileBean, eC eCVar) {
         packageName = jqVar.packageName;
@@ -96,6 +107,7 @@ public class Jx {
         extraBlocks = getExtraBlockData();
         isViewBindingEnabled = settings.getValue(ProjectSettings.SETTING_ENABLE_VIEWBINDING, BuildSettings.SETTING_GENERIC_VALUE_FALSE)
                 .equals(BuildSettings.SETTING_GENERIC_VALUE_TRUE);
+        materialLibraryManager = new Material3LibraryManager(projectDataManager.a);
     }
 
     public String activityResult() {
@@ -166,10 +178,14 @@ public class Jx {
     /**
      * @return Generated Java code of the current View (not Widget)
      */
-    public String generateCode(boolean exportingProject) {
-        boolean isDialogFragment = projectFileBean.fileName.contains("_dialog_fragment");
-        boolean isBottomDialogFragment = projectFileBean.fileName.contains("_bottomdialog_fragment");
-        boolean isFragment = projectFileBean.fileName.contains("_fragment");
+    public String generateCode(boolean isAndroidStudioExport, String sc_id) {
+        boolean isDialogFragment = (projectFileBean.fileName.contains("_dialog_fragment")
+                || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_dialog_fragment"));
+
+        boolean isBottomDialogFragment = (projectFileBean.fileName.contains("_bottomdialog_fragment")
+                || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_bottomdialog_fragment"));
+        boolean isFragment = (projectFileBean.fileName.contains("_fragment")
+                || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment"));
 
         extraVariables();
         handleAppCompat();
@@ -218,7 +234,7 @@ public class Jx {
             addImport("android.Manifest");
             addImport("android.content.pm.PackageManager");
         }
-        if (exportingProject && isViewBindingEnabled) {
+        if (isAndroidStudioExport && isViewBindingEnabled) {
             addImport(packageName + ".databinding.*");
         }
 
@@ -355,12 +371,33 @@ public class Jx {
             sb.append("protected void onCreate(Bundle _savedInstanceState) {").append(EOL);
             sb.append("super.onCreate(_savedInstanceState);").append(EOL);
 
+            if (ProjectDataLibrary.isEnabledAppCompat(sc_id)) {
+                if (ProjectDataDayDream.isEnableEdgeToEdge(sc_id, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalEdgeToEdge(sc_id)))
+                    sb.append("EdgeToEdge.enable(this);").append(EOL);
+            }
+
             if (isViewBindingEnabled) {
                 sb.append("binding = ").append(bindingName).append(".inflate(getLayoutInflater());").append(EOL);
                 sb.append("setContentView(binding.getRoot());").append(EOL);
             } else {
                 sb.append("setContentView(R.layout.").append(projectFileBean.fileName).append(");").append(EOL);
             }
+
+
+            if (ProjectDataDayDream.isEnableWindowInsetsHandling(sc_id, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(sc_id) && ProjectDataDayDream.isUniversalWindowInsetsHandling(sc_id))) {
+                if (LibraryUtils.isAllowUseWindowInsetsHandling(sc_id)) {
+                    if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR)) {
+                        sb.append("ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id._coordinator), (v, insets) -> {").append(EOL);
+                    } else {
+                        sb.append("ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id._main), (v, insets) -> {").append(EOL);
+                    }
+                    sb.append("Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());").append(EOL);
+                    sb.append("v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);").append(EOL);
+                    sb.append("return insets;").append(EOL);
+                    sb.append("});").append(EOL);
+                }
+            }
+
             sb.append("initialize(_savedInstanceState);");
         }
         sb.append(EOL);
@@ -491,6 +528,30 @@ public class Jx {
         if (!onCreateEventCode.isEmpty()) {
             sb.append(onCreateEventCode).append(EOL);
         }
+        if (!isFragment) {
+            if (ProjectDataDayDream.isEnableDayDream(sc_id)) {
+                if (ProjectDataDayDream.isContentProtection(sc_id, projectFileBean.fileName) || ProjectDataDayDream.isUniversalContentProtection(sc_id))
+                    sb.append("getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);").append(EOL);
+
+                if (ProjectDataDayDream.isUninversalEnableOnBackInvokedCallback(sc_id) && ProjectDataLogic.isThisActivityHaveOnBackPressed(sc_id, projectFileBean.getActivityName())) {
+                    sb.append("if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {").append(EOL);
+                    sb.append("getOnBackInvokedDispatcher().registerOnBackInvokedCallback(").append(EOL);
+                    sb.append("OnBackInvokedDispatcher.PRIORITY_DEFAULT,").append(EOL);
+                    sb.append("() -> {").append(EOL);
+                    sb.append("onBackPressed();").append(EOL);
+                    sb.append("});").append(EOL);
+                    sb.append("}").append(EOL);
+                }
+
+                if (ProjectUtils.convertJavaNameToXMLName(projectFileBean.getActivityName()).equals("main")) {
+                    if (ProjectDataDayDream.isUseGoogleAnalytics(Configs.currentProjectID)
+                            && LibraryUtils.isAllowUseGoogleAnalytics(Configs.currentProjectID)) {
+                        sb.append("FirebaseAnalytics.getInstance(this);").append(EOL);
+                    }
+                }
+            }
+        }
+
         sb.append("}").append(EOL);
 
         String agusComponentsOnActivityResultCode = getBillingResponseCode(buildConfig.x);
@@ -606,22 +667,22 @@ public class Jx {
 
     private String getListDeclarationAndAddImports(int listType, String listName) {
         String typeName = mq.b(listType);
-        addImports(mq.getImportsByTypeName(typeName, null));
+        addImports(mq.getImportsByTypeName(projectDataManager.a, typeName, null));
         return Lx.a(typeName, listName, Lx.AccessModifier.PRIVATE);
     }
 
     private String getComponentDeclarationAndAddImports(ComponentBean componentBean) {
         String typeName = mq.a(componentBean.type);
-        addImports(mq.getImportsByTypeName(typeName, null));
+        addImports(mq.getImportsByTypeName(projectDataManager.a, typeName, null));
         return Lx.a(typeName, componentBean.componentId, Lx.AccessModifier.PRIVATE, componentBean.param1, componentBean.param2, componentBean.param3);
     }
 
     private String getDrawerViewDeclarationAndAddImports(ViewBean viewBean) {
         String viewType = WIDGET_NAME_PATTERN.matcher(viewBean.convert).replaceAll("");
         if (viewType.isEmpty()) {
-            viewType = viewBean.getClassInfo().a();
+            viewType = viewBean.getClassInfo().getClassName();
         }
-        addImports(mq.getImportsByTypeName(viewType, null));
+        addImports(mq.getImportsByTypeName(projectDataManager.a, viewType, null));
         return Lx.a(viewType, "_drawer_" + viewBean.id, Lx.AccessModifier.PRIVATE);
     }
 
@@ -630,17 +691,19 @@ public class Jx {
      */
     private String getVariableDeclarationAndAddImports(int variableType, String name) {
         String variableTypeName = mq.c(variableType);
-        addImports(mq.getImportsByTypeName(variableTypeName, null));
+        addImports(mq.getImportsByTypeName(projectDataManager.a, variableTypeName, null));
         return Lx.a(variableTypeName, name, Lx.AccessModifier.PRIVATE);
     }
 
     private String getViewDeclarationAndAddImports(ViewBean viewBean) {
         String viewType = WIDGET_NAME_PATTERN.matcher(viewBean.convert).replaceAll("");
         if (viewType.isEmpty()) {
-            viewType = viewBean.getClassInfo().a();
+            viewType = viewBean.getClassInfo().getClassName();
         }
-        addImports(mq.getImportsByTypeName(viewType, viewBean.convert));
-        return Lx.a(viewType, viewBean.id, Lx.AccessModifier.PRIVATE);
+        if (requireImports(viewBean)) {
+            addImports(mq.getImportsByTypeName(projectDataManager.a, viewType, viewBean.convert));
+        }
+        return Lx.a(viewType, viewBean.id, Lx.AccessModifier.PRIVATE, isViewBindingEnabled);
     }
 
     private String getDeprecatedMethodsCode() {
@@ -725,13 +788,87 @@ public class Jx {
         } else {
             addImport("android.app.Activity");
         }
+
+        if (ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
+            if (ProjectDataDayDream.isEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalEdgeToEdge(Configs.currentProjectID)))
+                addImport("androidx.activity.EdgeToEdge");
+
+            if (ProjectDataDayDream.isEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName) || (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalWindowInsetsHandling(Configs.currentProjectID))) {
+                if (!ProjectDataBuildConfig.isUseJava7(Configs.currentProjectID)) {
+                    addImport("androidx.core.graphics.Insets");
+                    addImport("androidx.core.view.ViewCompat");
+                    addImport("androidx.core.view.WindowInsetsCompat");
+                }
+            }
+
+            if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.getActivityName())
+                        && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID)) {
+                    addImport("androidx.work.*");
+                }
+
+                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                    addImport("java.net.*");
+                    addImport("androidx.media3.common.*");
+                    addImport("androidx.media3.exoplayer.*");
+                }
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                    addImport("android.net.Uri");
+                    addImport("androidx.browser.auth.*");
+                    addImport("androidx.browser.browseractions.*");
+                    addImport("androidx.browser.customtabs.*");
+                    addImport("androidx.browser.trusted.*");
+                }
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.getActivityName())) {
+                    addImport("androidx.credentials.*");
+                    addImport("androidx.credentials.exceptions.*");
+                    addImport("androidx.credentials.internal.*");
+                    addImport("androidx.credentials.provider.*");
+                    addImport("androidx.credentials.webauthn.*");
+                    addImport("androidx.credentials.playservices.*");
+                    addImport("androidx.credentials.playservices.controllers.*");
+                    addImport("com.google.android.libraries.identity.googleid.*");
+                    addImport("androidx.biometric.*");
+                }
+
+                if (ProjectUtils.convertJavaNameToXMLName(projectFileBean.getActivityName()).equals("main")) {
+                    if (ProjectDataDayDream.isUseGoogleAnalytics(Configs.currentProjectID)
+                            && LibraryUtils.isAllowUseGoogleAnalytics(Configs.currentProjectID)) {
+                        addImport("com.google.firebase.analytics.FirebaseAnalytics");
+                    }
+                }
+
+                if (ProjectDataDayDream.isUseShizuku(Configs.currentProjectID)
+                        && ProjectDataDayDream.isImportShizuku(Configs.currentProjectID, projectFileBean.getActivityName())
+                        && LibraryUtils.isAllowUseShizuku(Configs.currentProjectID)) {
+                    addImport("rikka.shizuku.*");
+                }
+            }
+        }
+
+        if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+            if (ProjectDataDayDream.isUninversalEnableOnBackInvokedCallback(Configs.currentProjectID) && ProjectDataLogic.isThisActivityHaveOnBackPressed(Configs.currentProjectID, projectFileBean.getActivityName()))
+                addImport("android.window.OnBackInvokedDispatcher");
+        }
+
         if (isViewBindingEnabled) {
             fields.add("private " + ViewBindingBuilder.generateFileNameForLayout(projectFileBean.fileName) + " binding;");
         }
 
         if (buildConfig.g) {
-            if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR) && !projectFileBean.fileName.contains("_fragment")) {
-                addImport("androidx.appcompat.widget.Toolbar");
+            if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_TOOLBAR) && !projectFileBean.fileName.contains("_fragment") && !ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment")) {
+                addImport(
+                        (materialLibraryManager.isMaterial3Enabled()) ? "com.google.android.material.appbar.MaterialToolbar" : "androidx.appcompat.widget.Toolbar"
+                );
                 addImport("androidx.coordinatorlayout.widget.CoordinatorLayout");
                 addImport("com.google.android.material.appbar.AppBarLayout");
 
@@ -748,7 +885,9 @@ public class Jx {
                                     "});"
                     );
                 } else {
-                    fields.add("private Toolbar _toolbar;");
+                    fields.add("private " +
+                            (materialLibraryManager.isMaterial3Enabled() ? "MaterialToolbar" : "Toolbar") +
+                            " _toolbar;");
                     fields.add("private AppBarLayout _app_bar;");
                     fields.add("private CoordinatorLayout _coordinator;");
 
@@ -774,11 +913,13 @@ public class Jx {
                 if (!isViewBindingEnabled) {
                     fields.add("private FloatingActionButton _fab;");
                     initializeMethodCode.add("_fab = " +
-                            (projectFileBean.fileName.contains("_fragment") ? "_view." : "") +
+                            (projectFileBean.fileName.contains("_fragment")
+                                    || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment")
+                                    ? "_view." : "") +
                             "findViewById(R.id._fab);");
                 }
             }
-            if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_DRAWER) && !projectFileBean.fileName.contains("_fragment")) {
+            if (projectFileBean.hasActivityOption(ProjectFileBean.OPTION_ACTIVITY_DRAWER) && !projectFileBean.fileName.contains("_fragment") && !ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment")) {
                 addImport("androidx.core.view.GravityCompat");
                 addImport("androidx.drawerlayout.widget.DrawerLayout");
                 addImport("androidx.appcompat.app.ActionBarDrawerToggle");
@@ -809,7 +950,7 @@ public class Jx {
                             "LinearLayout _nav_view = findViewById(R.id._nav_view);" + EOL
                     );
                 }
-                addImports(mq.getImportsByTypeName("LinearLayout", null));
+                addImports(mq.getImportsByTypeName(projectDataManager.a, "LinearLayout", null));
             }
         }
         addImport("android.app.*");
@@ -840,7 +981,7 @@ public class Jx {
     private String getDrawerViewInitializer(ViewBean viewBean) {
         String replaceAll = WIDGET_NAME_PATTERN.matcher(viewBean.convert).replaceAll("");
         if (replaceAll.isEmpty()) {
-            replaceAll = viewBean.getClassInfo().a();
+            replaceAll = viewBean.getClassInfo().getClassName();
         }
         return Lx.getDrawerViewInitializer(replaceAll, viewBean.id, "_nav_view");
     }
@@ -868,9 +1009,9 @@ public class Jx {
     private String getViewInitializer(ViewBean viewBean) {
         String replaceAll = WIDGET_NAME_PATTERN.matcher(viewBean.convert).replaceAll("");
         if (replaceAll.isEmpty()) {
-            replaceAll = viewBean.getClassInfo().a();
+            replaceAll = viewBean.getClassInfo().getClassName();
         }
-        if (projectFileBean.fileName.contains("_fragment")) {
+        if (projectFileBean.fileName.contains("_fragment") || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.getActivityName()).contains("_fragment")) {
             return Lx.getViewInitializer(replaceAll, viewBean.id, true, isViewBindingEnabled);
         }
         return Lx.getViewInitializer(replaceAll, viewBean.id, false, isViewBindingEnabled);
@@ -1039,15 +1180,9 @@ public class Jx {
             if (!viewBean.convert.equals("include")) {
                 Set<String> toNotAdd = ox.readAttributesToReplace(viewBean);
                 if (!toNotAdd.contains("android:id")) {
-                    if (isViewBindingEnabled) {
-                        if (!requireImports(viewBean)) continue;
-                        String viewType = WIDGET_NAME_PATTERN.matcher(viewBean.convert).replaceAll("");
-                        if (viewType.isEmpty()) {
-                            viewType = viewBean.getClassInfo().a();
-                        }
-                        addImports(mq.getImportsByTypeName(viewType, viewBean.convert));
-                    } else {
-                        views.add(getViewDeclarationAndAddImports(viewBean));
+                    String viewDeclarations = getViewDeclarationAndAddImports(viewBean);
+                    if (!viewDeclarations.isEmpty()) {
+                        views.add(viewDeclarations);
                     }
                 }
             }
@@ -1058,15 +1193,9 @@ public class Jx {
                 if (!viewBean.convert.equals("include")) {
                     Set<String> toNotAdd = ox.readAttributesToReplace(viewBean);
                     if (!toNotAdd.contains("android:id")) {
-                        if (isViewBindingEnabled) {
-                            if (!requireImports(viewBean)) continue;
-                            String viewType = WIDGET_NAME_PATTERN.matcher(viewBean.convert).replaceAll("");
-                            if (viewType.isEmpty()) {
-                                viewType = viewBean.getClassInfo().a();
-                            }
-                            addImports(mq.getImportsByTypeName(viewType, null));
-                        } else {
-                            views.add(getDrawerViewDeclarationAndAddImports(viewBean));
+                        String drawerViewDeclarations = getDrawerViewDeclarationAndAddImports(viewBean);
+                        if (!drawerViewDeclarations.isEmpty()) {
+                            views.add(drawerViewDeclarations);
                         }
                     }
                 }
@@ -1123,6 +1252,9 @@ public class Jx {
     }
 
     private boolean requireImports(ViewBean viewBean) {
+        if (!isViewBindingEnabled) {
+            return true;
+        }
         return switch (viewBean.type) {
             case ViewBean.VIEW_TYPE_WIDGET_LISTVIEW,
                  ViewBeans.VIEW_TYPE_WIDGET_RECYCLERVIEW,

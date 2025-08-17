@@ -1,5 +1,6 @@
 package mod.hey.studios.project.custom_blocks;
 
+import android.content.Context;
 import android.os.Environment;
 
 import com.besome.sketch.beans.BlockBean;
@@ -9,30 +10,54 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import a.a.a.eC;
 import a.a.a.hC;
 import a.a.a.jC;
 import a.a.a.kq;
+import dev.aldi.sayuti.block.ExtraBlockFile;
 import mod.hey.studios.editor.manage.block.ExtraBlockInfo;
+import mod.hey.studios.editor.manage.block.v2.BlockLoader;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
 
 public class CustomBlocksManager {
+    private final Context context;
     final String sc_id;
     ArrayList<BlockBean> blocks;
     ArrayList<ExtraBlockInfo> custom_blocks;
 
-    public CustomBlocksManager(String sc_id) {
+    public CustomBlocksManager(Context context, String sc_id) {
+        this.context = context;
         this.sc_id = sc_id;
 
         load();
     }
 
     public ArrayList<BlockBean> getUsedBlocks() {
-        return blocks;
+        ArrayList<BlockBean> filteredCustomBlocks = new ArrayList<>();
+        for (BlockBean bean : blocks) {
+            if (!isBuildInBlock(bean.opCode)) {
+                filteredCustomBlocks.add(bean);
+            }
+        }
+        return filteredCustomBlocks;
+    }
+
+    private boolean isBuildInBlock(String blockName) {
+        if (ExtraBlockFile.buildInBlocks.isEmpty()) {
+            BlockLoader.refresh();
+        }
+        for (HashMap<String, Object> block : ExtraBlockFile.buildInBlocks) {
+            if (Objects.requireNonNull(block.get("name")).toString().equals(blockName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ExtraBlockInfo getExtraBlockInfo(String name) {
@@ -68,7 +93,7 @@ public class CustomBlocksManager {
                     if (!(block.opCode.equals("definedFunc")
                             || block.opCode.equals("getVar")
                             || block.opCode.equals("getArg"))) {
-                        if (kq.a(block.opCode, block.type) == -7711273) {
+                        if (kq.a(context, block.opCode, block.type) == 0xff8a55d7) {
                             if (!usedBlocks.contains(block.opCode)) {
                                 usedBlocks.add(block.opCode);
 

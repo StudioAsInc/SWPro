@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -25,6 +24,7 @@ import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
+import com.besome.sketch.lib.ui.ColorPickerDialog;
 import com.besome.sketch.projects.MyProjectSettingActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import a.a.a.HB;
-import a.a.a.Zx;
 import a.a.a.iB;
 import a.a.a.wq;
 import mod.hey.studios.util.Helper;
@@ -400,9 +399,9 @@ public class IconCreatorActivity extends BaseAppCompatActivity {
     }
 
     private void showColorPicker(View v, int r, int oldClr) {
-        Zx colorPicker = new Zx(this, oldClr, true, false);
+        ColorPickerDialog colorPicker = new ColorPickerDialog(this, oldClr, true, false);
 
-        colorPicker.a(new Zx.b() {
+        colorPicker.a(new ColorPickerDialog.b() {
             @Override
             public void a(int colorInt) {
                 switch (r) {
@@ -473,12 +472,7 @@ public class IconCreatorActivity extends BaseAppCompatActivity {
     }
 
     private void pickCustomIcon(int code) {
-        Uri uri;
-        if (Build.VERSION.SDK_INT >= 24) {
-            uri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", getCustomIcon());
-        } else {
-            uri = Uri.fromFile(getCustomIcon());
-        }
+        Uri uri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", getCustomIcon());
 
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
@@ -490,17 +484,12 @@ public class IconCreatorActivity extends BaseAppCompatActivity {
     }
 
     private void pickAndCropCustomIcon() {
-        Uri uri;
         Intent intent = new Intent(Intent.ACTION_PICK);
-        if (Build.VERSION.SDK_INT >= 24) {
-            Context applicationContext = getApplicationContext();
-            uri = FileProvider.getUriForFile(applicationContext, getApplicationContext().getPackageName() + ".provider", getCustomIcon());
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        } else {
-            uri = Uri.fromFile(getCustomIcon());
-        }
+        Context applicationContext = getApplicationContext();
+        Uri uri = FileProvider.getUriForFile(applicationContext, getApplicationContext().getPackageName() + ".provider", getCustomIcon());
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 
         intent.setDataAndType(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "image/*");
         intent.putExtra("crop", "true");

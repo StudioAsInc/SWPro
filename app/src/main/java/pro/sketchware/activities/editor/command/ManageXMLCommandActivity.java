@@ -75,12 +75,12 @@ public class ManageXMLCommandActivity extends BaseAppCompatActivity {
         var projectLibraryManager = jC.c(sc_id);
         var projectFileManager = jC.b(sc_id);
         var projectDataManager = jC.a(sc_id);
-        yq.a(projectLibraryManager, projectFileManager, projectDataManager, false);
+        yq.a(projectLibraryManager, projectFileManager, projectDataManager);
         CommandBlock.x();
         ArrayList<ProjectFileBean> files = new ArrayList<>(projectFileManager.b());
         files.addAll(new ArrayList<>(projectFileManager.c()));
         for (ProjectFileBean file : files) {
-            CommandBlock.CBForXml(new Jx(yq.N, file, projectDataManager).generateCode(false));
+            CommandBlock.CBForXml(new Jx(yq.N, file, projectDataManager).generateCode(false, sc_id));
         }
         String commandPath = FileUtil.getExternalStorageDir().concat("/.sketchware/temp/commands");
         if (FileUtil.isExistFile(commandPath)) {
@@ -123,7 +123,7 @@ public class ManageXMLCommandActivity extends BaseAppCompatActivity {
         adapter.setOnItemClickListener(
                 item -> {
                     int position = item.second;
-                    PopupMenu popupMenu = new PopupMenu(ManageXMLCommandActivity.this, item.first);
+                    PopupMenu popupMenu = new PopupMenu(this, item.first);
                     var menu = popupMenu.getMenu();
                     menu.add(Menu.NONE, 0, Menu.NONE, "Edit");
                     menu.add(Menu.NONE, 1, Menu.NONE, "Delete");
@@ -320,7 +320,7 @@ public class ManageXMLCommandActivity extends BaseAppCompatActivity {
         Executors.newSingleThreadExecutor()
                 .execute(
                         () -> {
-                            final String source =
+                            String source =
                                     new yq(getApplicationContext(), sc_id)
                                             .getFileSrc(
                                                     filename,
@@ -399,7 +399,7 @@ public class ManageXMLCommandActivity extends BaseAppCompatActivity {
                 Executors.newSingleThreadExecutor()
                         .execute(
                                 () -> {
-                                    fetchXMLCommand(ManageXMLCommandActivity.this, sc_id);
+                                    fetchXMLCommand(this, sc_id);
                                     runOnUiThread(
                                             () -> {
                                                 h();

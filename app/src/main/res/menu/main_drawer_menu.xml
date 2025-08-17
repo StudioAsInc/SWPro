@@ -21,6 +21,11 @@
         android:title="Create keystore" />
 
     <item
+        android:id="@+id/daydream_tools"
+        android:icon="@drawable/wand_stars_24px"
+        android:title="DayDream tools" />
+
+    <item
         android:id="@+id/app_settings"
         android:icon="@drawable/ic_mtrl_settings"
         android:title="Settings" />
@@ -29,17 +34,17 @@
         <menu>
             <item
                 android:id="@+id/social_discord"
-                android:icon="@drawable/ic_discord"
+                android:icon="@drawable/discord_logo"
                 android:title="Discord" />
 
             <item
                 android:id="@+id/social_telegram"
-                android:icon="@drawable/ic_telegram"
+                android:icon="@drawable/telegram_logo"
                 android:title="Telegram" />
 
             <item
                 android:id="@+id/social_github"
-                android:icon="@drawable/ic_github"
+                android:icon="@drawable/github_logo"
                 android:title="GitHub" />
         </menu>
     </item>

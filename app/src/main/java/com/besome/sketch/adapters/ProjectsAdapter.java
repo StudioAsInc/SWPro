@@ -3,11 +3,11 @@ package com.besome.sketch.adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DiffUtil;
@@ -29,6 +29,9 @@ import a.a.a.lC;
 import a.a.a.mB;
 import a.a.a.wq;
 import a.a.a.yB;
+import extensions.anbui.daydream.activity.DayDreamBackupTool;
+import extensions.anbui.daydream.activity.DayDreamProjectTool;
+import extensions.anbui.daydream.configs.Configs;
 import mod.hey.studios.project.ProjectSettingsDialog;
 import mod.hey.studios.project.backup.BackupRestoreManager;
 import mod.hey.studios.util.Helper;
@@ -45,7 +48,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
 
     public ProjectsAdapter(ProjectsFragment projectsFragment, List<HashMap<String, Object>> allProjects) {
         this.projectsFragment = projectsFragment;
-        this.activity = projectsFragment.requireActivity();
+        activity = projectsFragment.requireActivity();
         this.allProjects = allProjects;
     }
 
@@ -97,6 +100,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
         }, true);
         shownProjects = newProjects;
         result.dispatchUpdatesTo(this);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -114,8 +118,21 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
         return false;
     }
 
+    @DrawableRes
+    public static <T> int getShapedBackgroundForList(List<T> list, int position) {
+        if (list.size() == 1) {
+            return R.drawable.project_item_shape_alone;
+        } else if (position == 0) {
+            return R.drawable.project_item_shape_top;
+        } else if (position == list.size() - 1) {
+            return R.drawable.project_item_shape_bottom;
+        } else {
+            return R.drawable.project_item_shape_middle;
+        }
+    }
     @Override
     public void onBindViewHolder(@NonNull ProjectViewHolder holder, int position) {
+        holder.itemView.setBackgroundResource(getShapedBackgroundForList(shownProjects, position));
         HashMap<String, Object> projectMap = shownProjects.get(position);
         String scId = yB.c(projectMap, "sc_id");
 
@@ -135,12 +152,8 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
         if (yB.a(projectMap, "custom_icon")) {
             String iconFolder = wq.e() + File.separator + scId;
             Uri uri;
-            if (Build.VERSION.SDK_INT >= 24) {
-                String providerPath = activity.getPackageName() + ".provider";
-                uri = FileProvider.getUriForFile(activity, providerPath, new File(iconFolder, "icon.png"));
-            } else {
-                uri = Uri.fromFile(new File(iconFolder, "icon.png"));
-            }
+            String providerPath = activity.getPackageName() + ".provider";
+            uri = FileProvider.getUriForFile(activity, providerPath, new File(iconFolder, "icon.png"));
             holder.binding.imgIcon.setImageURI(uri);
         }
 
@@ -191,7 +204,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
             activity.runOnUiThread(() -> {
                 progressDialog.dismiss();
                 shownProjects.remove(position);
-                notifyItemRemoved(position);
+                notifyDataSetChanged();
                 allProjects.remove(projectMap);
             });
         }).start();
@@ -245,6 +258,13 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
 
         binding.projectConfig.setOnClickListener(v -> {
             showProjectSettingDialog(projectMap);
+            projectOptionsBSD.dismiss();
+        });
+
+        binding.projectDaydream.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, DayDreamProjectTool.class);
+            intent.putExtra("sc_id", yB.c(projectMap, "sc_id"));
+            activity.startActivity(intent);
             projectOptionsBSD.dismiss();
         });
 

@@ -9,6 +9,10 @@ import android.view.View;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.Objects;
+
+import extensions.anbui.daydream.project.GetProjectInfo;
+import extensions.anbui.daydream.project.ProjectApplication;
 import pro.sketchware.databinding.DialogProjectSettingsBinding;
 
 public class ProjectSettingsDialog {
@@ -59,7 +63,7 @@ public class ProjectSettingsDialog {
 
         dialog.setContentView(binding.getRoot());
 
-        final View[] preferences = {
+        View[] preferences = {
                 binding.etMinimumSdkVersion,
                 binding.etTargetSdkVersion,
                 binding.etApplicationClassName,
@@ -70,6 +74,7 @@ public class ProjectSettingsDialog {
 
         binding.save.setOnClickListener(v -> {
             settings.setValues(preferences);
+            ProjectApplication.createApplicationFile(settings.sc_id, GetProjectInfo.getPackageName(settings.sc_id), Objects.requireNonNull(binding.etApplicationClassName.getText()).toString());
             dialog.dismiss();
         });
         binding.cancel.setOnClickListener(v -> dialog.dismiss());

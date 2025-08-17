@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -18,22 +16,28 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.transition.AutoTransition;
 import androidx.transition.TransitionManager;
 
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
+import com.besome.sketch.lib.ui.ColorPickerDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import a.a.a.GB;
 import a.a.a.MA;
 import a.a.a.VB;
-import a.a.a.Zx;
+import a.a.a.bB;
 import a.a.a.lC;
 import a.a.a.mB;
 import a.a.a.nB;
@@ -41,6 +45,8 @@ import a.a.a.oB;
 import a.a.a.wB;
 import a.a.a.wq;
 import a.a.a.yB;
+import extensions.anbui.daydream.project.ProjectData;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
 import mod.hey.studios.project.ProjectSettings;
 import mod.hey.studios.util.Helper;
 import mod.hey.studios.util.ProjectFile;
@@ -52,6 +58,7 @@ import pro.sketchware.databinding.MyprojectSettingBinding;
 import pro.sketchware.lib.validator.AppNameValidator;
 import pro.sketchware.lib.validator.PackageNameValidator;
 import pro.sketchware.utility.FileUtil;
+import pro.sketchware.utility.SketchwareUtil;
 
 public class MyProjectSettingActivity extends BaseAppCompatActivity implements View.OnClickListener {
 
@@ -72,6 +79,8 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
     private boolean isIconAdaptive;
     private Bitmap icon;
     private String sc_id;
+
+    private ThemePresetAdapter themePresetAdapter;
 
     public static void saveBitmapTo(Bitmap bitmap, String path) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
@@ -97,12 +106,15 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
         binding.verCode.setSelected(true);
         binding.verName.setSelected(true);
 
+
         binding.appIconLayout.setOnClickListener(this);
         binding.verCodeHolder.setOnClickListener(this);
         binding.verNameHolder.setOnClickListener(this);
         binding.imgThemeColorHelp.setOnClickListener(this);
         binding.okButton.setOnClickListener(this);
         binding.cancel.setOnClickListener(this);
+
+        initializeThemePresets();
 
         binding.tilAppName.setHint(Helper.getResString(R.string.myprojects_settings_hint_enter_application_name));
         binding.tilPackageName.setHint(Helper.getResString(R.string.myprojects_settings_hint_enter_package_name));
@@ -150,16 +162,14 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
             binding.verName.setText(yB.c(metadata, "sc_ver_name"));
             projectHasCustomIcon = yB.a(metadata, "custom_icon");
             if (projectHasCustomIcon) {
-                if (Build.VERSION.SDK_INT >= 24) {
-                    binding.appIcon.setImageURI(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", getCustomIcon()));
-                } else {
-                    binding.appIcon.setImageURI(Uri.fromFile(getCustomIcon()));
-                }
+                binding.appIcon.setImageURI(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", getCustomIcon()));
             }
 
             for (int i = 0; i < themeColorKeys.length; i++) {
                 projectThemeColors[i] = yB.a(metadata, themeColorKeys[i], projectThemeColors[i]);
             }
+
+            binding.cardViewQuickProjectConf.setVisibility(View.GONE);
         } else {
             /* Set the dialog's title & create button label */
             String newProjectName = getIntent().getStringExtra("my_ws_name");
@@ -187,11 +197,7 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
             binding.verName.setText(newProjectVersionName);
             projectHasCustomIcon = getIntent().getBooleanExtra("custom_icon", false);
             if (projectHasCustomIcon) {
-                if (Build.VERSION.SDK_INT >= 24) {
-                    binding.appIcon.setImageURI(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", getCustomIcon()));
-                } else {
-                    binding.appIcon.setImageURI(Uri.fromFile(getCustomIcon()));
-                }
+                binding.appIcon.setImageURI(FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", getCustomIcon()));
             }
         }
         syncThemeColors();
@@ -229,6 +235,7 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
             if (isInputValid()) {
                 new SaveProjectAsyncTask(getApplicationContext()).execute();
                 if (icon != null) saveBitmapTo(icon, getCustomIconPath());
+                if (!updatingExistingProject) ProjectData.setDataForFirstTimeProjectCreation(sc_id, binding.cbEnableViewbinding.isChecked(), binding.cbSetMinSdk24.isChecked());
             }
         } else if (id == R.id.cancel) {
             finish();
@@ -366,22 +373,24 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
     }
 
     private void pickColor(View anchorView, int colorIndex) {
-        Zx zx = new Zx(this, projectThemeColors[colorIndex], false, false);
-        zx.a((new Zx.b() {
+        ColorPickerDialog colorPickerDialog = new ColorPickerDialog(this, projectThemeColors[colorIndex], false, false);
+        colorPickerDialog.a((new ColorPickerDialog.b() {
             @Override
             public void a(int var1) {
                 projectThemeColors[colorIndex] = var1;
                 syncThemeColors();
+                themePresetAdapter.unselectThePreviousTheme(-1);
             }
 
             @Override
             public void a(String var1, int var2) {
                 projectThemeColors[colorIndex] = var2;
                 syncThemeColors();
+                themePresetAdapter.unselectThePreviousTheme(-1);
             }
         }
         ));
-        zx.showAtLocation(anchorView, Gravity.CENTER, 0, 0);
+        colorPickerDialog.showAtLocation(anchorView, Gravity.CENTER, 0, 0);
     }
 
     private void showResetIconConfirmation() {
@@ -496,6 +505,7 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
                     data.put(themeColorKeys[i], projectThemeColors[i]);
                 }
                 lC.b(sc_id, data);
+                updateProjectResourcesContents(data);
             } else {
                 data.put("my_sc_reg_dt", new nB().a("yyyyMMddHHmmss"));
                 data.put("custom_icon", projectHasCustomIcon);
@@ -507,9 +517,10 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
                     data.put(themeColorKeys[i], projectThemeColors[i]);
                 }
                 lC.a(sc_id, data);
+                updateProjectResourcesContents(data);
                 wq.a(getApplicationContext(), sc_id);
                 new oB().b(wq.b(sc_id));
-                final ProjectSettings projectSettings = new ProjectSettings(sc_id);
+                ProjectSettings projectSettings = new ProjectSettings(sc_id);
                 projectSettings.setValue(ProjectSettings.SETTING_NEW_XML_COMMAND, ProjectSettings.SETTING_GENERIC_VALUE_TRUE);
                 projectSettings.setValue(ProjectSettings.SETTING_ENABLE_VIEWBINDING, ProjectSettings.SETTING_GENERIC_VALUE_TRUE);
 
@@ -524,10 +535,67 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
 
         }
 
+        private void updateProjectResourcesContents(HashMap<String, Object> data) {
+            String baseDir = wq.b(sc_id) + "/files/resource/values/";
+            String stringsFilePath = baseDir + "strings.xml";
+            String colorsFilePath = baseDir + "colors.xml";
+            String newAppName = Objects.requireNonNull(data.get("my_app_name")).toString();
+
+            if (FileUtil.isExistFile(stringsFilePath)) {
+                String xmlContent = FileUtil.readFile(stringsFilePath);
+                xmlContent = xmlContent.replaceAll("(<string\\s+name=\"app_name\">)(.*?)(</string>)", "$1" + newAppName + "$3");
+                FileUtil.writeFile(stringsFilePath, xmlContent);
+            }
+
+            if (FileUtil.isExistFile(colorsFilePath)) {
+                String xmlContent = FileUtil.readFile(colorsFilePath);
+                for (int i = 0; i < themeColorKeys.length; i++) {
+                    String colorName = themeColorLabels[i];
+                    String newColor = String.format("#%06X", (0xFFFFFF & projectThemeColors[i]));
+                    xmlContent = xmlContent.replaceAll("(<color\\s+name=\"" + colorName + "\">)(.*?)(</color>)", "$1" + newColor + "$3");
+                }
+                FileUtil.writeFile(colorsFilePath, xmlContent);
+            }
+
+        }
+
         @Override
         public void a(String str) {
             h();
         }
 
+    }
+
+    private void initializeThemePresets() {
+        List<ThemeManager.ThemePreset> themePresets = Arrays.asList(ThemeManager.getThemePresets());
+
+        themePresetAdapter = new ThemePresetAdapter(this, themePresets, (theme, position) -> applyTheme(theme));
+
+        binding.btnGenerateRandomTheme.setOnClickListener(v -> {
+            themePresetAdapter.unselectThePreviousTheme(-1);
+            generateRandomTheme();
+        });
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        binding.layoutThemePresets.setLayoutManager(layoutManager);
+
+        binding.layoutThemePresets.setAdapter(themePresetAdapter);
+    }
+
+    private void generateRandomTheme() {
+        ThemeManager.ThemePreset randomTheme = ThemeManager.generateRandomTheme();
+        applyTheme(randomTheme);
+
+        SketchwareUtil.toast(Helper.getResString(R.string.theme_random_generated));
+    }
+
+    private void applyTheme(ThemeManager.ThemePreset theme) {
+        projectThemeColors[0] = theme.colorAccent;
+        projectThemeColors[1] = theme.colorPrimary;
+        projectThemeColors[2] = theme.colorPrimaryDark;
+        projectThemeColors[3] = theme.colorControlHighlight;
+        projectThemeColors[4] = theme.colorControlNormal;
+
+        syncThemeColors();
     }
 }
