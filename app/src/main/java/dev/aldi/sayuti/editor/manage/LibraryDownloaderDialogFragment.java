@@ -322,7 +322,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                         SketchwareUtil.toast("Library downloaded successfully");
                         if (!notAssociatedWithProject) {
                             String fileContent = FileUtil.readFile(localLibFile);
-                            List<java.util.Map<String, Object>> enabledLibs;
+                            ArrayList<java.util.HashMap<String, Object>> enabledLibs;
 
                             if (fileContent == null || fileContent.trim().isEmpty()) {
                                 enabledLibs = new ArrayList<>();
@@ -342,7 +342,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                             // Add only unique dependencies from the resolved list
                             for (String resolvedDepName : dependencies) {
                                 boolean alreadyExists = false;
-                                for (java.util.Map<String, Object> existingLib : enabledLibs) {
+                                for (java.util.HashMap<String, Object> existingLib : enabledLibs) {
                                     // Check if a library with the same 'name' (artifact name) already exists
                                     if (existingLib.containsKey("name") && resolvedDepName.equals(existingLib.get("name"))) {
                                         alreadyExists = true;
