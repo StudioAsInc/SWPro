@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,6 +61,14 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
 
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnDownload.setOnClickListener(v -> initDownloadFlow());
+
+        String[] options = new String[] {"21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                options
+        );
+        binding.actChooseminapi.setAdapter(adapter);
     }
 
     public void setOnLibraryDownloadedTask(OnLibraryDownloadedTask onLibraryDownloadedTask) {
@@ -89,7 +98,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
         var artifact = parts[1];
         var version = parts[2];
         //D8 default Min API Level is 1.
-        var resolver = new DependencyResolver(group, artifact, version, binding.cbSkipSubdependencies.isChecked(), buildSettings, binding.cbMinapi24.isChecked() ? 24 : 1);
+        var resolver = new DependencyResolver(group, artifact, version, binding.cbSkipSubdependencies.isChecked(), buildSettings, Integer.parseInt(binding.actChooseminapi.getText().toString()));
         var handler = new Handler(Looper.getMainLooper());
 
         class SetTextRunnable implements Runnable {
@@ -216,7 +225,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
         binding.btnDownload.setEnabled(!downloading);
         binding.dependencyInput.setEnabled(!downloading);
         binding.cbSkipSubdependencies.setEnabled(!downloading);
-        binding.cbMinapi24.setEnabled(!downloading);
+        binding.actChooseminapi.setEnabled(!downloading);
         setCancelable(!downloading);
 
         if (!downloading) {

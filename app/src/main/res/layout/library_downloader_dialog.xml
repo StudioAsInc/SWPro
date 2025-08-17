@@ -35,16 +35,36 @@
             android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="16dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/act_chooseminapi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:hint="Select minimum API version."
+            android:text="21"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/dependency_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="16dp"
-        android:maxLines="2"
-        android:text="@string/local_library_manager_dependency_info"
-        android:textColor="?attr/colorOnSurface"
-        android:textAppearance="?attr/textAppearanceBodyMedium" />
+        android:text="@string/local_library_manager_dependency_info" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="16dp"
+        android:text="If you are having issues with modern libraries, try selecting the minimum API version 24. And your projects that use this library should also set the Minimium SDK version to be equal to or newer than the minimum API version you selected." />
 
     <CheckBox
         android:id="@+id/cb_skip_subdependencies"
@@ -55,16 +75,6 @@
         android:layout_marginTop="8dp"
         android:paddingStart="8dp"
         android:text="@string/local_library_manager_skip_downloading_dependencies" />
-
-    <CheckBox
-        android:id="@+id/cb_minapi24"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:paddingStart="8dp"
-        android:text="Min API level is 24. Helps fix issues when working with modern libraries. This also requires your app to have the Minimum SDK version set to 24 when using these libraries." />
 
     <LinearLayout
         android:layout_width="match_parent"
