@@ -56,6 +56,16 @@
         android:paddingStart="8dp"
         android:text="@string/local_library_manager_skip_downloading_dependencies" />
 
+    <CheckBox
+        android:id="@+id/cb_minapi24"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:paddingStart="8dp"
+        android:text="Min API level is 24. Helps fix issues when working with modern libraries. This also requires your app to have the Minimum SDK version set to 24 when using these libraries." />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

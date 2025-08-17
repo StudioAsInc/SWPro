@@ -5,7 +5,7 @@ import android.app.Activity;
 import pro.sketchware.SketchApplication;
 
 public class Configs {
-
+    public static final String universalTAG = "DayDream";
     public static final String mainDataDir = "/.sketchware/";
     public static final String projectMySourceFolderDir = mainDataDir + "mysc/";
     public static final String projectInfoFolderDir = mainDataDir + "mysc/list/";

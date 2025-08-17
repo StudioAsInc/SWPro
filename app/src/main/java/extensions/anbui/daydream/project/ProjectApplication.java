@@ -1,8 +1,13 @@
 package extensions.anbui.daydream.project;
 
+import android.util.Log;
+
+import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.java.JavaFileUtils;
 
 public class ProjectApplication {
+
+    public static String TAG = Configs.universalTAG + "ProjectApplication";
     public static void createApplicationFile(String projectID, String packageName, String className) {
         //Example: app..MyApplication
         //1: app..MyApplication
@@ -17,9 +22,12 @@ public class ProjectApplication {
         if (!className.isEmpty() && !className.equals(".SketchApplication")
                 && !JavaFileUtils.isJavaFileExistInProject(projectID, finalClassNamePath + ".java"))
             JavaFileUtils.addJavaFileToProject(projectID, finalClassNamePath + ".java", preparecodesForApplication(packageName, className));
+
+        Log.i(TAG, "createApplicationFile: " + finalClassNamePath);
     }
 
     public static String preparecodesForApplication(String packageName, String className) {
+        Log.i(TAG, "preparecodesForApplication: " + packageName + " " + className);
         //Example: app..MyApplication
         //1: .app..MyApplication
         //2: .app.MyApplication

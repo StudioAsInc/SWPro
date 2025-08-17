@@ -88,7 +88,8 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
         var group = parts[0];
         var artifact = parts[1];
         var version = parts[2];
-        var resolver = new DependencyResolver(group, artifact, version, binding.cbSkipSubdependencies.isChecked(), buildSettings);
+        //D8 default Min API Level is 1.
+        var resolver = new DependencyResolver(group, artifact, version, binding.cbSkipSubdependencies.isChecked(), buildSettings, binding.cbMinapi24.isChecked() ? 24 : 1);
         var handler = new Handler(Looper.getMainLooper());
 
         class SetTextRunnable implements Runnable {
@@ -215,6 +216,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
         binding.btnDownload.setEnabled(!downloading);
         binding.dependencyInput.setEnabled(!downloading);
         binding.cbSkipSubdependencies.setEnabled(!downloading);
+        binding.cbMinapi24.setEnabled(!downloading);
         setCancelable(!downloading);
 
         if (!downloading) {

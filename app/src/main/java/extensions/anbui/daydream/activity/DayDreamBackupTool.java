@@ -23,8 +23,8 @@ import java.util.Objects;
 import extensions.anbui.daydream.dialog.DialogUtils;
 import extensions.anbui.daydream.file.FileUtils;
 import extensions.anbui.daydream.project.GetProjectInfo;
-import extensions.anbui.daydream.settings.DayDreamSkSettings;
-import extensions.anbui.daydream.tool.DayDreamBackupProjectToolCore;
+import extensions.anbui.daydream.settings.SkSettings;
+import extensions.anbui.daydream.tool.BackupProjectToolCore;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 import pro.sketchware.databinding.ActivityDaydreamBackupToolBinding;
@@ -84,7 +84,7 @@ public class DayDreamBackupTool extends AppCompatActivity {
 
     private void startBackup () {
         if (!Objects.requireNonNull(binding.edBackupfilename.getText()).toString().isEmpty()) {
-            if (FileUtils.isFileExist(FileUtils.getInternalStorageDir() + DayDreamSkSettings.getBackupDir() + GetProjectInfo.getProjectName(projectID) + "/" + Objects.requireNonNull(binding.edBackupfilename.getText()).toString() + ".swb")) {
+            if (FileUtils.isFileExist(FileUtils.getInternalStorageDir() + SkSettings.getBackupDir() + GetProjectInfo.getProjectName(projectID) + "/" + Objects.requireNonNull(binding.edBackupfilename.getText()).toString() + ".swb")) {
                 DialogUtils.oneDialog(this,
                         "Unable to backup",
                         "This name has already been used for one of your previous backups. Please use a different name.",
@@ -108,12 +108,12 @@ public class DayDreamBackupTool extends AppCompatActivity {
         progressDialog.show();
 
         new Thread(() -> {
-            if (DayDreamBackupProjectToolCore.backup(projectID, progress_text, Objects.requireNonNull(binding.edBackupfilename.getText()).toString(), binding.swLocallibraries.isChecked(), binding.swCustomblocks.isChecked(), binding.swApis.isChecked())) {
+            if (BackupProjectToolCore.backup(projectID, progress_text, Objects.requireNonNull(binding.edBackupfilename.getText()).toString(), binding.swLocallibraries.isChecked(), binding.swCustomblocks.isChecked(), binding.swApis.isChecked())) {
                 runOnUiThread(() -> {
                     progressDialog.dismiss();
                     DialogUtils.threeDialog(this,
                             "Done",
-                            "Saved in " + DayDreamBackupProjectToolCore.backedupFilePath + ".",
+                            "Saved in " + BackupProjectToolCore.backedupFilePath + ".",
                             "OK",
                             "Exit",
                             "Share",
@@ -137,7 +137,7 @@ public class DayDreamBackupTool extends AppCompatActivity {
     }
 
     private void share() {
-        if (DayDreamBackupProjectToolCore.backedupFilePath.isEmpty()) {
+        if (BackupProjectToolCore.backedupFilePath.isEmpty()) {
             DialogUtils.oneDialog(this,
                     "Cannot share",
                     "File does not exist.",
@@ -150,8 +150,8 @@ public class DayDreamBackupTool extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("plain/text");
         intent.putExtra(Intent.EXTRA_SUBJECT, "This is my project.");
-        intent.putExtra(Intent.EXTRA_TEXT, Uri.parse(DayDreamBackupProjectToolCore.backedupFilePath).getLastPathSegment());
-        intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(DayDreamBackupProjectToolCore.backedupFilePath)));
+        intent.putExtra(Intent.EXTRA_TEXT, Uri.parse(BackupProjectToolCore.backedupFilePath).getLastPathSegment());
+        intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(BackupProjectToolCore.backedupFilePath)));
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);

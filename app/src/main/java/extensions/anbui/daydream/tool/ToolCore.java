@@ -8,21 +8,26 @@ import com.google.gson.JsonParser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.file.FileUtils;
 import extensions.anbui.daydream.project.ProjectDataDecryptor;
 
-public class DayDreamTool {
+public class ToolCore {
+
+    public static String TAG = Configs.universalTAG + "ToolCore";
+
     public static void copyToTemp(String path) {
+        Log.i(TAG, "copyToTemp: " + path);
         FileUtils.copyFile(path, FileUtils.getInternalStorageDir() + Configs.tempDayDreamFolderDir);
     }
     public static String getTempFilePath(String path) {
+        Log.i(TAG, "getTempFilePath: " + path);
         return FileUtils.getInternalStorageDir() + Configs.tempDayDreamFolderDir + path;
     }
 
     public static void cleanOutTheRecyclingBin() {
+        Log.i(TAG, "cleanOutTheRecyclingBin");
         FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir));
     }
 
@@ -42,6 +47,7 @@ public class DayDreamTool {
                 }
             }
         }
+        Log.i(TAG, "Cleaned: " + cleaned);
         return cleaned;
     }
 
@@ -62,6 +68,7 @@ public class DayDreamTool {
                 }
             }
         }
+        Log.i(TAG, "Moved: " + moved);
         return moved;
     }
 
@@ -80,6 +87,7 @@ public class DayDreamTool {
                 result.append(content).append("\n");
             }
         }
+        Log.i(TAG, "getAllUsingLocalLib: " + result.toString());
         return result.toString();
     }
 
@@ -99,10 +107,12 @@ public class DayDreamTool {
                 }
             }
         }
+        Log.i(TAG, "getLastID: " + result);
         return result;
     }
 
     public static void fixID(String projectID) {
+        Log.i(TAG, "fixID: " + projectID);
         String projectInfo = ProjectDataDecryptor.decryptProjectFile(FileUtils.getInternalStorageDir() + Configs.projectInfoFolderDir + projectID + "/project");
         JsonObject json = JsonParser.parseString(projectInfo).getAsJsonObject();
         json.addProperty("sc_id", projectID);

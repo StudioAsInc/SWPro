@@ -31,7 +31,8 @@ class DependencyResolver(
     private val artifactId: String,
     private val version: String,
     private val skipDependencies: Boolean,
-    private val buildSettings: BuildSettings
+    private val buildSettings: BuildSettings,
+    private val minAPILevel: Int
 ) {
     companion object {
         private val DEFAULT_REPOS = """
@@ -282,6 +283,7 @@ class DependencyResolver(
         D8.run(
             D8Command.builder().setIntermediate(true).setMode(CompilationMode.RELEASE)
                 .addProgramFiles(jarFile).addLibraryFiles(libraryJars).addClasspathFiles(jars)
+                .setMinApiLevel(minAPILevel)
                 .setOutput(jarFile.parent, OutputMode.DexIndexed).build()
         )
     }

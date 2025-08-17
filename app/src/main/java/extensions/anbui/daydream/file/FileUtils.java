@@ -19,22 +19,30 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import extensions.anbui.daydream.configs.Configs;
+
 public class FileUtils {
+
+    public static String TAG = Configs.universalTAG + "FileUtils";
 
     //Get the internal storage directory.
     public static String getInternalStorageDir() {
         File storageDir = Environment.getExternalStorageDirectory();
+        Log.i(TAG, "getInternalStorageDir: " + storageDir.getAbsolutePath());
         return storageDir.getAbsolutePath();
     }
 
     //Is file exist.
     public static boolean isFileExist(String path) {
+        Log.i(TAG, "isFileExist: " + path);
         if (path == null || path.isEmpty()) return false;
         File file = new File(path);
+        Log.i(TAG, "isFileExist: " + file.exists());
         return file.exists();
     }
 
     public static boolean createDirectory(String path) {
+        Log.i(TAG, "createDirectory: " + path);
         File file = new File(path);
         if (file.exists()) return true;
         return file.mkdirs();
@@ -45,21 +53,18 @@ public class FileUtils {
         String filePath = null;
         if ("content".equalsIgnoreCase(uri.getScheme())) {
             String[] projection = {MediaStore.Files.FileColumns.DATA};
-            Cursor cursor = null;
-            try {
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            try (Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     int index = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
                     filePath = cursor.getString(index);
                 }
+                Log.i(TAG, "getFilePathFromUri: " + filePath);
             } catch (Exception e) {
-                System.err.println("Error getting file path: " + e.getMessage());
-            } finally {
-                if (cursor != null)
-                    cursor.close();
+                Log.e(TAG, "getFilePathFromUri: " + e.getMessage());
             }
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             filePath = uri.getPath();
+            Log.i(TAG, "getFilePathFromUri: " + filePath);
         }
         return filePath;
     }
@@ -73,8 +78,9 @@ public class FileUtils {
             while ((line = br.readLine()) != null) {
                 content.append(line).append("\n");
             }
+            Log.i(TAG, "readTextFile: " + path);
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            Log.e(TAG, "readTextFile: " + e.getMessage());
         }
         return content.toString();
     }
@@ -88,9 +94,9 @@ public class FileUtils {
 
         try (FileWriter writer = new FileWriter(path)) {
             writer.write(content);
-            Log.i("FileUtils", "writeTextFile: " + path);
+            Log.i(TAG, "writeTextFile: " + path);
         } catch (IOException e) {
-            Log.e("FileUtils", "writeTextFile: " + e.getMessage());
+            Log.e(TAG, "writeTextFile: " + e.getMessage());
         }
     }
 
@@ -102,6 +108,7 @@ public class FileUtils {
         for (File file : sourceDir.listFiles()) {
             File destFile = new File(destDir, file.getName());
             if (file.isDirectory()) {
+                Log.i(TAG, "copyDirectory: " + file.getPath());
                 copyDirectory(file, destFile);
             } else {
                 copyFile(file.getPath(), destFile.getPath());
@@ -112,7 +119,7 @@ public class FileUtils {
     public static void copyFile(String source, String dest) {
         File sourceFile = new File(source);
         if (!sourceFile.exists() || !sourceFile.isFile()) {
-            System.err.println("Source file not found: " + source);
+            Log.e(TAG, "copyFile: Source file does not exist or is not a file: " + source);
             return;
         }
 
@@ -125,7 +132,7 @@ public class FileUtils {
 
             File parentDir = destFile.getParentFile();
             if (parentDir != null && !parentDir.exists() && !parentDir.mkdirs()) {
-                System.err.println("Failed to create directory: " + parentDir);
+                Log.e(TAG, "copyFile: Failed to create parent directory: " + parentDir.getAbsolutePath());
                 return;
             }
 
@@ -138,9 +145,9 @@ public class FileUtils {
                     out.write(buffer, 0, length);
                 }
             }
-
+            Log.i(TAG, "copyFile: " + source + " to " + dest);
         } catch (Exception e) {
-            System.err.println("Error copying file: " + e.getMessage());
+            Log.e(TAG, "copyFile: " + e.getMessage());
         }
     }
 
@@ -152,7 +159,7 @@ public class FileUtils {
         if (!parentDir.exists() && !parentDir.mkdirs()) return;
 
         if (filefrom.renameTo(finalTarget)) {
-            Log.d("FileUtils", "Moved " + from + " to " + to);
+            Log.d(TAG, "Moved " + from + " to " + to);
             return;
         }
 
@@ -164,9 +171,9 @@ public class FileUtils {
                 copyFile(filefrom.getAbsolutePath(), finalTarget.getAbsolutePath());
                 deleteRecursive(filefrom);
             }
-            Log.d("FileUtils", "Moved by copy+delete!");
+            Log.d(TAG, "Moved " + from + " to " + to + ". With copy and delete.");
         } catch (Exception e) {
-            Log.e("FileUtils", "Failed to move: " + e.getMessage());
+            Log.e(TAG, "Error moving file: " + e.getMessage());
         }
     }
 
@@ -174,15 +181,20 @@ public class FileUtils {
         if (!isFileExist(path)) return;
 
         File file = new File(path);
-        file.delete();
+        if (file.delete()) {
+            Log.i(TAG, "deleteFile: " + path);
+        } else {
+            Log.e(TAG, "deleteFile: " + path);
+        }
     }
 
     public static boolean deleteRecursive(File fileOrDir) {
         if (fileOrDir.isDirectory()) {
-            for (File child : fileOrDir.listFiles()) {
+            for (File child : Objects.requireNonNull(fileOrDir.listFiles())) {
                 deleteRecursive(child);
             }
         }
+        Log.i(TAG, "deleteRecursive: " + fileOrDir.getAbsolutePath());
         return fileOrDir.delete();
     }
 
@@ -198,5 +210,6 @@ public class FileUtils {
         for (File file : listFiles) {
             list.add(file.getAbsolutePath());
         }
+        Log.i(TAG, "getFileListInDirectory: " + path);
     }
 }

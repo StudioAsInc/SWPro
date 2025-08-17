@@ -80,7 +80,8 @@
                         android:id="@+id/progress_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingVertical="12dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="8dp"
                         android:singleLine="true"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         tools:text="Building your awesome app..." />

@@ -1,7 +1,6 @@
 package extensions.anbui.daydream.tool;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.TextView;
@@ -16,16 +15,18 @@ import extensions.anbui.daydream.file.FileUtils;
 import extensions.anbui.daydream.project.GetProjectInfo;
 import extensions.anbui.daydream.project.ProjectDataDecryptor;
 import extensions.anbui.daydream.project.ProjectDataLibrary;
-import extensions.anbui.daydream.settings.DayDreamSkSettings;
+import extensions.anbui.daydream.settings.SkSettings;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
-public class DayDreamBackupProjectToolCore {
+public class BackupProjectToolCore {
 
+    public static String TAG = Configs.universalTAG + "BackupProjectToolCore";
     public static String backedupFilePath = "";
 
     public static boolean backup(String projectID, TextView statusTextView, String backupFileName, boolean locallibs, boolean customblocks, boolean includeApis) {
+        Log.i(TAG, "backup: " + projectID);
         boolean result = true;
         FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir));
         copyProjectData(projectID, statusTextView, customblocks);
@@ -43,7 +44,7 @@ public class DayDreamBackupProjectToolCore {
         if (backupFileName.isEmpty())
             fileName = GetProjectInfo.getProjectName(projectID) + "-" + GetProjectInfo.getVersionName(projectID) + "-" + GetProjectInfo.getVersionCode(projectID) + "-" + System.currentTimeMillis() / 1000L + ".swb";
 
-        String backupDir = FileUtils.getInternalStorageDir() + DayDreamSkSettings.getBackupDir() + GetProjectInfo.getProjectName(projectID) + "/";
+        String backupDir = FileUtils.getInternalStorageDir() + SkSettings.getBackupDir() + GetProjectInfo.getProjectName(projectID) + "/";
         if(!FileUtils.createDirectory(backupDir)) result = false;
         try {
             if (result) {
@@ -69,12 +70,13 @@ public class DayDreamBackupProjectToolCore {
                 }
             }
             backedupFilePath = backupDir + fileName;
+            Log.i(TAG, "backup: " + backedupFilePath);
         } catch (ZipException e) {
             result = false;
-            Log.e("backup", Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         } catch (Exception e) {
             result = false;
-            Log.e("backup", Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }
         updateStatus(statusTextView, "Cleaning up...");
         FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir));
@@ -82,6 +84,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static void copyProjectData(String projectID, TextView statusTextView, boolean customblocks) {
+        Log.i(TAG, "copyProjectData: " + projectID);
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + projectID,
@@ -102,6 +105,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static void copyFonts(String projectID, TextView statusTextView) {
+        Log.i(TAG, "copyFonts: " + projectID);
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.resFontsFolderDir + projectID,
@@ -115,6 +119,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static void copyIcons(String projectID, TextView statusTextView) {
+        Log.i(TAG, "copyIcons: " + projectID);
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.resIconsFolderDir + projectID,
@@ -128,6 +133,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static void copyImages(String projectID, TextView statusTextView) {
+        Log.i(TAG, "copyImages: " + projectID);
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.resImagesFolderDir + projectID,
@@ -141,6 +147,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static void copySounds(String projectID, TextView statusTextView) {
+        Log.i(TAG, "copySounds: " + projectID);
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.resSoundsFolderDir + projectID,
@@ -154,6 +161,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static void copyUsingLocalLibraries(String projectID, TextView statusTextView) {
+        Log.i(TAG, "copyUsingLocalLibraries: " + projectID);
         String usingLocalLib = FileUtils.readTextFile(FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + projectID + "/local_library");
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
@@ -176,11 +184,13 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static void copyProjectInfo(String projectID, TextView statusTextView) {
+        Log.i(TAG, "copyProjectInfo: " + projectID);
         updateStatus(statusTextView, "Copying project info: project");
         FileUtils.copyFile(FileUtils.getInternalStorageDir() + Configs.projectInfoFolderDir + projectID + "/project", FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir);
     }
 
     public static String replaceLibraryData(String projectID) {
+        Log.i(TAG, "replaceLibraryData: " + projectID);
         String result = replaceFirebaseLibraryData(ProjectDataLibrary.isEnabledFirebase(projectID)) + "\n";
         result += replaceAppCompatLibraryData(ProjectDataLibrary.isEnabledAppCompat(projectID)) + "\n";
         result += replaceAdmobLibraryData(ProjectDataLibrary.isEnabledAdmob(projectID)) + "\n";
@@ -189,6 +199,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static String replaceFirebaseLibraryData(boolean isUsingFirebase) {
+        Log.i(TAG, "replaceFirebaseLibraryData: " + isUsingFirebase);
         if (isUsingFirebase) {
             return "@firebaseDB\n" +
                     "{\"adUnits\":[],\"data\":\"xxxxx-xxxxx-default-rtdb.firebaseio.com\",\"libType\":0,\"reserved1\":\"0:0000000000000:android:0000000000000000000000\",\"reserved2\":\"0000000000000000000000000000000000000\",\"reserved3\":\"xxxxx-xxxxx.appspot.com\",\"testDevices\":[],\"useYn\":\"Y\"}";
@@ -199,6 +210,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static String replaceAppCompatLibraryData(boolean isUsingAppCompat) {
+        Log.i(TAG, "replaceAppCompatLibraryData: " + isUsingAppCompat);
         if (isUsingAppCompat) {
             return "@compat\n" +
                     "{\"adUnits\":[],\"appId\":\"\",\"configurations\":{},\"data\":\"\",\"libType\":1,\"reserved1\":\"\",\"reserved2\":\"\",\"reserved3\":\"\",\"testDevices\":[],\"useYn\":\"Y\"}";
@@ -209,6 +221,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static String replaceAdmobLibraryData(boolean isUsingAdmob) {
+        Log.i(TAG, "replaceAdmobLibraryData: " + isUsingAdmob);
         if (isUsingAdmob) {
             return "@admob\n" +
                     "{\"adUnits\":[{\"id\":\"ca-app-pub-0000000000000000/0000000000\",\"name\":\"bn\"},{\"id\":\"ca-app-pub-0000000000000000/0000000000\",\"name\":\"tg\"},{\"id\":\"ca-app-pub-0000000000000000/0000000000\",\"name\":\"ctt\"}],\"appId\":\"ca-app-pub-0000000000000000~0000000000\",\"data\":\"\",\"libType\":2,\"reserved1\":\"bn : ca-app-pub-0000000000000000/0000000000\",\"reserved2\":\"tg : ca-app-pub-0000000000000000/0000000000\",\"reserved3\":\"ctt : ca-app-pub-0000000000000000/0000000000\",\"testDevices\":[],\"useYn\":\"Y\"}";
@@ -219,6 +232,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     public static String replaceGoogleMapLibraryData(boolean isUsingGoogleMap) {
+        Log.i(TAG, "replaceGoogleMapLibraryData: " + isUsingGoogleMap);
         if (isUsingGoogleMap) {
             return "@googleMap\n" +
                     "{\"adUnits\":[],\"appId\":\"\",\"configurations\":{},\"data\":\"AIzaSyA-00000000000000000000000000000\\n\",\"libType\":3,\"reserved1\":\"\",\"reserved2\":\"\",\"reserved3\":\"\",\"testDevices\":[],\"useYn\":\"Y\"}";
@@ -229,6 +243,7 @@ public class DayDreamBackupProjectToolCore {
     }
 
     private static void updateStatus(TextView statusTextView, String msg) {
+        Log.i(TAG, "updateStatus: " + msg);
         if (statusTextView == null || statusTextView.getContext() == null) return;
         ((Activity) statusTextView.getContext()).runOnUiThread(() -> statusTextView.setText(msg));
     }

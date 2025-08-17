@@ -15,13 +15,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Objects;
 
-import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.dialog.DialogUtils;
-import extensions.anbui.daydream.tool.DayDreamProjectToolCore;
-import extensions.anbui.daydream.tool.DayDreamTool;
+import extensions.anbui.daydream.tool.ProjectToolCore;
 import pro.sketchware.R;
 import pro.sketchware.activities.main.activities.MainActivity;
-import pro.sketchware.activities.main.fragments.projects.ProjectsFragment;
 import pro.sketchware.databinding.ActivityDaydreamProjectToolBinding;
 
 public class DayDreamProjectTool extends AppCompatActivity {
@@ -84,7 +81,7 @@ public class DayDreamProjectTool extends AppCompatActivity {
         progressDialog.show();
 
         new Thread(() -> {
-            boolean result = DayDreamProjectToolCore.clone(projectID);
+            boolean result = ProjectToolCore.clone(projectID);
             runOnUiThread(() -> {
                 if (result) {
                     progressDialog.dismiss();
@@ -137,7 +134,7 @@ public class DayDreamProjectTool extends AppCompatActivity {
         progressDialog.show();
 
         new Thread(() -> {
-            boolean result = DayDreamProjectToolCore.cleanTemporaryFiles(projectID);
+            boolean result = ProjectToolCore.cleanTemporaryFiles(projectID);
             runOnUiThread(() -> {
                 if (result) {
                     progressDialog.dismiss();

@@ -17,7 +17,7 @@ import java.util.Objects;
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.dialog.DialogUtils;
 import extensions.anbui.daydream.file.FileUtils;
-import extensions.anbui.daydream.tool.DayDreamTool;
+import extensions.anbui.daydream.tool.ToolCore;
 import pro.sketchware.R;
 import pro.sketchware.databinding.ActivityDaydreamToolsBinding;
 
@@ -68,7 +68,7 @@ public class DayDreamTools extends AppCompatActivity {
 
         new Thread(() -> {
             String message;
-            int cleared = DayDreamTool.cleanupLocalLib();
+            int cleared = ToolCore.cleanupLocalLib();
             if (cleared > 0)
                 message = "Cleaned up " + cleared + " local libraries. And those libraries have been moved to"
                         + FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir + "local_libs.";
@@ -114,7 +114,7 @@ public class DayDreamTools extends AppCompatActivity {
         progressDialog.show();
 
         new Thread(() -> {
-            DayDreamTool.cleanOutTheRecyclingBin();
+            ToolCore.cleanOutTheRecyclingBin();
 
             runOnUiThread(() -> {
                 progressDialog.dismiss();
@@ -156,7 +156,7 @@ public class DayDreamTools extends AppCompatActivity {
 
         new Thread(() -> {
             String message;
-            int cleared = DayDreamTool.cleanUpTemporaryFiles();
+            int cleared = ToolCore.cleanUpTemporaryFiles();
             if (cleared > 0)
                 message = "Cleaned up temporary files in " + cleared + " projects.";
             else {
