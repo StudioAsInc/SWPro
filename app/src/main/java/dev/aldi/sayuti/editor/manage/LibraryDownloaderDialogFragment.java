@@ -322,13 +322,12 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                         SketchwareUtil.toast("Library downloaded successfully");
                         if (!notAssociatedWithProject) {
                             String fileContent = FileUtil.readFile(localLibFile);
-                            List<java.util.Map<String, String>> enabledLibs;
+                            List<java.util.Map<String, Object>> enabledLibs;
 
                             if (fileContent == null || fileContent.trim().isEmpty()) {
                                 enabledLibs = new ArrayList<>();
                             } else {
                                 try {
-                                    // Helper.TYPE_MAP_LIST is expected to be a Type for List<Map<String, String>>
                                     enabledLibs = gson.fromJson(fileContent, Helper.TYPE_MAP_LIST);
                                     if (enabledLibs == null) { // If JSON is "null" or malformed but not an exception
                                         enabledLibs = new ArrayList<>();
@@ -343,7 +342,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                             // Add only unique dependencies from the resolved list
                             for (String resolvedDepName : dependencies) {
                                 boolean alreadyExists = false;
-                                for (java.util.Map<String, String> existingLib : enabledLibs) {
+                                for (java.util.Map<String, Object> existingLib : enabledLibs) {
                                     // Check if a library with the same 'name' (artifact name) already exists
                                     if (existingLib.containsKey("name") && resolvedDepName.equals(existingLib.get("name"))) {
                                         alreadyExists = true;
