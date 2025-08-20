@@ -123,7 +123,9 @@ dependencies {
     //noinspection GradleDependency copied from above dependency for not just runtime access
     implementation "com.google.protobuf:protobuf-java:3.19.2"
     //noinspection GradleDependency
-    implementation "com.android.tools:sdklib:25.3.0", { exclude group: "com.intellij", module: "annotations" }
+    implementation("com.android.tools:sdklib:25.3.0") {
+        exclude group: "com.intellij", module: "annotations"
+    }
     implementation "com.android.tools:r8:8.11.18"
     implementation "com.github.Iyxan23:zipalign-java:1.2.2"
 
