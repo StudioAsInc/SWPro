@@ -126,6 +126,8 @@ dependencies {
     implementation("com.android.tools:sdklib:25.3.0") {
         exclude group: "com.intellij", module: "annotations"
     }
+
+
     implementation "com.android.tools:r8:8.11.18"
     implementation "com.github.Iyxan23:zipalign-java:1.2.2"
 
@@ -138,18 +140,26 @@ dependencies {
     implementation "com.squareup.okio:okio:3.15.0"
 
     implementation "org.eclipse.jdt:ecj:3.26.0"
+    implementation "com.github.waelchateur:kotlinc-for-sketchware:2.1.21_rc3"
+    compileOnly "org.jetbrains.kotlin:kotlin-compiler:2.1.21"
+    implementation 'io.github.itsaky:nb-javac-android:17.0.0.3'
+    implementation 'com.fasterxml.woodstox:woodstox-core:6.5.1'
+
+    implementation 'javax.xml.stream:stax-api:1.0-2'
 
     implementation "com.github.Cosmic-Ide:DependencyResolver:05ec26af0b"
-    implementation "com.github.Cosmic-IDE:kotlinc-android:fce2462f00"
+    
     implementation "com.github.PranavPurwar:filepicker:74526bea66"
 
-    implementation files('libs/proguard-base-7.2.2.jar')
+    
     implementation 'com.guardsquare:proguard-core:9.0.2'
 
     implementation "com.github.topjohnwu.libsu:core:5.0.4"
     implementation "dev.chrisbanes.insetter:insetter:0.6.1"
 
-    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
+   implementation("com.github.javaparser:javaparser-symbol-solver-core:3.25.3") {
+        exclude group: "com.google.guava", module: "guava"
+    }
 
     // Analytics and Crashlytics
     if (analyticsEnabled) {
