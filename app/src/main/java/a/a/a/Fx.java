@@ -1283,29 +1283,7 @@ public class Fx {
                 }
                 break;
             case "filepickerstartpickfiles":
-                String componentName = params.get(0);
-                String onFilesPickedEvent = "_" + componentName + "_onFilesPicked";
-
-                opcode = String.format(
-                        "FilePickerOptions options = new FilePickerOptions();\n" +
-                        "options.setSelectFolder(false);\n" +
-                        "FilePickerCallback callback = new FilePickerCallback() {\n" +
-                        "    @Override\n" +
-                        "    public void onFileSelected(File file) {\n" +
-                        "        final ArrayList<String> _files = new ArrayList<>();\n" +
-                        "        _files.add(file.getAbsolutePath());\n" +
-                        "        %s.onFilesPicked(_files);\n" +
-                        "    }\n" +
-                        "    @Override\n" +
-                        "    public boolean onFileSelectionCancelled() {\n" +
-                        "        %s.onFileSelectionCancelled();\n" +
-                        "        return true;\n" +
-                        "    }\n" +
-                        "};\n" +
-                        "FilePickerDialogFragment dialog = new FilePickerDialogFragment(options, callback);\n" +
-                        "dialog.show(getSupportFragmentManager(), \"filePicker\");",
-                        onFilesPickedEvent, onFilesPickedEvent
-                );
+                opcode = String.format("startActivityForResult(%s, REQ_CD_%s);", params.get(0), params.get(0).toUpperCase());
                 break;
             case "camerastarttakepicture":
                 opcode = String.format("startActivityForResult(%s, REQ_CD_%s);", params.get(0), params.get(0).toUpperCase());

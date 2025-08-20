@@ -480,10 +480,6 @@ public class Ix {
                 writePermission(a, Manifest.permission.ACCESS_FINE_LOCATION);
             }
         }
-        if (c.isFilePickerUsed) {
-            writePermission(a, Manifest.permission.READ_EXTERNAL_STORAGE);
-            writePermission(a, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
         if (FileUtil.isExistFile(fpu.getPathPermission(c.sc_id))) {
             for (String s : frc.getPermissionList()) {
                 writePermission(a, s);

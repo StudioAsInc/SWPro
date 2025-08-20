@@ -568,10 +568,8 @@ public class yq {
                         N.addPermission(activity.getActivityName(), jq.PERMISSION_READ_EXTERNAL_STORAGE);
                         N.addPermission(activity.getActivityName(), jq.PERMISSION_WRITE_EXTERNAL_STORAGE);
                     }
-                    case ComponentBean.COMPONENT_TYPE_FILE_PICKER -> {
-                            N.isFilePickerUsed = true;
+                    case ComponentBean.COMPONENT_TYPE_FILE_PICKER ->
                             N.addPermission(activity.getActivityName(), jq.PERMISSION_READ_EXTERNAL_STORAGE);
-                    }
                     case ComponentBean.COMPONENT_TYPE_FIREBASE -> {
                         N.isGsonUsed = true;
                         N.isFirebaseDatabaseUsed = true;

@@ -405,34 +405,46 @@ public class FileUtil {
         return Environment.getExternalStoragePublicDirectory(type).getAbsolutePath();
     }
 
-    public static String convertUriToFilePath(Context context, Uri uri) {
-        String path = null;
+    public static String convertUriToFilePath(final Context context, final Uri uri) {
+        if (uri == null) return null;
+
         if (DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) {
-                String docId = DocumentsContract.getDocumentId(uri);
-                String[] split = docId.split(":");
-                String type = split[0];
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
 
                 if ("primary".equalsIgnoreCase(type)) {
-                    path = Environment.getExternalStorageDirectory() + "/" + split[1];
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
             } else if (isDownloadsDocument(uri)) {
-                String id = DocumentsContract.getDocumentId(uri);
-
-                if (!TextUtils.isEmpty(id)) {
-                    if (id.startsWith("raw:")) {
-                        return id.replaceFirst("raw:", "");
-                    }
+                final String id = DocumentsContract.getDocumentId(uri);
+                if (id != null && id.startsWith("raw:")) {
+                    return id.substring(4);
                 }
 
-                Uri contentUri = ContentUris
-                        .withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.parseLong(id));
+                String[] contentUriPrefixesToTry = new String[]{
+                        "content://downloads/public_downloads",
+                        "content://downloads/my_downloads",
+                        "content://downloads/all_downloads"
+                };
 
-                path = getDataColumn(context, contentUri, null, null);
+                for (String contentUriPrefix : contentUriPrefixesToTry) {
+                    try {
+                        final Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), Long.valueOf(id));
+                        String path = getDataColumn(context, contentUri, null, null);
+                        if (path != null) {
+                            return path;
+                        }
+                    } catch (NumberFormatException e) {
+                        // In case of non-numeric id
+                        return uri.getPath();
+                    }
+                }
             } else if (isMediaDocument(uri)) {
-                String docId = DocumentsContract.getDocumentId(uri);
-                String[] split = docId.split(":");
-                String type = split[0];
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
 
                 Uri contentUri = null;
                 if ("image".equals(type)) {
@@ -444,25 +456,18 @@ public class FileUtil {
                 }
 
                 final String selection = "_id=?";
-                String[] selectionArgs = {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
-                path = getDataColumn(context, contentUri, selection, selectionArgs);
+                return getDataColumn(context, contentUri, selection, selectionArgs);
             }
         } else if (ContentResolver.SCHEME_CONTENT.equalsIgnoreCase(uri.getScheme())) {
-            path = getDataColumn(context, uri, null, null);
+            return getDataColumn(context, uri, null, null);
         } else if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme())) {
-            path = uri.getPath();
+            return uri.getPath();
         }
 
-        if (path != null) {
-            try {
-                return URLDecoder.decode(path, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                return null;
-            }
-        }
         return null;
     }
 
