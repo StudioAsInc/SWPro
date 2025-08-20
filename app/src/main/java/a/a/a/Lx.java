@@ -206,19 +206,6 @@ public class Lx {
      */
     public static String getOnActivityResultCode(int componentId, String componentName, String onSuccessLogic, String onCancelledLogic) {
         String componentLogic = switch (componentId) {
-            case ComponentBean.COMPONENT_TYPE_FILE_PICKER ->
-                    "ArrayList<String> _filePath = new ArrayList<>();\r\n" +
-                            "if (_data != null) {\r\n" +
-                            "if (_data.getClipData() != null) {\r\n" +
-                            "for (int _index = 0; _index < _data.getClipData().getItemCount(); _index++) {\r\n" +
-                            "ClipData.Item _item = _data.getClipData().getItemAt(_index);\r\n" +
-                            "_filePath.add(FileUtil.convertUriToFilePath(getApplicationContext(), _item.getUri()));\r\n" +
-                            "}\r\n" +
-                            "}\r\n" +
-                            "else {\r\n" +
-                            "_filePath.add(FileUtil.convertUriToFilePath(getApplicationContext(), _data.getData()));\r\n" +
-                            "}\r\n" +
-                            "}";
             case ComponentBean.COMPONENT_TYPE_CAMERA ->
                     " String _filePath = _file_" + componentName + ".getAbsolutePath();\r\n";
             case ComponentBean.COMPONENT_TYPE_FIREBASE_AUTH_GOOGLE_LOGIN ->
@@ -236,6 +223,11 @@ public class Lx {
                 onCancelledLogic + "\r\n" +
                 "}\r\n" +
                 "break;";
+    }
+
+    public interface _FilePicker_files_picked_listener {
+        void onFilesPicked(ArrayList<String> files);
+        void onFileSelectionCancelled();
     }
 
     /**
@@ -583,160 +575,16 @@ public class Lx {
                     "final double _acc = _param1.getAccuracy();\r\n" +
                     eventLogic + "\r\n" +
                     "}";
+            case "onFilesPicked" -> "@Override\r\n" +
+                    "public void onFilesPicked(ArrayList<String> _files) {\r\n" +
+                    eventLogic + "\r\n" +
+                    "}";
+            case "onFileSelectionCancelled" -> "@Override\r\n" +
+                    "public void onFileSelectionCancelled() {\r\n" +
+                    eventLogic + "\r\n" +
+                    "}";
             default -> ManageEvent.f(targetId, eventName, eventLogic);
         };
-    }
-
-    /**
-     * @return One or more lines which declare a Type's needed fields.
-     * Example for a Camera Component:
-     * <pre>
-     * private File _file_&lt;component name&gt;;
-     * </pre>
-     */
-    public static String a(String typeName, String typeInstanceName, AccessModifier accessModifier, String... parameters) {
-        return a(typeName, typeInstanceName, accessModifier, false, parameters);
-    }
-
-    public static String a(String typeName, String typeInstanceName, AccessModifier accessModifier, boolean isViewBindingEnabled, String... parameters) {
-        String fieldDeclaration = "";
-
-        if (typeName.equals("include") || typeName.equals("#")) {
-            fieldDeclaration = "";
-        } else {
-            if (!isViewBindingEnabled) {
-                fieldDeclaration = accessModifier.getName();
-                String initializer = getInitializer(typeName, parameters);
-                String builtInType = mq.e(typeName);
-                if (initializer.isEmpty()) {
-                    if (!(builtInType.isEmpty() || builtInType.equals("RewardedVideoAd") || builtInType.equals("FirebaseCloudMessage") || builtInType.equals("FragmentStatePagerAdapter"))) {
-                        fieldDeclaration += " " + builtInType + " " + typeInstanceName + ";";
-                    } else {
-                        switch (typeName) {
-                            case "FirebaseCloudMessage":
-                                fieldDeclaration = "";
-                                break;
-                            case "FragmentStatePagerAdapter":
-                                fieldDeclaration += " " + a(typeInstanceName + "Fragment", false) + " " + typeInstanceName + ";";
-                                break;
-                            case "RewardedVideoAd":
-                                fieldDeclaration += " RewardedAd " + typeInstanceName + ";";
-                                break;
-                            default:
-                                fieldDeclaration += " " + typeName + " " + typeInstanceName + ";";
-                                break;
-                        }
-                    }
-                } else {
-                    String typeNameOfField = builtInType;
-
-                    if (builtInType.isEmpty() && "Videos".equals(typeName)) {
-                        typeNameOfField = "Intent";
-                    }
-
-                    fieldDeclaration += " " + typeNameOfField + " " + typeInstanceName + " = " + initializer + ";";
-                }
-            }
-
-            switch (typeName) {
-                case "FirebaseDB":
-                    fieldDeclaration += "\r\nprivate ChildEventListener _" + typeInstanceName + "_child_listener;";
-                    break;
-
-                case "Gyroscope":
-                    fieldDeclaration += "\r\nprivate SensorEventListener _" + typeInstanceName + "_sensor_listener;";
-                    break;
-
-                case "FirebaseAuth":
-                    fieldDeclaration += "\r\nprivate OnCompleteListener<AuthResult> _" + typeInstanceName + "_create_user_listener;\r\n" +
-                            "private OnCompleteListener<AuthResult> _" + typeInstanceName + "_sign_in_listener;\r\n" +
-                            "private OnCompleteListener<Void> _" + typeInstanceName + "_reset_password_listener;\r\n" +
-                            // Fields/Events added by Agus
-                            "private OnCompleteListener<Void> " + typeInstanceName + "_updateEmailListener;\r\n" +
-                            "private OnCompleteListener<Void> " + typeInstanceName + "_updatePasswordListener;\r\n" +
-                            "private OnCompleteListener<Void> " + typeInstanceName + "_emailVerificationSentListener;\r\n" +
-                            "private OnCompleteListener<Void> " + typeInstanceName + "_deleteUserListener;\r\n" +
-                            "private OnCompleteListener<Void> " + typeInstanceName + "_updateProfileListener;\r\n" +
-                            "private OnCompleteListener<AuthResult> " + typeInstanceName + "_phoneAuthListener;\r\n" +
-                            "private OnCompleteListener<AuthResult> " + typeInstanceName + "_googleSignInListener;\r\n";
-                    break;
-
-                case "InterstitialAd":
-                    fieldDeclaration += "\r\nprivate InterstitialAdLoadCallback _" + typeInstanceName + "_interstitial_ad_load_callback;";
-                    fieldDeclaration += "\r\nprivate FullScreenContentCallback _" + typeInstanceName + "_full_screen_content_callback;";
-                    break;
-
-                case "RewardedVideoAd":
-                    fieldDeclaration += "\r\nprivate OnUserEarnedRewardListener _" + typeInstanceName + "_on_user_earned_reward_listener;";
-                    fieldDeclaration += "\r\nprivate RewardedAdLoadCallback _" + typeInstanceName + "_rewarded_ad_load_callback;";
-                    fieldDeclaration += "\r\nprivate FullScreenContentCallback _" + typeInstanceName + "_full_screen_content_callback;";
-                    break;
-
-                case "FirebaseStorage":
-                    fieldDeclaration += "\r\nprivate OnCompleteListener<Uri> _" + typeInstanceName + "_upload_success_listener;\r\n" +
-                            "private OnSuccessListener<FileDownloadTask.TaskSnapshot> _" + typeInstanceName + "_download_success_listener;\r\n" +
-                            "private OnSuccessListener _" + typeInstanceName + "_delete_success_listener;\r\n" +
-                            "private OnProgressListener _" + typeInstanceName + "_upload_progress_listener;\r\n" +
-                            "private OnProgressListener _" + typeInstanceName + "_download_progress_listener;\r\n" +
-                            "private OnFailureListener _" + typeInstanceName + "_failure_listener;\r\n";
-                    break;
-
-                case "Camera":
-                    fieldDeclaration += "\r\nprivate File _file_" + typeInstanceName + ";";
-                    break;
-
-                case "RequestNetwork":
-                    fieldDeclaration += "\r\nprivate RequestNetwork.RequestListener _" + typeInstanceName + "_request_listener;";
-                    break;
-
-                case "BluetoothConnect":
-                    fieldDeclaration += "\r\nprivate BluetoothConnect.BluetoothConnectionListener _" + typeInstanceName + "_bluetooth_connection_listener;";
-                    break;
-
-                case "LocationManager":
-                    fieldDeclaration += "\r\nprivate LocationListener _" + typeInstanceName + "_location_listener;";
-                    break;
-
-                case "MapView":
-                    fieldDeclaration += "\r\nprivate GoogleMapController _" + typeInstanceName + "_controller;";
-                    break;
-
-                case "Videos":
-                    fieldDeclaration += "\r\nprivate File file_" + typeInstanceName + ";";
-                    break;
-
-                case "FirebaseCloudMessage":
-                    fieldDeclaration += "\r\nprivate OnCompleteListener " + typeInstanceName + "_onCompleteListener;";
-                    break;
-
-                case "com.facebook.ads.InterstitialAd":
-                    fieldDeclaration += "\r\nprivate InterstitialAdListener " + typeInstanceName + "_InterstitialAdListener;";
-                    break;
-
-                case "PhoneAuthProvider.OnVerificationStateChangedCallbacks":
-                    fieldDeclaration += "private PhoneAuthProvider.ForceResendingToken " + typeInstanceName + "_resendToken;";
-                    break;
-
-                case "DynamicLink":
-                    fieldDeclaration += "\r\nprivate OnSuccessListener " + typeInstanceName + "_onSuccessLink;"
-                            + "\r\nprivate OnFailureListener " + typeInstanceName + "_onFailureLink;";
-                    break;
-
-                case "com.facebook.ads.AdView":
-                    fieldDeclaration += "\r\nprivate AdListener " + typeInstanceName + "_AdListener;";
-                    break;
-
-                case "TimePickerDialog":
-                    fieldDeclaration += "\r\nprivate TimePickerDialog.OnTimeSetListener " + typeInstanceName + "_listener;";
-                    break;
-
-                default:
-                    fieldDeclaration = ComponentsHandler.extraVar(typeName, fieldDeclaration, typeInstanceName);
-                    break;
-            }
-        }
-
-        return fieldDeclaration.trim();
     }
 
     /**
@@ -928,7 +776,7 @@ public class Lx {
                 return "new Intent(MediaStore.ACTION_IMAGE_CAPTURE)";
 
             case "FilePicker":
-                return "new Intent(Intent.ACTION_GET_CONTENT)";
+                return "";
 
             default:
                 return "";
@@ -1178,14 +1026,7 @@ public class Lx {
                 return componentName + " = FirebaseAuth.getInstance();";
 
             case "FilePicker":
-                String mimeType;
-                if (parameters[0] != null && !parameters[0].isEmpty()) {
-                    mimeType = parameters[0].replace(";", "");
-                } else {
-                    mimeType = "*/*";
-                }
-                return componentName + ".setType(\"" + mimeType + "\");\r\n" +
-                        componentName + ".putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);";
+                return "";
 
             case "Camera":
                 return "_file_" + componentName + " = FileUtil.createNewPictureFile(getApplicationContext());\r\n" +
@@ -1819,6 +1660,12 @@ public class Lx {
                         + eventLogic + "\r\n" +
                         "};\r\n"
                         + componentName + ".addChildEventListener(" + childEventListenerName + ");";
+            }
+            case "filePickerListener" -> {
+                String listenerName = "_" + componentName + "_onFilesPicked";
+                yield listenerName + " = new _FilePicker_files_picked_listener() {\r\n"
+                        + eventLogic + "\r\n"
+                        + "};";
             }
             default -> ManageEvent.g(eventName, componentName, eventLogic);
         };

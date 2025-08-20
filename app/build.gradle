@@ -149,7 +149,7 @@ dependencies {
 
     implementation "com.github.Cosmic-Ide:DependencyResolver:05ec26af0b"
     
-    implementation "com.github.PranavPurwar:filepicker:74526bea66"
+    implementation "com.github.PranavPurwar:filepicker:e6ed776a13"
 
     
     implementation 'com.guardsquare:proguard-core:9.0.2'

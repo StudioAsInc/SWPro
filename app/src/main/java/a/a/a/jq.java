@@ -184,6 +184,12 @@ public class jq {
     public boolean isSpeechToTextUsed = false;
 
     /**
+     * If at least 1 FilePicker Component ({@link com.besome.sketch.beans.ComponentBean#COMPONENT_TYPE_FILE_PICKER})
+     * is used in the project.
+     */
+    public boolean isFilePickerUsed = false;
+
+    /**
      * Permissions of the whole project, stored as bitfield.
      */
     public int q = 0;
