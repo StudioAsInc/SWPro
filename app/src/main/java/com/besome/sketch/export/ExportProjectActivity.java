@@ -853,7 +853,7 @@ public class ExportProjectActivity extends BaseAppCompatActivity {
                     return;
                 }
 
-                FragmentUtils.prepareFallbackFragmentFile(project_metadata.sc_id);
+                //FragmentUtils.prepareFallbackFragmentFile(project_metadata.sc_id);
 
                 /* Check AAPT/AAPT2 */
                 onProgress("Extracting AAPT/AAPT2 binaries...", 3);

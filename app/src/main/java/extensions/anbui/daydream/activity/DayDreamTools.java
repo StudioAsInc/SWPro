@@ -1,5 +1,6 @@
 package extensions.anbui.daydream.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.util.Objects;
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.dialog.DialogUtils;
 import extensions.anbui.daydream.file.FileUtils;
+import extensions.anbui.daydream.git.DayDreamGitCloneActivity;
 import extensions.anbui.daydream.tool.ToolCore;
 import pro.sketchware.R;
 import pro.sketchware.databinding.ActivityDaydreamToolsBinding;
@@ -40,6 +42,10 @@ public class DayDreamTools extends AppCompatActivity {
         binding.lnCleanuptemporaryfiles.setOnClickListener(v -> cleanUpTemporaryFiles());
         binding.lnCleanuplocallibrary.setOnClickListener(v -> cleanUpLocalLib());
         binding.lnCleanouttherecyclingbin.setOnClickListener(v -> cleanOutTheRecyclingBin());
+        binding.lnGitclone.setOnClickListener(v -> {
+            Intent intent = new Intent(this, DayDreamGitCloneActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void cleanUpLocalLib() {

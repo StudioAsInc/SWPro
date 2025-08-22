@@ -95,6 +95,8 @@ import a.a.a.zy;
 import dev.chrisbanes.insetter.Insetter;
 import extensions.anbui.daydream.activity.DayDreamGeneralSettings;
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.git.DayDreamGitActionsActivity;
+import extensions.anbui.daydream.git.DayDreamGitTools;
 import mod.agus.jcoderz.editor.manage.permission.ManagePermissionActivity;
 import mod.agus.jcoderz.editor.manage.resource.ManageResourceActivity;
 import mod.hey.studios.activity.managers.assets.ManageAssetsActivity;
@@ -667,6 +669,15 @@ public class DesignActivity extends BaseAppCompatActivity implements View.OnClic
         if (freeMegabytes < 100L && freeMegabytes > 0L) {
             warnAboutInsufficientStorageSpace();
         }
+
+        DayDreamGitTools.checkDiff(this, sc_id, () -> {
+            saveProject();
+            Intent intent = new Intent(getApplicationContext(), DayDreamGitActionsActivity.class);
+            intent.putExtra("sc_id", sc_id);
+            intent.putExtra("action", "pullapply");
+            startActivity(intent);
+            finish();
+        });
     }
 
     @Override

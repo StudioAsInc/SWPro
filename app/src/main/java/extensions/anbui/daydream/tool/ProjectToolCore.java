@@ -29,12 +29,12 @@ public class ProjectToolCore {
         if (FileUtils.isFileExist(FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + newID + "/logic")) return false;
 
         try {
-            FileUtils.copyDirectory(new File(FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + projectID + "/"), new File(FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + newID + "/"));
+            FileUtils.copyDirectory(FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + projectID + "/", FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + newID + "/");
             FileUtils.copyFile(FileUtils.getInternalStorageDir() + Configs.projectInfoFolderDir + projectID + "/project", FileUtils.getInternalStorageDir() + Configs.projectInfoFolderDir + newID + "/");
-            FileUtils.copyDirectory(new File(FileUtils.getInternalStorageDir() + Configs.resFontsFolderDir + projectID + "/"), new File(FileUtils.getInternalStorageDir() + Configs.resFontsFolderDir + newID + "/"));
-            FileUtils.copyDirectory(new File(FileUtils.getInternalStorageDir() + Configs.resIconsFolderDir + projectID + "/"), new File(FileUtils.getInternalStorageDir() + Configs.resIconsFolderDir + newID + "/"));
-            FileUtils.copyDirectory(new File(FileUtils.getInternalStorageDir() + Configs.resImagesFolderDir + projectID + "/"), new File(FileUtils.getInternalStorageDir() + Configs.resImagesFolderDir + newID + "/"));
-            FileUtils.copyDirectory(new File(FileUtils.getInternalStorageDir() + Configs.resSoundsFolderDir + projectID + "/"), new File(FileUtils.getInternalStorageDir() + Configs.resSoundsFolderDir + newID + "/"));
+            FileUtils.copyDirectory(FileUtils.getInternalStorageDir() + Configs.resFontsFolderDir + projectID + "/", FileUtils.getInternalStorageDir() + Configs.resFontsFolderDir + newID + "/");
+            FileUtils.copyDirectory(FileUtils.getInternalStorageDir() + Configs.resIconsFolderDir + projectID + "/", FileUtils.getInternalStorageDir() + Configs.resIconsFolderDir + newID + "/");
+            FileUtils.copyDirectory(FileUtils.getInternalStorageDir() + Configs.resImagesFolderDir + projectID + "/", FileUtils.getInternalStorageDir() + Configs.resImagesFolderDir + newID + "/");
+            FileUtils.copyDirectory(FileUtils.getInternalStorageDir() + Configs.resSoundsFolderDir + projectID + "/", FileUtils.getInternalStorageDir() + Configs.resSoundsFolderDir + newID + "/");
             ToolCore.fixID(newID);
             Log.i(TAG, "Cloned: " + FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + newID + "/");
             return true;

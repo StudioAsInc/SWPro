@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.file.FileUtils;
@@ -28,7 +29,11 @@ public class ToolCore {
 
     public static void cleanOutTheRecyclingBin() {
         Log.i(TAG, "cleanOutTheRecyclingBin");
-        FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir));
+        try {
+            FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.recycleBinDayDreamFolderDir));
+        } catch (Exception e) {
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+        }
     }
 
     public static int cleanUpTemporaryFiles() {
@@ -42,7 +47,11 @@ public class ToolCore {
         for (String filePath : filelist) {
             if (FileUtils.isFileExist(filePath)) {
                 if (!filePath.contains("list")) {
-                    FileUtils.deleteRecursive(new File(filePath));
+                    try {
+                        FileUtils.deleteRecursive(new File(filePath));
+                    } catch (Exception e) {
+                        Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+                    }
                     cleaned++;
                 }
             }

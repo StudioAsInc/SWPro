@@ -100,18 +100,27 @@ public class FileUtils {
         }
     }
 
-    public static void copyDirectory(File sourceDir, File destDir) throws IOException {
-        if (!destDir.exists()) {
-            if(!destDir.mkdirs()) return;
-        }
+    public static void copyDirectory(String sourceDir, String destDir) throws IOException {
 
-        for (File file : sourceDir.listFiles()) {
-            File destFile = new File(destDir, file.getName());
-            if (file.isDirectory()) {
-                Log.i(TAG, "copyDirectory: " + file.getPath());
-                copyDirectory(file, destFile);
-            } else {
-                copyFile(file.getPath(), destFile.getPath());
+        File source = new File(sourceDir);
+        File dest = new File(destDir);
+
+
+//        if (source.isFile()) {
+//            copyFile(sourceDir, destDir);
+//            return;
+//        }
+
+        File[] files = source.listFiles();
+        File newFile = new File(destDir);
+        if (!newFile.exists()) {
+            newFile.mkdirs();
+        }
+        for (File file : files) {
+            if (file.isFile()) {
+                copyFile(file.getPath(), destDir);
+            } else if (file.isDirectory()) {
+                copyDirectory(file.getAbsolutePath(), dest.getAbsoluteFile() + "/" + file.getName());
             }
         }
     }
@@ -123,11 +132,27 @@ public class FileUtils {
             return;
         }
 
+        if (!sourceFile.isFile()) {
+            try {
+                copyDirectory(source, dest);
+            } catch (Exception e) {
+                Log.e(TAG, "copyFile: " + e.getMessage());
+            }
+            return;
+        }
+
         try {
             File destFile = new File(dest);
 
             if (destFile.exists() && destFile.isDirectory() || dest.endsWith("/")) {
                 destFile = new File(destFile, sourceFile.getName());
+            } else {
+                if (!destFile.exists()) {
+                    if(!destFile.mkdirs()) {
+                        Log.i(TAG, "copyFile: Create failed directory " + destFile.getAbsolutePath());
+                        return;
+                    }
+                }
             }
 
             File parentDir = destFile.getParentFile();
@@ -165,7 +190,7 @@ public class FileUtils {
 
         try {
             if (filefrom.isDirectory()) {
-                copyDirectory(filefrom, finalTarget);
+                copyDirectory(filefrom.getAbsolutePath(), finalTarget.getAbsolutePath());
                 deleteRecursive(filefrom);
             } else {
                 copyFile(filefrom.getAbsolutePath(), finalTarget.getAbsolutePath());
@@ -188,15 +213,27 @@ public class FileUtils {
         }
     }
 
-    public static boolean deleteRecursive(File fileOrDir) {
+    public static boolean deleteRecursive(File fileOrDir) throws InterruptedException {
         if (fileOrDir.isDirectory()) {
-            for (File child : Objects.requireNonNull(fileOrDir.listFiles())) {
-                deleteRecursive(child);
+            File[] children = fileOrDir.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursive(child);
+                }
             }
         }
-        Log.i(TAG, "deleteRecursive: " + fileOrDir.getAbsolutePath());
-        return fileOrDir.delete();
+
+        boolean deleted = fileOrDir.delete();
+        int retries = 5;
+        while (!deleted && retries-- > 0) {
+            Thread.sleep(50);
+            deleted = fileOrDir.delete();
+        }
+
+        Log.i(TAG, "deleteRecursive: " + fileOrDir.getAbsolutePath() + " deleted=" + deleted);
+        return deleted;
     }
+
 
     public static void getFileListInDirectory(String path, ArrayList<String> list) {
         File dir = new File(path);

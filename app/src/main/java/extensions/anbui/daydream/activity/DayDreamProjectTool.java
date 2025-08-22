@@ -16,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Objects;
 
 import extensions.anbui.daydream.dialog.DialogUtils;
+import extensions.anbui.daydream.git.DayDreamGitActionsActivity;
 import extensions.anbui.daydream.tool.ProjectToolCore;
 import pro.sketchware.R;
 import pro.sketchware.activities.main.activities.MainActivity;
@@ -48,6 +49,11 @@ public class DayDreamProjectTool extends AppCompatActivity {
         binding.lnBackup.setOnClickListener(v -> backup());
         binding.lnClone.setOnClickListener(v -> cloneProject());
         binding.lnCleanuptemporaryfiles.setOnClickListener(v -> cleanUpTemporaryFiles());
+        binding.lnGit.setOnClickListener(v -> {
+            Intent intent = new Intent(this, DayDreamGitActionsActivity.class);
+            intent.putExtra("sc_id", projectID);
+            startActivity(intent);
+        });
     }
 
     private void backup() {

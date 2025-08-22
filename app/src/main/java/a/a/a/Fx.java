@@ -41,7 +41,9 @@ public class Fx {
 
     public Fx(String activityName, jq buildConfig, ArrayList<BlockBean> eventBlocks, boolean isViewBindingEnabled) {
         this.activityName = activityName;
-        isActivity = activityName.endsWith("Activity");
+
+        isActivity = !(activityName.endsWith("DialogFragmentActivity") || activityName.endsWith("BottomDialogFragmentActivity") || activityName.endsWith("FragmentActivity"));
+
         this.buildConfig = buildConfig;
         this.eventBlocks = eventBlocks;
         this.isViewBindingEnabled = isViewBindingEnabled;

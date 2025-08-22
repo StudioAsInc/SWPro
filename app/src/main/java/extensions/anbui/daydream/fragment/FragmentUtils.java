@@ -2,13 +2,19 @@ package extensions.anbui.daydream.fragment;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.Contract;
+
 import extensions.anbui.daydream.java.JavaFileUtils;
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.project.GetProjectInfo;
 
 public class FragmentUtils {
 
-    public static String returnFragmentgetItem(String input) {
+    @NonNull
+    @Deprecated
+    public static String returnFragmentgetItem(@NonNull String input) {
 
         //Get the last line of the code.
         String[] lines = input.split("\n");
@@ -46,6 +52,8 @@ public class FragmentUtils {
     }
 
     //Prepare content for FallbackFragment.java.
+    @NonNull
+    @Contract(pure = true)
     public static String fallbackFragmentCode (String packagename) {
         return "package " + packagename + ".lab;\n" +
                 "\n" +

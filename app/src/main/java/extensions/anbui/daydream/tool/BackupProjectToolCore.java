@@ -6,12 +6,14 @@ import android.util.Log;
 import android.widget.TextView;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.file.FileUtils;
+import extensions.anbui.daydream.file.FilesTools;
 import extensions.anbui.daydream.project.GetProjectInfo;
 import extensions.anbui.daydream.project.ProjectDataDecryptor;
 import extensions.anbui.daydream.project.ProjectDataLibrary;
@@ -28,7 +30,11 @@ public class BackupProjectToolCore {
     public static boolean backup(String projectID, TextView statusTextView, String backupFileName, boolean locallibs, boolean customblocks, boolean includeApis) {
         Log.i(TAG, "backup: " + projectID);
         boolean result = true;
-        FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir));
+        try {
+            FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir));
+        } catch (Exception e) {
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+        }
         copyProjectData(projectID, statusTextView, customblocks);
         copyFonts(projectID, statusTextView);
         copyIcons(projectID, statusTextView);
@@ -79,12 +85,19 @@ public class BackupProjectToolCore {
             Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }
         updateStatus(statusTextView, "Cleaning up...");
+        try {
         FileUtils.deleteRecursive(new File(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir));
+        } catch (Exception e) {
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+        }
         return result;
     }
 
     public static void copyProjectData(String projectID, TextView statusTextView, boolean customblocks) {
         Log.i(TAG, "copyProjectData: " + projectID);
+
+        FileUtils.createDirectory(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "data/");
+
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + projectID,
@@ -92,20 +105,33 @@ public class BackupProjectToolCore {
         );
 
         for (String filePath : filelist) {
-            if (Objects.requireNonNull(Uri.parse(filePath).getLastPathSegment()).equals("custom_blocks")) {
+            if (Objects.requireNonNull(Uri.parse(filePath).getLastPathSegment()).equals("DataDayDreamGit.json")) {
+                Log.i(TAG, "copyProjectData Skiped: " + Uri.parse(filePath).getLastPathSegment());
+            } else if (Objects.requireNonNull(Uri.parse(filePath).getLastPathSegment()).equals("custom_blocks")) {
                 if (customblocks) {
                     updateStatus(statusTextView, "Copying project data: " + Uri.parse(filePath).getLastPathSegment());
-                    FileUtils.copyFile(filePath, FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "data/");
+                    try {
+                        FilesTools.startCopy(filePath, FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "data/");
+                    } catch (Exception e) {
+                        Log.e("copyProjectData", Objects.requireNonNull(e.getMessage()));
+                    }
                 }
             } else {
                 updateStatus(statusTextView, "Copying project data: " + Uri.parse(filePath).getLastPathSegment());
-                FileUtils.copyFile(filePath, FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "data/");
+                try {
+                    FilesTools.startCopy(filePath, FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "data/");
+                } catch (Exception e) {
+                    Log.e("copyProjectData", Objects.requireNonNull(e.getMessage()));
+                }
             }
         }
     }
 
     public static void copyFonts(String projectID, TextView statusTextView) {
         Log.i(TAG, "copyFonts: " + projectID);
+
+        FileUtils.createDirectory(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "resources/fonts/");
+
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.resFontsFolderDir + projectID,
@@ -121,6 +147,9 @@ public class BackupProjectToolCore {
     public static void copyIcons(String projectID, TextView statusTextView) {
         Log.i(TAG, "copyIcons: " + projectID);
         ArrayList<String> filelist = new ArrayList<>();
+
+        FileUtils.createDirectory(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "resources/icons/");
+
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.resIconsFolderDir + projectID,
                 filelist
@@ -134,6 +163,9 @@ public class BackupProjectToolCore {
 
     public static void copyImages(String projectID, TextView statusTextView) {
         Log.i(TAG, "copyImages: " + projectID);
+
+        FileUtils.createDirectory(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "resources/images/");
+
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.resImagesFolderDir + projectID,
@@ -148,6 +180,9 @@ public class BackupProjectToolCore {
 
     public static void copySounds(String projectID, TextView statusTextView) {
         Log.i(TAG, "copySounds: " + projectID);
+
+        FileUtils.createDirectory(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "resources/sounds/");
+
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
                 FileUtils.getInternalStorageDir() + Configs.resSoundsFolderDir + projectID,
@@ -162,6 +197,9 @@ public class BackupProjectToolCore {
 
     public static void copyUsingLocalLibraries(String projectID, TextView statusTextView) {
         Log.i(TAG, "copyUsingLocalLibraries: " + projectID);
+
+        FileUtils.createDirectory(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "local_libs/");
+
         String usingLocalLib = FileUtils.readTextFile(FileUtils.getInternalStorageDir() + Configs.projectDataFolderDir + projectID + "/local_library");
         ArrayList<String> filelist = new ArrayList<>();
         FileUtils.getFileListInDirectory(
@@ -174,7 +212,7 @@ public class BackupProjectToolCore {
                 if (usingLocalLib.contains(filePath)) {
                     updateStatus(statusTextView, "Copying libraries: " + Uri.parse(filePath).getLastPathSegment());
                     try {
-                        FileUtils.copyDirectory(new File(filePath), new File(FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "local_libs/" + Uri.parse(filePath).getLastPathSegment()));
+                        FileUtils.copyDirectory(filePath, FileUtils.getInternalStorageDir() + Configs.tempBackupDayDreamFolderDir + "local_libs/" + Uri.parse(filePath).getLastPathSegment());
                     } catch (Exception e) {
                         Log.e("copyUsingLocalLibToBackupProject", Objects.requireNonNull(e.getMessage()));
                     }

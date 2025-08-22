@@ -123,6 +123,26 @@ public class ProjectDataDayDream {
         setDataBoolean(projectID, activityName, "importShizuku", isEnable);
     }
 
+    public static String getGitHubToken(String projectID) {
+        Log.i(TAG, "getGitHubToken: " + projectID);
+        return getDataString(projectID, "git", "token");
+    }
+
+    public static void setGitHubToken(String projectID, String token) {
+        Log.i(TAG, "setGitHubToken: " + projectID);
+        setDataString(projectID, "git", "token", token);
+    }
+
+    public static String getRemoteUrl(String projectID) {
+        Log.i(TAG, "getRemoteUrl: " + projectID);
+        return getDataString(projectID, "git", "remoteUrl");
+    }
+
+    public static void setRemoteUrl(String projectID, String remoteUrl) {
+        Log.i(TAG, "setRemoteUrl: " + projectID);
+        setDataString(projectID, "git", "remoteUrl", remoteUrl);
+    }
+
     //Universal settings
 
     public static boolean isEnableDayDream(String projectID) {
