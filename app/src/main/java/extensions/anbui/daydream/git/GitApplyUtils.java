@@ -28,6 +28,7 @@ public class GitApplyUtils {
         copyIcons(projectID, statusTextView);
         copyImages(projectID, statusTextView);
         copySounds(projectID, statusTextView);
+        copyLibrary(projectID, statusTextView);
         copyProjectInfo(projectID, statusTextView);
         ToolCore.fixID(projectID);
         return true;
@@ -147,6 +148,7 @@ public class GitApplyUtils {
 
     public static void copyLibrary(String projectID, TextView statusTextView) {
         Log.i(TAG, "copyLibrary: " + projectID);
+        updateStatus(statusTextView, "Copying project info: library");
 
         FileUtils.createDirectory(FileUtils.getInternalStorageDir() + Configs.projectLocalLibFolderDir);
 

@@ -29,7 +29,9 @@ public class GitFeaturesCore {
     public static final String TAG = "GitFeatureCore";
     public static String universalErrorContent = "";
 
-    public static boolean cloneRepo(String localPath, String remoteUrl, String token, String branch) {
+    public static boolean cloneRepo(String localPath, String remoteUrl, String token, String branchName) {
+        String branch = (branchName.isEmpty() ? "main" : branchName);
+
         try {
             CloneCommand cloneCommand = Git.cloneRepository()
                     .setURI(remoteUrl)
@@ -119,6 +121,8 @@ public class GitFeaturesCore {
     }
 
     public static boolean switchBranch(String projectPath, String remoteUrl, String token, String branchName) {
+        String branch = (branchName.isEmpty() ? "main" : branchName);
+
         try (Git git = Git.open(new File(projectPath))) {
             git.fetch()
                     .setRemote("origin")
@@ -127,11 +131,11 @@ public class GitFeaturesCore {
 
             git.checkout()
                     .setCreateBranch(true)
-                    .setName(branchName)
-                    .setStartPoint("origin/" + branchName)
+                    .setName(branch)
+                    .setStartPoint("origin/" + branch)
                     .call();
 
-            Log.d(TAG, "Switched to branch: " + branchName);
+            Log.d(TAG, "Switched to branch: " + branch);
             return true;
 
         } catch (Exception e) {
@@ -140,11 +144,11 @@ public class GitFeaturesCore {
                 FilesTools.deleteFileOrDirectory(Path.of(projectPath));
                 Git.cloneRepository()
                         .setURI(remoteUrl)
-                        .setBranch(branchName)
+                        .setBranch(branch)
                         .setDirectory(new File(projectPath))
                         .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token, ""))
                         .call();
-                Log.d(TAG, "Re-cloned branch: " + branchName);
+                Log.d(TAG, "Re-cloned branch: " + branch);
                 return true;
             } catch (Exception ex) {
                 Log.e(TAG, "Re-clone failed: " + ex.getMessage());
@@ -181,7 +185,9 @@ public class GitFeaturesCore {
         }
     }
 
-    public static boolean hasChangesWithRemote(String projectPath, String remote, String token, String branch) {
+    public static boolean hasChangesWithRemote(String projectPath, String remote, String token, String branchName) {
+        String branch = (branchName.isEmpty() ? "main" : branchName);
+
         try {
             Git git = Git.open(new File(projectPath));
             Repository repository = git.getRepository();
