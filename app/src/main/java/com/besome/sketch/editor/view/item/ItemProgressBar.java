@@ -10,10 +10,10 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 
 import com.besome.sketch.beans.ViewBean;
-import pro.sketchware.R;
 
 import a.a.a.sy;
 import a.a.a.wB;
+import pro.sketchware.R;
 
 public class ItemProgressBar extends LinearLayout implements sy {
 
@@ -46,18 +46,37 @@ public class ItemProgressBar extends LinearLayout implements sy {
         setGravity(Gravity.CENTER);
     }
 
+    @Override
     public ViewBean getBean() {
         return viewBean;
     }
 
+    @Override
+    public void setBean(ViewBean viewBean) {
+        this.viewBean = viewBean;
+    }
+
+    @Override
     public boolean getFixed() {
         return isFixed;
+    }
+
+    @Override
+    public void setFixed(boolean isFixed) {
+        this.isFixed = isFixed;
     }
 
     public boolean getSelection() {
         return isSelected;
     }
 
+    @Override
+    public void setSelection(boolean selection) {
+        isSelected = selection;
+        invalidate();
+    }
+
+    @Override
     public void onDraw(Canvas var1) {
         if (isSelected) {
             var1.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), paint);
@@ -65,14 +84,7 @@ public class ItemProgressBar extends LinearLayout implements sy {
         super.onDraw(var1);
     }
 
-    public void setBean(ViewBean viewBean) {
-        this.viewBean = viewBean;
-    }
-
-    public void setFixed(boolean isFixed) {
-        this.isFixed = isFixed;
-    }
-
+    @Override
     public void setPadding(int left, int top, int right, int bottom) {
         super.setPadding((int) (left * paddingFactor),
                 (int) (top * paddingFactor),
@@ -90,10 +102,5 @@ public class ItemProgressBar extends LinearLayout implements sy {
             imageView.getLayoutParams().width = (int) (paddingFactor * 320F);
             imageView.getLayoutParams().height = (int) (paddingFactor * 30F);
         }
-    }
-
-    public void setSelection(boolean selection) {
-        isSelected = selection;
-        invalidate();
     }
 }

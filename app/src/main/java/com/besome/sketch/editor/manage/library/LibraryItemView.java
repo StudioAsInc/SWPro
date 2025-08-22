@@ -7,22 +7,22 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
-
 import com.besome.sketch.beans.ProjectLibraryBean;
+import com.google.android.material.divider.MaterialDivider;
 
 import a.a.a.wB;
 import a.a.a.xB;
 import pro.sketchware.R;
+import pro.sketchware.utility.ThemeUtils;
 
 public class LibraryItemView extends FrameLayout {
-    protected final Context context;
-
-    public final CardView container;
+    public final ViewGroup container;
     public final ImageView icon;
     public final TextView title;
     public final TextView description;
     public final TextView enabled;
+    public final MaterialDivider divider;
+    protected final Context context;
 
     public LibraryItemView(Context context) {
         super(context);
@@ -34,8 +34,12 @@ public class LibraryItemView extends FrameLayout {
         title = findViewById(R.id.lib_title);
         description = findViewById(R.id.lib_desc);
         enabled = findViewById(R.id.tv_enable);
+        divider = findViewById(R.id.divider);
 
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        int dividerColor = ThemeUtils.isDarkThemeEnabled(context) ? R.attr.colorSurfaceContainerHighest : R.attr.colorOutlineVariant;
+        divider.setDividerColor(ThemeUtils.getColor(context, dividerColor));
     }
 
     public void setData(ProjectLibraryBean projectLibraryBean) {
@@ -53,18 +57,22 @@ public class LibraryItemView extends FrameLayout {
         enabled.setVisibility(View.GONE);
     }
 
+    public void showDivider(boolean showDivider) {
+        divider.setVisibility(showDivider ? View.VISIBLE : View.GONE);
+    }
+
     @Override
     public void setOnClickListener(View.OnClickListener listener) {
         container.setOnClickListener(listener);
     }
 
     @Override
-    public void setTag(Object tag) {
-        container.setTag(tag);
+    public Object getTag() {
+        return container.getTag();
     }
 
     @Override
-    public Object getTag() {
-        return container.getTag();
+    public void setTag(Object tag) {
+        container.setTag(tag);
     }
 }

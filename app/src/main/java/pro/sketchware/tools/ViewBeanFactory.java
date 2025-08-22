@@ -6,14 +6,13 @@ import com.besome.sketch.beans.LayoutBean;
 import com.besome.sketch.beans.TextBean;
 import com.besome.sketch.beans.ViewBean;
 
-import mod.agus.jcoderz.beans.ViewBeans;
-
-import pro.sketchware.utility.AttributeConstants;
-import pro.sketchware.utility.PropertiesUtil;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import mod.agus.jcoderz.beans.ViewBeans;
+import pro.sketchware.utility.AttributeConstants;
+import pro.sketchware.utility.PropertiesUtil;
 
 public class ViewBeanFactory {
 
@@ -21,6 +20,19 @@ public class ViewBeanFactory {
 
     public ViewBeanFactory(ViewBean bean) {
         this.bean = bean;
+    }
+
+    public static int getConsideredTypeViewByName(String name, int def) {
+        return switch (name) {
+            //Add more here
+            case "MaterialSwitch" -> ViewBean.VIEW_TYPE_WIDGET_SWITCH;
+            case "MaterialCardView", "CardView" -> ViewBeans.VIEW_TYPE_LAYOUT_CARDVIEW;
+            case "TextInputEditText" -> ViewBean.VIEW_TYPE_WIDGET_EDITTEXT;
+            //idk should I use ImageView(ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW) or Button(ViewBean.VIEW_TYPE_WIDGET_BUTTON)?
+            case "ImageButton" -> ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW;
+            case "NestedScrollView" -> ViewBean.VIEW_TYPE_LAYOUT_VSCROLLVIEW;
+            default -> def;
+        };
     }
 
     public void applyAttributes(Map<String, String> attributes) {
@@ -244,8 +256,8 @@ public class ViewBeanFactory {
 
         switch (bean.type) {
             case ViewBean.VIEW_TYPE_WIDGET_CHECKBOX,
-                    ViewBean.VIEW_TYPE_WIDGET_SWITCH,
-                    ViewBeans.VIEW_TYPE_WIDGET_RADIOBUTTON -> {
+                 ViewBean.VIEW_TYPE_WIDGET_SWITCH,
+                 ViewBeans.VIEW_TYPE_WIDGET_RADIOBUTTON -> {
                 var checked = attributes.getOrDefault("android:checked", null);
                 if (checked != null) {
                     if (!checked.startsWith("@bool/")) {
@@ -511,16 +523,16 @@ public class ViewBeanFactory {
         if (textColor != null) {
             if (PropertiesUtil.isHexColor(textColor)) {
                 bean.textColor = PropertiesUtil.parseColor(textColor);
-            } else if (textColor.startsWith("@color/")) {
-                bean.resTextColor = parseReferName(textColor, "/");
+            } else if (textColor.startsWith("@color/") || textColor.startsWith("?")) {
+                bean.resTextColor = textColor;
             } else {
                 injectAttributes.put("android:textColor", textColor);
             }
         }
         switch (this.bean.type) {
             case ViewBean.VIEW_TYPE_WIDGET_EDITTEXT,
-                    ViewBeans.VIEW_TYPE_WIDGET_AUTOCOMPLETETEXTVIEW,
-                    ViewBeans.VIEW_TYPE_WIDGET_MULTIAUTOCOMPLETETEXTVIEW -> {
+                 ViewBeans.VIEW_TYPE_WIDGET_AUTOCOMPLETETEXTVIEW,
+                 ViewBeans.VIEW_TYPE_WIDGET_MULTIAUTOCOMPLETETEXTVIEW -> {
                 var hint = attributes.getOrDefault("android:hint", null);
                 if (hint != null) {
                     bean.hint = hint;
@@ -530,8 +542,8 @@ public class ViewBeanFactory {
                 if (hintColor != null) {
                     if (PropertiesUtil.isHexColor(hintColor)) {
                         bean.hintColor = PropertiesUtil.parseColor(hintColor);
-                    } else if (hintColor.startsWith("@color/")) {
-                        bean.resHintColor = parseReferName(hintColor, "/");
+                    } else if (hintColor.startsWith("@color/") || hintColor.startsWith("?")) {
+                        bean.resHintColor = hintColor;
                     } else {
                         injectAttributes.put("android:textColorHint", hintColor);
                     }
@@ -666,8 +678,9 @@ public class ViewBeanFactory {
         if (background != null) {
             if (PropertiesUtil.isHexColor(background)) {
                 bean.backgroundColor = PropertiesUtil.parseColor(background);
-            } else if (background.startsWith("@color/")) {
-                bean.backgroundResColor = parseReferName(background, "/");
+            } else if (background.startsWith("@color/") || background.startsWith("?")) {
+                bean.backgroundResColor = background;
+                bean.backgroundColor = 0xFFFFFFFF;
             } else if (background.startsWith("@drawable/")) {
                 bean.backgroundResource = parseReferName(background, "/");
             } else if (background.equals("@android:color/transparent")) {
@@ -759,18 +772,5 @@ public class ViewBeanFactory {
             }
         }
         return null;
-    }
-
-    public static int getConsideredTypeViewByName(String name, int def) {
-        return switch (name) {
-            //Add more here
-            case "MaterialSwitch" -> ViewBean.VIEW_TYPE_WIDGET_SWITCH;
-            case "MaterialCardView", "CardView" -> ViewBeans.VIEW_TYPE_LAYOUT_CARDVIEW;
-            case "TextInputEditText" -> ViewBean.VIEW_TYPE_WIDGET_EDITTEXT;
-            //idk should I use ImageView(ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW) or Button(ViewBean.VIEW_TYPE_WIDGET_BUTTON)?
-            case "ImageButton" -> ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW;
-            case "NestedScrollView" -> ViewBean.VIEW_TYPE_LAYOUT_VSCROLLVIEW;
-            default -> def;
-        };
     }
 }

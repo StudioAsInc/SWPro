@@ -1,10 +1,6 @@
 package pro.sketchware.menu;
 
 import static android.text.TextUtils.isEmpty;
-
-import static mod.bobur.StringEditorActivity.convertXmlToListMap;
-import static mod.bobur.StringEditorActivity.isXmlStringsContains;
-
 import static pro.sketchware.utility.SketchwareUtil.getDip;
 
 import android.annotation.SuppressLint;
@@ -17,35 +13,13 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import a.a.a.Ss;
-import a.a.a.aB;
-import a.a.a.eC;
-import a.a.a.jC;
-import a.a.a.uq;
-import a.a.a.wB;
-
 import com.besome.sketch.beans.AdTestDeviceBean;
 import com.besome.sketch.beans.AdUnitBean;
 import com.besome.sketch.beans.ComponentBean;
 import com.besome.sketch.beans.ProjectFileBean;
 import com.besome.sketch.editor.LogicEditorActivity;
-import com.github.angads25.filepicker.model.DialogConfigs;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
-
-import mod.hey.studios.util.Helper;
-import mod.hilal.saif.activities.tools.ConfigActivity;
-import mod.hilal.saif.asd.AsdDialog;
-import mod.hilal.saif.asd.old.AsdOldDialog;
-
-import pro.sketchware.R;
-import pro.sketchware.lib.base.BaseTextWatcher;
-import pro.sketchware.lib.highlighter.SimpleHighlighter;
-import pro.sketchware.utility.CustomVariableUtil;
-import pro.sketchware.utility.FilePathUtil;
-import pro.sketchware.utility.FileResConfig;
-import pro.sketchware.utility.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,6 +27,27 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import a.a.a.Ss;
+import a.a.a.eC;
+import a.a.a.jC;
+import a.a.a.uq;
+import a.a.a.wB;
+import dev.pranav.filepicker.FilePickerCallback;
+import dev.pranav.filepicker.FilePickerDialogFragment;
+import dev.pranav.filepicker.FilePickerOptions;
+import dev.pranav.filepicker.SelectionMode;
+import mod.hey.studios.util.Helper;
+import mod.hilal.saif.activities.tools.ConfigActivity;
+import mod.hilal.saif.asd.AsdDialog;
+import pro.sketchware.R;
+import pro.sketchware.activities.resourceseditor.components.utils.StringsEditorManager;
+import pro.sketchware.lib.base.BaseTextWatcher;
+import pro.sketchware.lib.highlighter.SimpleHighlighter;
+import pro.sketchware.utility.CustomVariableUtil;
+import pro.sketchware.utility.FilePathUtil;
+import pro.sketchware.utility.FileResConfig;
+import pro.sketchware.utility.FileUtil;
 
 public class ExtraMenuBean {
 
@@ -75,17 +70,15 @@ public class ExtraMenuBean {
     private final String NATIVE_PATH = FileUtil.getExternalStorageDir() + "/.sketchware/data/%s/files/native_libs/";
     private final DefaultExtraMenuBean defaultExtraMenu;
     private final FilePathUtil fpu;
-    private final FilePickerDialog fpd;
+    private FilePickerDialogFragment fpd;
     private final FileResConfig frc;
     private final LogicEditorActivity logicEditor;
-    private final DialogProperties mProperty = new DialogProperties();
+    private final FilePickerOptions mOptions = new FilePickerOptions();
     private final eC projectDataManager;
     private final String sc_id;
     private final String javaName;
-    private String splitter;
 
     public ExtraMenuBean(LogicEditorActivity logicA) {
-        fpd = new FilePickerDialog(logicA);
         logicEditor = logicA;
         sc_id = logicA.B;
         fpu = new FilePathUtil();
@@ -123,11 +116,10 @@ public class ExtraMenuBean {
 
     private void codeMenu(Ss menu) {
         AsdDialog asdDialog = new AsdDialog(logicEditor);
-        asdDialog.setCon(menu.getArgValue().toString());
+        asdDialog.setContent(menu.getArgValue().toString());
         asdDialog.show();
-        /* p2 as true is for number */
-        asdDialog.saveLis(logicEditor, false, menu, asdDialog);
-        asdDialog.cancelLis(asdDialog);
+        asdDialog.setOnSaveClickListener(logicEditor, false, menu, asdDialog);
+        asdDialog.setOnCancelClickListener(asdDialog);
     }
 
     public void defineMenuSelector(Ss ss) {
@@ -249,7 +241,7 @@ public class ExtraMenuBean {
     @SuppressLint("SetTextI18n")
     private void defaultMenus(Ss menu) {
         String menuName = menu.getMenuName();
-        aB dialog = new aB(logicEditor);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(logicEditor);
         View rootView = wB.a(logicEditor, R.layout.property_popup_selector_single);
         ViewGroup viewGroup = rootView.findViewById(R.id.rg_content);
         ArrayList<String> menus = new ArrayList<>();
@@ -613,9 +605,10 @@ public class ExtraMenuBean {
 
                 String filePath = FileUtil.getExternalStorageDir().concat("/.sketchware/data/").concat(sc_id.concat("/files/resource/values/strings.xml"));
                 ArrayList<HashMap<String, Object>> StringsListMap = new ArrayList<>();
-                convertXmlToListMap(FileUtil.readFileIfExist(filePath), StringsListMap);
+                StringsEditorManager stringsEditorManager = new StringsEditorManager();
+                stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFileIfExist(filePath), StringsListMap);
 
-                if (!isXmlStringsContains(StringsListMap, "app_name")) {
+                if (!stringsEditorManager.isXmlStringsExist(StringsListMap, "app_name")) {
                     menus.add("R.string.app_name");
                 }
                 for (HashMap<String, Object> map : StringsListMap) {
@@ -632,11 +625,11 @@ public class ExtraMenuBean {
             case "ResAttr":
             case "ResXml":
                 title = "Deprecated";
-                dialog.a("This Block Menu was initially used to parse resource values, but was too I/O heavy and has been removed due to that. Please use the Code Editor instead.");
+                dialog.setMessage("This Block Menu was initially used to parse resource values, but was too I/O heavy and has been removed due to that. Please use the Code Editor instead.");
                 break;
 
             case "AdUnit":
-                dialog.a(R.drawable.unit_96);
+                dialog.setIcon(R.drawable.unit_96);
                 title = "Select an Ad Unit";
                 for (AdUnitBean bean : jC.c(sc_id).e.adUnits) {
                     menus.add(bean.id);
@@ -644,7 +637,7 @@ public class ExtraMenuBean {
                 break;
 
             case "TestDevice":
-                dialog.a(R.drawable.ic_test_device_48dp);
+                dialog.setIcon(R.drawable.ic_test_device_48dp);
                 title = "Select a Test device";
                 for (AdTestDeviceBean testDevice : jC.c(sc_id).e.testDevices) {
                     menus.add(testDevice.deviceId);
@@ -725,9 +718,9 @@ public class ExtraMenuBean {
             }
         }
 
-        dialog.b(title);
-        dialog.a(rootView);
-        dialog.b(Helper.getResString(R.string.common_word_select), v -> {
+        dialog.setTitle(title);
+        dialog.setView(rootView);
+        dialog.setPositiveButton(Helper.getResString(R.string.common_word_select), (v, which) -> {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 if (viewGroup.getChildAt(i) instanceof RadioButton rb) {
                     if (rb.isChecked()) {
@@ -735,16 +728,16 @@ public class ExtraMenuBean {
                     }
                 }
             }
-            dialog.dismiss();
+            v.dismiss();
         });
-        dialog.a(Helper.getResString(R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
-        dialog.configureDefaultButton("Code Editor", v -> {
+        dialog.setNegativeButton(Helper.getResString(R.string.common_word_cancel), null);
+        dialog.setNeutralButton("Code Editor", (v, which) -> {
             AsdDialog editor = new AsdDialog(logicEditor);
-            editor.setCon(menu.getArgValue().toString());
+            editor.setContent(menu.getArgValue().toString());
             editor.show();
-            editor.saveLis(logicEditor, false, menu, editor);;
-            editor.cancelLis(editor);
-            dialog.dismiss();
+            editor.setOnSaveClickListener(logicEditor, false, menu, editor);
+            editor.setOnCancelClickListener(editor);
+            v.dismiss();
         });
         dialog.show();
     }
@@ -762,11 +755,10 @@ public class ExtraMenuBean {
     }
 
     private void asdDialog(Ss ss, String message) {
-        aB dialog = new aB(logicEditor);
-        dialog.b(Helper.getResString(R.string.logic_editor_title_enter_string_value));
-        dialog.a(R.drawable.rename_96_blue);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(logicEditor);
+        dialog.setTitle(Helper.getResString(R.string.logic_editor_title_enter_string_value));
 
-        if (!isEmpty(message)) dialog.a(message);
+        if (!isEmpty(message)) dialog.setMessage(message);
 
         View root = wB.a(logicEditor, R.layout.property_popup_input_text);
         EditText edittext = root.findViewById(R.id.ed_input);
@@ -776,57 +768,53 @@ public class ExtraMenuBean {
             new SimpleHighlighter(edittext);
         }
         edittext.setText(ss.getArgValue().toString());
-        dialog.a(root);
+        dialog.setView(root);
 
-        dialog.b(Helper.getResString(R.string.common_word_save), v -> {
+        dialog.setPositiveButton(Helper.getResString(R.string.common_word_save), (v, which) -> {
             String content = Helper.getText(edittext);
             if (!content.isEmpty() && content.charAt(0) == '@') {
                 content = " " + content;
             }
             logicEditor.a(ss, content);
-            dialog.dismiss();
+            v.dismiss();
         });
-        dialog.a(Helper.getResString(R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
-        dialog.configureDefaultButton("Code Editor", v -> {
+        dialog.setNegativeButton(Helper.getResString(R.string.common_word_cancel), null);
+        dialog.setNeutralButton("Code Editor", (v, which) -> {
             AsdDialog asdDialog = new AsdDialog(logicEditor);
-            asdDialog.setCon(Helper.getText(edittext));
+            asdDialog.setContent(Helper.getText(edittext));
             asdDialog.show();
-            asdDialog.saveLis(logicEditor, false, ss, asdDialog);
-            asdDialog.cancelLis(asdDialog);
-            dialog.dismiss();
+            asdDialog.setOnSaveClickListener(logicEditor, false, ss, asdDialog);
+            asdDialog.setOnCancelClickListener(asdDialog);
+            v.dismiss();
         });
         dialog.show();
     }
 
-    private void pathSelectorMenu(final Ss ss) {
+    private void pathSelectorMenu(Ss ss) {
         String menuName = ss.getMenuName();
         ArrayList<String> markedPath = new ArrayList<>();
 
-        mProperty.selection_mode = DialogConfigs.SINGLE_MODE;
-        mProperty.selection_type = DialogConfigs.FILE_AND_DIR_SELECT;
-        String path;
+        mOptions.setSelectionMode(SelectionMode.BOTH);
+        String path = null;
         if (menuName.equals("Assets")) {
-            fpd.setTitle("Select an Asset");
+            mOptions.setTitle("Select an Asset");
             path = String.format(ASSETS_PATH, sc_id);
             markedPath.add(0, path + ss.getArgValue().toString());
-            fpd.markFiles(markedPath);
-            mProperty.root = new File(path);
-            mProperty.error_dir = new File(path);
-            String[] strArr = path.split("/");
-            splitter = strArr[strArr.length - 1];
         } else if (menuName.equals("NativeLib")) {
-            fpd.setTitle("Select a Native library");
+            mOptions.setTitle("Select a Native library");
             path = String.format(NATIVE_PATH, sc_id);
             markedPath.add(0, path + ss.getArgValue().toString());
-            fpd.markFiles(markedPath);
-            mProperty.selection_type = DialogConfigs.FILE_SELECT;
-            mProperty.root = new File(path);
-            mProperty.error_dir = new File(path);
-            String[] strArr = path.split("/");
-            splitter = strArr[strArr.length - 1];
         }
-        fpd.setProperties(mProperty);
-        fpd.setDialogSelectionListener(files -> logicEditor.a(ss, files[0].split(splitter)[1]));
-        fpd.show();
+        String[] strArr = path.split("/");
+        String splitter = strArr[strArr.length - 1];
+        mOptions.setInitialDirectory(path);
+        FilePickerCallback callback = new FilePickerCallback() {
+            @Override
+            public void onFileSelected(File file) {
+                logicEditor.a(ss, file.getAbsolutePath().split(splitter)[1]);
+            }
+        };
+        fpd = new FilePickerDialogFragment(mOptions, callback);
+        fpd.show(logicEditor.getSupportFragmentManager(), "filePicker");
     }
 }

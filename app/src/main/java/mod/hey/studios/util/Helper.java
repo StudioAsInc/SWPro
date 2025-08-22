@@ -2,7 +2,6 @@ package mod.hey.studios.util;
 
 import static pro.sketchware.SketchApplication.getContext;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
-import android.os.Build;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,9 +19,9 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
-import androidx.activity.ComponentActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -34,8 +32,8 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import a.a.a.xB;
-import pro.sketchware.utility.FileUtil;
 import pro.sketchware.lib.base.BaseTextWatcher;
+import pro.sketchware.utility.FileUtil;
 
 public class Helper {
     public static final TypeToken<HashMap<String, Object>> TYPE_MAP = new TypeToken<>() {
@@ -51,12 +49,10 @@ public class Helper {
     }
 
     public static void fixFileprovider() {
-        if (Build.VERSION.SDK_INT >= 24) {
-            try {
-                StrictMode.class.getMethod("disableDeathOnFileUriExposure").invoke(null);
-            } catch (Exception e) {
-                Log.e("Helper", "An error occurred while trying to fix death on file URI exposure: " + e.getMessage(), e);
-            }
+        try {
+            StrictMode.class.getMethod("disableDeathOnFileUriExposure").invoke(null);
+        } catch (Exception e) {
+            Log.e("Helper", "An error occurred while trying to fix death on file URI exposure: " + e.getMessage(), e);
         }
     }
 
@@ -90,11 +86,11 @@ public class Helper {
         return String.format(getResString(resId), formatArgs);
     }
 
-    public static View.OnClickListener getBackPressedClickListener(final ComponentActivity activity) {
+    public static View.OnClickListener getBackPressedClickListener(ComponentActivity activity) {
         return v -> activity.getOnBackPressedDispatcher().onBackPressed();
     }
 
-    public static DialogDismissListener getDialogDismissListener(final DialogInterface dialog) {
+    public static DialogDismissListener getDialogDismissListener(DialogInterface dialog) {
         return new DialogDismissListener(dialog);
     }
 
@@ -133,10 +129,6 @@ public class Helper {
         }
     }
 
-    public interface BasicTextChangedListener {
-        void onTextChanged(String str);
-    }
-
     public static void applyRippleToToolbarView(View view) {
         GradientDrawable content = new GradientDrawable();
         content.setCornerRadius(90);
@@ -160,7 +152,7 @@ public class Helper {
      * @param rippleColor   The effect's color
      * @param standardColor The view's color when untouched
      */
-    public static void applyRippleEffect(final View target, final int rippleColor, int standardColor) {
+    public static void applyRippleEffect(View target, int rippleColor, int standardColor) {
         if (!target.isClickable()) {
             target.setClickable(true);
         }
@@ -210,6 +202,10 @@ public class Helper {
                 target.setError(null);
             }
         });
+    }
+
+    public interface BasicTextChangedListener {
+        void onTextChanged(String str);
     }
 
     /**

@@ -6,7 +6,6 @@ import static pro.sketchware.utility.SketchwareUtil.dpToPx;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -22,14 +21,14 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.besome.sketch.beans.ViewBean;
 import com.besome.sketch.editor.view.ViewEditor;
-import com.github.angads25.filepicker.model.DialogConfigs;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.reflect.TypeToken;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +39,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import a.a.a.ViewEditorFragment;
 import a.a.a.xB;
+import dev.pranav.filepicker.FilePickerCallback;
+import dev.pranav.filepicker.FilePickerDialogFragment;
+import dev.pranav.filepicker.FilePickerOptions;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 import pro.sketchware.databinding.DialogSelectorActionsBinding;
@@ -50,7 +52,6 @@ import pro.sketchware.utility.SketchwareUtil;
 
 public class WidgetsCreatorManager {
 
-    private ArrayList<HashMap<String, Object>> widgetConfigurationsList = new ArrayList<>();
     private final String widgetResourcesDirectoryPath = "/storage/emulated/0/.sketchware/resources/widgets/";
     private final String widgetsJsonFilePath = widgetResourcesDirectoryPath + "widgets.json";
     private final String widgetExportDirectoryPath = widgetResourcesDirectoryPath + "export/";
@@ -68,12 +69,32 @@ public class WidgetsCreatorManager {
     private final ViewEditor viewEditor;
     private final ViewEditorFragment viewEditorFragment;
     private final Context context;
+    private ArrayList<HashMap<String, Object>> widgetConfigurationsList = new ArrayList<>();
 
     public WidgetsCreatorManager(ViewEditorFragment viewEditorFragment) {
         this.viewEditorFragment = viewEditorFragment;
         viewEditor = viewEditorFragment.viewEditor;
         context = viewEditorFragment.requireContext();
         initialize();
+    }
+
+    public static void clearErrorOnTextChanged(EditText editText, TextInputLayout textInputLayout) {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (textInputLayout.getError() != null) {
+                    textInputLayout.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
     public void initialize() {
@@ -121,7 +142,6 @@ public class WidgetsCreatorManager {
         return false;
     }
 
-
     private void initializeAvailableWidgetTypesList() {
         for (String widgetName : availableWidgetsNames) {
             availableWidgetsTypes.add(String.valueOf(ViewBean.getViewTypeByTypeName(widgetName)));
@@ -146,8 +166,8 @@ public class WidgetsCreatorManager {
 
     public void showWidgetsCreatorDialog(int position) {
         boolean isEditing = position != -1;
-        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(context);
-        dialog.setTitle(isEditing ? Helper.getResString(R.string.widget_editor) : Helper.getResString(R.string.create_new_widget));
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+        builder.setTitle(isEditing ? Helper.getResString(R.string.widget_editor) : Helper.getResString(R.string.create_new_widget));
         WidgetsCreatorDialogBinding binding = WidgetsCreatorDialogBinding.inflate(LayoutInflater.from(context));
         View inflate = binding.getRoot();
 
@@ -166,9 +186,7 @@ public class WidgetsCreatorManager {
             binding.addWidgetTo.setText(map.get("Class").toString());
             binding.injectCode.setText(map.get("inject").toString());
         } else {
-            dialog.setNeutralButton(R.string.common_word_see_more, (dialog1, which) -> {
-                showMorePopUp(dialog1, dialog.create().getButton(which));
-            });
+            builder.setNeutralButton(Helper.getResString(R.string.common_word_see_more), null);
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -188,13 +206,13 @@ public class WidgetsCreatorManager {
             showCategorySelectorDialog(types, binding.addWidgetTo);
         });
 
-        dialog.setPositiveButton(R.string.common_word_save, (v, which) -> {
+        builder.setPositiveButton(Helper.getResString(R.string.common_word_save), (v, which) -> {
             try {
-                String widgetTitle = Helper.getText(binding.widgetTitle).trim();
-                String widgetName = Helper.getText(binding.widgetName).trim();
-                String widgetType = Helper.getText(binding.widgetType).trim();
-                String widgetInject = Helper.getText(binding.injectCode).trim();
-                String widgetClass = Helper.getText(binding.addWidgetTo).trim();
+                String widgetTitle = Objects.requireNonNull(binding.widgetTitle.getText()).toString().trim();
+                String widgetName = Objects.requireNonNull(binding.widgetName.getText()).toString().trim();
+                String widgetType = Objects.requireNonNull(binding.widgetType.getText()).toString().trim();
+                String widgetInject = Objects.requireNonNull(binding.injectCode.getText()).toString().trim();
+                String widgetClass = Objects.requireNonNull(binding.addWidgetTo.getText()).toString().trim();
 
                 if (widgetTitle.isEmpty()) {
                     binding.inputTitle.setError(String.format(Helper.getResString(R.string.var_is_required, "Widget title")));
@@ -237,9 +255,17 @@ public class WidgetsCreatorManager {
             }
         });
 
-        dialog.setNegativeButton(R.string.common_word_cancel, null);
+        builder.setNegativeButton(Helper.getResString(R.string.common_word_cancel), null);
 
-        dialog.setView(inflate);
+        builder.setView(inflate);
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialog1 -> {
+            if (!isEditing) {
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> showMorePopUp(dialog, v));
+            }
+        });
+
         dialog.show();
     }
 
@@ -250,21 +276,19 @@ public class WidgetsCreatorManager {
         popupMenu.setOnMenuItemClickListener(menuItem -> {
             dialog.dismiss();
             if (menuItem.getItemId() == R.id.import_widgets) {
-                DialogProperties properties = new DialogProperties();
+                FilePickerOptions options = new FilePickerOptions();
+                options.setMultipleSelection(true);
+                options.setExtensions(new String[]{"json"});
+                options.setTitle("Select .json widgets files");
 
-                properties.selection_mode = DialogConfigs.MULTI_MODE;
-                properties.selection_type = DialogConfigs.FILE_SELECT;
-                properties.root = Environment.getExternalStorageDirectory();
-                properties.error_dir = Environment.getExternalStorageDirectory();
-                properties.offset = Environment.getExternalStorageDirectory();
-                properties.extensions = new String[]{"json"};
+                FilePickerCallback callback = new FilePickerCallback() {
+                    @Override
+                    public void onFilesSelected(@NotNull List<? extends File> files) {
+                        importWidgets(files.stream().map(File::getAbsolutePath).toArray(String[]::new));
+                    }
+                };
 
-                FilePickerDialog pickerDialog = new FilePickerDialog(context, properties, R.style.RoundedCornersDialog);
-
-                pickerDialog.setTitle("Select .json widgets files");
-                pickerDialog.setDialogSelectionListener(this::importWidgets);
-
-                pickerDialog.show();
+                new FilePickerDialogFragment(options, callback).show(viewEditorFragment.getChildFragmentManager(), "file_picker");
             } else {
                 String exportFilePath = widgetExportDirectoryPath + "allWidgets.json";
                 FileUtil.writeFile(exportFilePath, getGson().toJson(widgetConfigurationsList));
@@ -312,25 +336,6 @@ public class WidgetsCreatorManager {
             viewEditorFragment.e();
             SketchwareUtil.toast("Imported!");
         }
-    }
-
-    public static void clearErrorOnTextChanged(EditText editText, TextInputLayout textInputLayout) {
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (textInputLayout.getError() != null) {
-                    textInputLayout.setError(null);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
     }
 
     private void showTypeViewSelectorDialog(List<String> choices, List<String> types, TextInputEditText type) {

@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.besome.sketch.beans.ViewBean;
-import pro.sketchware.R;
 
 import a.a.a.sy;
 import a.a.a.wB;
+import pro.sketchware.R;
 
 public class ItemVideoView extends LinearLayout implements sy {
 
@@ -57,6 +57,7 @@ public class ItemVideoView extends LinearLayout implements sy {
         return isFixed;
     }
 
+    @Override
     public void setFixed(boolean z) {
         isFixed = z;
     }

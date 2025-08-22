@@ -17,12 +17,12 @@ import android.widget.Toast;
 
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import pro.sketchware.R;
 
 import java.io.File;
 
 import a.a.a.GB;
 import a.a.a.xB;
+import pro.sketchware.R;
 import pro.sketchware.utility.SketchwareUtil;
 
 public class CollectErrorActivity extends BaseAppCompatActivity {
@@ -33,7 +33,7 @@ public class CollectErrorActivity extends BaseAppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            final String error = intent.getStringExtra("error");
+            String error = intent.getStringExtra("error");
 
             var dialog = new MaterialAlertDialogBuilder(this)
                     .setTitle(xB.b().a(getApplicationContext(), R.string.common_error_an_error_occurred))
@@ -43,6 +43,7 @@ public class CollectErrorActivity extends BaseAppCompatActivity {
                     .setPositiveButton("Copy", null)
                     .setNegativeButton("Cancel", (dialogInterface, which) -> finish())
                     .setNeutralButton("Show error", null) // null to set proper onClick listeners later without dismissing the AlertDialog
+                    .setCancelable(false)
                     .show();
 
             TextView messageView = dialog.findViewById(android.R.id.message);

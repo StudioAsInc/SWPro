@@ -47,6 +47,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.library.LibraryUtils;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
 import mod.agus.jcoderz.dex.Dex;
 import mod.agus.jcoderz.dex.FieldId;
 import mod.agus.jcoderz.dex.MethodId;
@@ -84,9 +90,8 @@ public class ProjectBuilder {
     public static final String TAG = "AppBuilder";
 
     private final File aapt2Binary;
-    public BuildSettings build_settings;
-    private BuildProgressReceiver progressReceiver;
     private final Context context;
+    public BuildSettings build_settings;
     public yq yq;
     public FilePathUtil fpu;
     public ManageLocalLibrary mll;
@@ -94,6 +99,7 @@ public class ProjectBuilder {
     public String androidJarPath;
     public ProguardHandler proguard;
     public ProjectSettings settings;
+    private BuildProgressReceiver progressReceiver;
     private boolean buildAppBundle = false;
     private ArrayList<File> dexesToAddButNotMerge = new ArrayList<>();
 
@@ -144,6 +150,37 @@ public class ProjectBuilder {
     }
 
     /**
+     * Checks if a file on local storage differs from a file in assets, and if so,
+     * replaces the file on local storage with the one in assets.
+     * <p/>
+     * The files' sizes are compared, not content.
+     *
+     * @param fileInAssets The file in assets relative to assets/ in the APK
+     * @param targetFile   The file on local storage
+     * @return If the file in assets has been extracted
+     */
+    public static boolean hasFileChanged(String fileInAssets, String targetFile) {
+        long length;
+        File compareToFile = new File(targetFile);
+        oB fileUtil = new oB();
+        long lengthOfFileInAssets = fileUtil.a(SketchApplication.getContext(), fileInAssets);
+        if (compareToFile.exists()) {
+            length = compareToFile.length();
+        } else {
+            length = 0;
+        }
+        if (lengthOfFileInAssets == length) {
+            return false;
+        }
+
+        /* Delete the file */
+        fileUtil.a(compareToFile);
+        /* Copy the file from assets to local storage */
+        fileUtil.a(SketchApplication.getContext(), fileInAssets, targetFile);
+        return true;
+    }
+
+    /**
      * Compile resources and log time needed.
      *
      * @throws Exception Thrown when anything goes wrong while compiling resources
@@ -174,37 +211,6 @@ public class ProjectBuilder {
         ViewBindingBuilder builder = new ViewBindingBuilder(layouts, outputDirectory, yq.packageName);
 
         builder.generateBindings();
-    }
-
-    /**
-     * Checks if a file on local storage differs from a file in assets, and if so,
-     * replaces the file on local storage with the one in assets.
-     * <p/>
-     * The files' sizes are compared, not content.
-     *
-     * @param fileInAssets The file in assets relative to assets/ in the APK
-     * @param targetFile   The file on local storage
-     * @return If the file in assets has been extracted
-     */
-    public static boolean hasFileChanged(String fileInAssets, String targetFile) {
-        long length;
-        File compareToFile = new File(targetFile);
-        oB fileUtil = new oB();
-        long lengthOfFileInAssets = fileUtil.a(SketchApplication.getContext(), fileInAssets);
-        if (compareToFile.exists()) {
-            length = compareToFile.length();
-        } else {
-            length = 0;
-        }
-        if (lengthOfFileInAssets == length) {
-            return false;
-        }
-
-        /* Delete the file */
-        fileUtil.a(compareToFile);
-        /* Copy the file from assets to local storage */
-        fileUtil.a(SketchApplication.getContext(), fileInAssets, targetFile);
-        return true;
     }
 
     public boolean isD8Enabled() {
@@ -761,6 +767,34 @@ public class ProjectBuilder {
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_APPCOMPAT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_COORDINATORLAYOUT);
             builtInLibraryManager.addLibrary(BuiltInLibraries.MATERIAL);
+            if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)) {
+                if (ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_WORK_RUNTIME);
+
+                if (ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID)) {
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER);
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_EXOPLAYER_HLS);
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_MEDIA3_MEDIA3_UI);
+                }
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_BROWSER);
+
+                if (ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.ANDROIDX_CREDENTIALS_CREDENTIALS);
+
+                if (ProjectDataDayDream.isUseGoogleAnalytics(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseGoogleAnalytics(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_API);
+
+                if (ProjectDataDayDream.isUseShizuku(Configs.currentProjectID)
+                        && LibraryUtils.isAllowUseShizuku(Configs.currentProjectID))
+                    builtInLibraryManager.addLibrary(BuiltInLibraries.DEV_RIKKA_SHIZUKU_PROVIDER);
+            }
         }
         if (yq.N.isFirebaseEnabled) {
             builtInLibraryManager.addLibrary(BuiltInLibraries.FIREBASE_COMMON);

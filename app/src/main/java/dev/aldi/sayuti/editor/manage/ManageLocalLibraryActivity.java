@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
@@ -31,14 +30,15 @@ import com.google.gson.Gson;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import a.a.a.MA;
+import a.a.a.mB;
 import mod.hey.studios.build.BuildSettings;
-
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 import pro.sketchware.databinding.ManageLocallibrariesBinding;
@@ -46,55 +46,93 @@ import pro.sketchware.databinding.ViewItemLocalLibBinding;
 import pro.sketchware.databinding.ViewItemLocalLibSearchBinding;
 import pro.sketchware.utility.SketchwareUtil;
 
-import a.a.a.MA;
-import a.a.a.mB;
-
 public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
+    private final LibraryAdapter adapter = new LibraryAdapter();
+    private final SearchAdapter searchAdapter = new SearchAdapter();
     private ArrayList<HashMap<String, Object>> projectUsedLibs;
-
     private boolean notAssociatedWithProject;
     private boolean searchBarExpanded;
     private BuildSettings buildSettings;
     private ManageLocallibrariesBinding binding;
     private String scId;
 
-    private LibraryAdapter adapter = new LibraryAdapter();
-    private SearchAdapter searchAdapter = new SearchAdapter();
-
-    private interface OnLocalLibrarySelectedStateChangedListener {
-        void invoke(LocalLibrary library);
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        EdgeToEdge.enable(this);
+        enableEdgeToEdgeNoContrast();
         super.onCreate(savedInstanceState);
         binding = ManageLocallibrariesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        AtomicInteger existingBottomMargin = new AtomicInteger(-1);
+        {
+            View view1 = binding.searchBar;
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) view1.getLayoutParams();
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.downloadLibraryButton, (view, insets) -> {
-            Insets navigationBarsInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
+            int end = lp.getMarginEnd();
+            int start = lp.getMarginStart();
 
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.displayCutout());
+                lp.setMarginEnd(end + insets.right);
+                lp.setMarginStart(start + insets.left);
+                v.setLayoutParams(lp);
+                return i;
+            });
+        }
 
-            if (existingBottomMargin.get() == -1) {
-                existingBottomMargin.set(params.bottomMargin);
-            }
+        {
+            View view1 = binding.contextualToolbarContainer;
+            int left = view1.getPaddingLeft();
+            int top = view1.getPaddingTop();
+            int right = view1.getPaddingRight();
+            int bottom = view1.getPaddingBottom();
 
-            params.bottomMargin = existingBottomMargin.get() + navigationBarsInsets.bottom;
-            view.setLayoutParams(params);
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top + insets.top, right + insets.right, bottom);
+                return i;
+            });
+        }
 
-            return WindowInsetsCompat.CONSUMED;
-        });
+        {
+            View view1 = binding.librariesList;
+            int left = view1.getPaddingLeft();
+            int top = view1.getPaddingTop();
+            int right = view1.getPaddingRight();
+            int bottom = view1.getPaddingBottom();
 
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.contextualToolbarContainer, (v, windowInsets) -> {
-            var insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(insets.left, insets.top, insets.right, 0);
-            return windowInsets;
-        });
+        {
+            View view1 = binding.searchList;
+            int left = view1.getPaddingLeft();
+            int top = view1.getPaddingTop();
+            int right = view1.getPaddingRight();
+            int bottom = view1.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
+
+        {
+            View view1 = binding.downloadLibraryButton;
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) view1.getLayoutParams();
+            int bottom = lp.bottomMargin;
+
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars());
+                lp.bottomMargin = bottom + insets.bottom;
+                v.setLayoutParams(lp);
+                return i;
+            });
+        }
 
         if (getIntent().hasExtra("sc_id")) {
             scId = Objects.requireNonNull(getIntent().getStringExtra("sc_id"));
@@ -252,6 +290,21 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
         });
     }
 
+    private boolean isUsedLibrary(String libraryName) {
+        if (!notAssociatedWithProject) {
+            for (Map<String, Object> libraryMap : projectUsedLibs) {
+                if (libraryName.equals(libraryMap.get("name").toString())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private interface OnLocalLibrarySelectedStateChangedListener {
+        void invoke(LocalLibrary library);
+    }
+
     private static class LoadLocalLibrariesTask extends MA {
         private final WeakReference<ManageLocalLibraryActivity> activity;
 
@@ -281,15 +334,6 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
         }
     }
 
-    private boolean isUsedLibrary(String libraryName) {
-        for (Map<String, Object> libraryMap : projectUsedLibs) {
-            if (libraryName.equals(libraryMap.get("name").toString())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.ViewHolder> {
         private final List<LocalLibrary> localLibraries = new ArrayList<>();
         public boolean isSelectionModeEnabled;
@@ -302,9 +346,9 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
-            final var binding = holder.binding;
-            final var library = localLibraries.get(position);
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            var binding = holder.binding;
+            var library = localLibraries.get(position);
 
             binding.libraryName.setText(library.getName());
             binding.librarySize.setText(library.getSize());
@@ -320,7 +364,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
             });
 
             binding.card.setOnLongClickListener(v -> {
-                if (isSelectionModeEnabled || notAssociatedWithProject) {
+                if (isSelectionModeEnabled) {
                     return false;
                 }
 
@@ -357,7 +401,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
         }
 
         private void toggleLocalLibrary(MaterialCardView card, LocalLibrary library,
-                @Nullable OnLocalLibrarySelectedStateChangedListener onLocalLibrarySelectedStateChangedListener) {
+                                        @Nullable OnLocalLibrarySelectedStateChangedListener onLocalLibrarySelectedStateChangedListener) {
             library.setSelected(!library.isSelected());
             bindSelectedState(card, library);
             if (onLocalLibrarySelectedStateChangedListener != null) {
@@ -413,14 +457,14 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
             rewriteLocalLibFile(scId, new Gson().toJson(projectUsedLibs));
         }
 
+        public List<LocalLibrary> getLocalLibraries() {
+            return localLibraries;
+        }
+
         public void setLocalLibraries(List<LocalLibrary> localLibraries) {
             this.localLibraries.clear();
             this.localLibraries.addAll(localLibraries);
             notifyDataSetChanged();
-        }
-
-        public List<LocalLibrary> getLocalLibraries() {
-            return localLibraries;
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
@@ -444,9 +488,9 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
-            final var binding = holder.binding;
-            final var library = filteredLocalLibraries.get(position);
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            var binding = holder.binding;
+            var library = filteredLocalLibraries.get(position);
 
             binding.libraryName.setText(library.getName());
             binding.librarySize.setText(library.getSize());

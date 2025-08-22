@@ -2,7 +2,6 @@ package dev.aldi.sayuti.editor.manage;
 
 import static dev.aldi.sayuti.editor.manage.LocalLibrariesUtil.createLibraryMap;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,27 +9,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 
 import org.cosmic.ide.dependency.resolver.api.Artifact;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import mod.hey.studios.build.BuildSettings;
 import mod.hey.studios.util.Helper;
-import mod.jbk.build.BuildProgressReceiver;
 import mod.jbk.build.BuiltInLibraries;
 import mod.pranav.dependency.resolver.DependencyResolver;
-
 import pro.sketchware.R;
 import pro.sketchware.databinding.LibraryDownloaderDialogBinding;
 import pro.sketchware.utility.FileUtil;
@@ -39,17 +34,13 @@ import pro.sketchware.utility.SketchwareUtil;
 public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
     private LibraryDownloaderDialogBinding binding;
 
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
     private BuildSettings buildSettings;
 
     private boolean notAssociatedWithProject;
     private String dependencyName;
     private String localLibFile;
     private OnLibraryDownloadedTask onLibraryDownloadedTask;
-
-    public interface OnLibraryDownloadedTask {
-        void invoke();
-    }
 
     @Nullable
     @Override
@@ -70,6 +61,14 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
 
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnDownload.setOnClickListener(v -> initDownloadFlow());
+
+        String[] options = new String[] {"21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                options
+        );
+        binding.actChooseminapi.setAdapter(adapter);
     }
 
     public void setOnLibraryDownloadedTask(OnLibraryDownloadedTask onLibraryDownloadedTask) {
@@ -98,7 +97,8 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
         var group = parts[0];
         var artifact = parts[1];
         var version = parts[2];
-        var resolver = new DependencyResolver(group, artifact, version, binding.cbSkipSubdependencies.isChecked(), buildSettings);
+        //D8 default Min API Level is 1.
+        var resolver = new DependencyResolver(group, artifact, version, binding.cbSkipSubdependencies.isChecked(), buildSettings, Integer.parseInt(binding.actChooseminapi.getText().toString()));
         var handler = new Handler(Looper.getMainLooper());
 
         class SetTextRunnable implements Runnable {
@@ -127,11 +127,6 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                 @Override
                 public void onResolutionComplete(@NonNull Artifact dep) {
                     handler.post(new SetTextRunnable("Dependency " + dep + " resolved"));
-                }
-
-                @Override
-                public void onArtifactFound(@NonNull Artifact dep) {
-                    handler.post(new SetTextRunnable("Found " + dep + " in " + dep.getRepository().getName()));
                 }
 
                 @Override
@@ -213,7 +208,7 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
                             var enabledLibs = gson.fromJson(fileContent, Helper.TYPE_MAP_LIST);
                             enabledLibs.addAll(dependencies.stream()
                                     .map(name -> createLibraryMap(name, dependencyName))
-                                    .collect(Collectors.toList()));
+                                    .toList());
                             FileUtil.writeFile(localLibFile, gson.toJson(enabledLibs));
                         }
                         if (getActivity() == null) return;
@@ -230,10 +225,15 @@ public class LibraryDownloaderDialogFragment extends BottomSheetDialogFragment {
         binding.btnDownload.setEnabled(!downloading);
         binding.dependencyInput.setEnabled(!downloading);
         binding.cbSkipSubdependencies.setEnabled(!downloading);
+        binding.actChooseminapi.setEnabled(!downloading);
         setCancelable(!downloading);
 
         if (!downloading) {
             binding.dependencyInfo.setText(R.string.local_library_manager_dependency_info);
         }
+    }
+
+    public interface OnLibraryDownloadedTask {
+        void invoke();
     }
 }

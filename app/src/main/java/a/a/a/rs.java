@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -35,6 +33,7 @@ import com.besome.sketch.lib.base.CollapsibleViewHolder;
 import com.besome.sketch.lib.ui.CollapsibleButton;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigationrail.NavigationRailView;
 
@@ -92,7 +91,7 @@ public class rs extends qA implements View.OnClickListener, MoreblockImporterDia
             default -> "";
         };
     }
-    
+
     private int getPaletteIndex(int id) {
         if (id == R.id.activity) {
             return 0;
@@ -107,7 +106,7 @@ public class rs extends qA implements View.OnClickListener, MoreblockImporterDia
         }
         return -1;
     }
-    
+
     private int getPaletteIndex() {
         return getPaletteIndex(paletteView.getSelectedItemId());
     }
@@ -124,15 +123,9 @@ public class rs extends qA implements View.OnClickListener, MoreblockImporterDia
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fr_logic_list, container, false);
         initialize(view);
-        setHasOptionsMenu(true);
         if (savedInstanceState != null) {
             sc_id = savedInstanceState.getString("sc_id");
         } else {
@@ -262,9 +255,9 @@ public class rs extends qA implements View.OnClickListener, MoreblockImporterDia
     }
 
     private void showSaveMoreBlockToCollectionsDialog(int moreBlockPosition) {
-        aB aBVar = new aB(requireActivity());
-        aBVar.b(xB.b().a(requireContext(), R.string.logic_more_block_favorites_save_title));
-        aBVar.a(R.drawable.ic_bookmark_red_48dp);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(requireActivity());
+        aBVar.setTitle(xB.b().a(requireContext(), R.string.logic_more_block_favorites_save_title));
+        aBVar.setIcon(R.drawable.ic_bookmark_red_48dp);
         View a2 = wB.a(requireContext(), R.layout.property_popup_save_to_favorite);
         ((TextView) a2.findViewById(R.id.tv_favorites_guide)).setText(xB.b().a(requireContext(), R.string.logic_more_block_favorites_save_guide));
         EditText editText = a2.findViewById(R.id.ed_input);
@@ -273,17 +266,17 @@ public class rs extends qA implements View.OnClickListener, MoreblockImporterDia
         editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         NB nb = new NB(requireContext(), a2.findViewById(R.id.ti_input), Pp.h().g());
-        aBVar.a(a2);
-        aBVar.b(xB.b().a(requireContext(), R.string.common_word_save), v -> {
+        aBVar.setView(a2);
+        aBVar.setPositiveButton(xB.b().a(requireContext(), R.string.common_word_save), (v, which) -> {
             if (nb.b()) {
                 saveMoreBlockToCollection(Helper.getText(editText), moreBlocks.get(moreBlockPosition));
                 mB.a(requireContext(), editText);
-                aBVar.dismiss();
+                v.dismiss();
             }
         });
-        aBVar.a(xB.b().a(requireContext(), R.string.common_word_cancel), v -> {
+        aBVar.setNegativeButton(xB.b().a(requireContext(), R.string.common_word_cancel), (v, which) -> {
             mB.a(requireContext(), editText);
-            aBVar.dismiss();
+            v.dismiss();
         });
         aBVar.show();
     }
@@ -394,7 +387,7 @@ public class rs extends qA implements View.OnClickListener, MoreblockImporterDia
             holder.targetType.setVisibility(View.VISIBLE);
             holder.previewContainer.setVisibility(View.VISIBLE);
             holder.preview.setVisibility(View.VISIBLE);
-            holder.preview.setImageResource(oq.a(eventBean.eventName));
+            holder.preview.setImageResource(oq.getEventIconResource(eventBean.eventName));
             holder.optionsLayout.showDelete();
             if (eventBean.eventType == EventBean.EVENT_TYPE_ETC) {
                 holder.optionsLayout.showAddToCollection();
@@ -406,9 +399,9 @@ public class rs extends qA implements View.OnClickListener, MoreblockImporterDia
                     holder.optionsLayout.hideDelete();
                 }
                 holder.targetId.setText(eventBean.targetId);
-                holder.type.setBackgroundResource(oq.a(eventBean.eventName));
+                holder.type.setBackgroundResource(oq.getEventIconResource(eventBean.eventName));
                 holder.name.setText(eventBean.eventName);
-                holder.description.setText(oq.a(eventBean.eventName, requireContext()));
+                holder.description.setText(oq.getEventName(eventBean.eventName));
                 holder.icon.setImageResource(R.drawable.ic_mtrl_code);
                 holder.preview.setVisibility(View.GONE);
                 holder.targetType.setVisibility(View.GONE);
@@ -433,7 +426,7 @@ public class rs extends qA implements View.OnClickListener, MoreblockImporterDia
                 holder.type.setText(EventBean.getEventTypeName(eventBean.eventType));
                 holder.type.setBackgroundResource(EventBean.getEventTypeBgRes(eventBean.eventType));
                 holder.name.setText(eventBean.eventName);
-                holder.description.setText(oq.a(eventBean.eventName, requireContext()));
+                holder.description.setText(oq.getEventName(eventBean.eventName));
                 if (eventBean.eventType == EventBean.EVENT_TYPE_ETC) {
                     holder.description.setText(ReturnMoreblockManager.getMbTypeList(eventBean.targetId));
                 }

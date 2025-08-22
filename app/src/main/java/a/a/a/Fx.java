@@ -8,18 +8,28 @@ import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import mod.hey.studios.editor.manage.block.ExtraBlockInfo;
 import mod.hey.studios.editor.manage.block.v2.BlockLoader;
 import mod.hey.studios.moreblock.ReturnMoreblockManager;
+import mod.pranav.viewbinding.ViewBindingBuilder;
 
 public class Fx {
 
     private static final Pattern PARAM_PATTERN = Pattern.compile("%m(?!\\.[\\w]+)");
     public final boolean isViewBindingEnabled;
+    private final ArrayList<String> viewParamsTypes = new ArrayList<>(List.of(
+            "%m.view", "%m.layout", "%m.textview", "%m.button", "%m.edittext", "%m.imageview", "%m.recyclerview",
+            "%m.listview", "%m.gridview", "%m.cardview", "%m.viewpager", "%m.webview", "%m.videoview", "%m.progressbar",
+            "%m.seekbar", "%m.switch", "%m.checkbox", "%m.spinner", "%m.tablayout", "%m.bottomnavigation", "%m.adview",
+            "%m.swiperefreshlayout", "%m.textinputlayout", "%m.ratingbar", "%m.datepicker", "%m.otpview", "%m.lottie",
+            "%m.badgeview", "%m.codeview", "%m.patternview", "%m.signinbutton", "%m.youtubeview"
+    ));
     public String[] operators = {"repeat", "+", "-", "*", "/", "%", ">", "=", "<", "&&", "||", "not"};
     public String[] arithmetic = {"+", "-", "*", "/", "%", ">", "=", "<", "&&", "||"};
     public String moreBlock = "";
@@ -27,9 +37,13 @@ public class Fx {
     public jq buildConfig;
     public ArrayList<BlockBean> eventBlocks;
     public Map<String, BlockBean> blockMap;
+    private final boolean isActivity;
 
     public Fx(String activityName, jq buildConfig, ArrayList<BlockBean> eventBlocks, boolean isViewBindingEnabled) {
         this.activityName = activityName;
+
+        isActivity = !(activityName.endsWith("DialogFragmentActivity") || activityName.endsWith("BottomDialogFragmentActivity") || activityName.endsWith("FragmentActivity"));
+
         this.buildConfig = buildConfig;
         this.eventBlocks = eventBlocks;
         this.isViewBindingEnabled = isViewBindingEnabled;
@@ -174,12 +188,53 @@ public class Fx {
 
     public ArrayList<String> getBlockParams(BlockBean bean) {
         ArrayList<String> params = new ArrayList<>();
+        ArrayList<String> paramsTypes = extractParamsTypes(bean.spec);
         for (int i = 0; i < bean.parameters.size(); i++) {
-            String param = bean.parameters.get(i);
+            String param = getParamValue(bean.parameters.get(i), paramsTypes.get(i));
             int type = getBlockType(bean, i);
             params.add(a(param, type, bean.opCode));
         }
         return params;
+    }
+
+    private String getParamValue(String param, String paramType) {
+        boolean isWidgetParam = viewParamsTypes.contains(paramType);
+        boolean isColorParam = paramType.equals("%m.color");
+
+        if (isWidgetParam) {
+            String bindingStart = "binding.";
+            if (isViewBindingEnabled && !param.isEmpty() && !param.startsWith("@") && !param.startsWith(bindingStart)) {
+                return bindingStart + ViewBindingBuilder.generateParameterFromId(param);
+            }
+        } else if (isColorParam) {
+            if (param.startsWith("R.color.")) {
+                return "getResources().getColor(" + param + ")";
+            }
+            String context = isActivity ? "this" : "getContext()";
+            String attr = null;
+            if (param.startsWith("R.attr.")) {
+                attr = param;
+            } else if (param.startsWith("getMaterialColor(") && param.endsWith(")")) {
+                // to keep backward compatibility with old getMaterialColor calls
+                attr = param.substring("getMaterialColor(".length(), param.length() - 1);
+            }
+            if (attr != null) {
+                return String.format("SketchwareUtil.getMaterialColor(%s, %s)", context, attr);
+            }
+        }
+        return param;
+    }
+
+    private ArrayList<String> extractParamsTypes(String input) {
+        ArrayList<String> matches = new ArrayList<>();
+        Pattern pattern = Pattern.compile("%\\w+(?:\\.\\w+)?|%\\w"); // Supports %m.word.word, %m.word and %word
+        Matcher matcher = pattern.matcher(input);
+
+        while (matcher.find()) {
+            matches.add(matcher.group().toLowerCase());
+        }
+
+        return matches;
     }
 
     private String getBlockCode(BlockBean bean, ArrayList<String> params) {
@@ -191,12 +246,13 @@ public class Fx {
                     opcode = bean.type;
                     moreBlock = "_" + (space < 0 ? bean.spec : bean.spec.substring(0, space)) + "()" + ReturnMoreblockManager.getMbEnd(bean.type);
                 } else {
+                    ArrayList<String> paramsTypes = extractParamsTypes(bean.spec);
                     opcode = "_" + bean.spec.substring(0, space) + "(";
                     boolean hasStringParam = false;
 
                     for (int i = 0; i < params.size(); i++) {
                         if (i > 0) opcode += ", ";
-                        String param = params.get(i);
+                        String param = getParamValue(params.get(i), paramsTypes.get(i));
                         if (param.isEmpty()) {
                             Gx paramInfo = bean.getParamClassInfo().get(i);
                             if (paramInfo.b("boolean")) {
@@ -717,7 +773,7 @@ public class Fx {
                 if (isViewBindingEnabled && paramAdapter.startsWith("binding.")) {
                     paramAdapter = paramAdapter.substring("binding.".length());
                 }
-                opcode = String.format("%s.setAdapter(new %s(%s));", param, Lx.a(paramAdapter), params.get(1));
+                opcode = String.format("%s.setAdapter(new %s(%s));", param, Lx.a(paramAdapter, isViewBindingEnabled), params.get(1));
                 break;
             case "listRefresh":
                 opcode = String.format("((BaseAdapter)%s.getAdapter()).notifyDataSetChanged();", params.get(0));
@@ -1339,7 +1395,7 @@ public class Fx {
                 if (buildConfig.g) {
                     opcode = String.format("if (ContextCompat.checkSelfPermission(%s.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {\n" + locationRequest + "\n}", activityName, params.get(0), params.get(1), params.get(2), params.get(3), params.get(0));
                 } else {
-                    opcode = String.format("if (Build.VERSION.SDK_INT >= 23) {if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {\n" + locationRequest + "\n}\n}\nelse {\n" + locationRequest + "\n}", params.get(0), params.get(1), params.get(2), params.get(3), params.get(0), params.get(0), params.get(1), params.get(2), opcode, params.get(0));
+                    opcode = String.format("if (Build.VERSION.SDK_INT >= 23) {\nif (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {\n" + locationRequest + "\n}\n}\nelse {\n" + locationRequest + "\n}", params.get(0), params.get(1), params.get(2), params.get(3), params.get(0), params.get(0), params.get(1), params.get(2), params.get(3), params.get(0));
                 }
                 break;
 
@@ -1360,12 +1416,13 @@ public class Fx {
         }
         return opcode;
     }
-    
+
     private String getCodeExtraBlock(BlockBean blockBean, String var2) {
         ArrayList<String> parameters = new ArrayList<>();
+        ArrayList<String> paramsTypes = extractParamsTypes(blockBean.spec);
 
         for (int i = 0; i < blockBean.parameters.size(); i++) {
-            String parameterValue = blockBean.parameters.get(i);
+            String parameterValue = getParamValue(blockBean.parameters.get(i), paramsTypes.get(i));
 
             switch (getBlockType(blockBean, i)) {
                 case 0:
@@ -1432,7 +1489,7 @@ public class Fx {
 
         return formattedCode;
     }
-    
+
     private int getBlockType(BlockBean blockBean, int parameterIndex) {
         int blockType;
 

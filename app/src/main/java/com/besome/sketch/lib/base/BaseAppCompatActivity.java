@@ -4,30 +4,32 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface.OnCancelListener;
+import android.graphics.Color;
 import android.os.AsyncTask.Status;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.activity.EdgeToEdge;
+import androidx.activity.SystemBarStyle;
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.android.annotations.NonNull;
+import com.besome.sketch.lib.ui.LoadingDialog;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
-import dev.chrisbanes.insetter.Insetter;
 
 import java.util.ArrayList;
 
-import pro.sketchware.dialogs.ProgressDialog;
-
 import a.a.a.MA;
-import a.a.a.ZA;
 import a.a.a.lC;
 import a.a.a.xB;
+import dev.chrisbanes.insetter.Insetter;
+import pro.sketchware.dialogs.ProgressDialog;
 
 public abstract class BaseAppCompatActivity extends AppCompatActivity {
 
@@ -37,7 +39,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     public Context e;
     public Activity parent;
     protected ProgressDialog progressDialog;
-    private ZA lottieDialog;
+    private LoadingDialog lottieDialog;
     private ArrayList<MA> taskList;
 
     public void a(MA var1) {
@@ -77,7 +79,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
             }
         } catch (Exception var2) {
             lottieDialog = null;
-            lottieDialog = new ZA(this);
+            lottieDialog = new LoadingDialog(this);
         }
     }
 
@@ -112,7 +114,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         e = getApplicationContext();
         taskList = new ArrayList<>();
-        lottieDialog = new ZA(this);
+        lottieDialog = new LoadingDialog(this);
         lC.a(getApplicationContext(), false);
         progressDialog = new ProgressDialog(this);
         mAnalytics = FirebaseAnalytics.getInstance(this);
@@ -147,6 +149,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         }
     }
 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (parent != null) {
             return parent.onCreateOptionsMenu(menu);
@@ -154,6 +157,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (parent != null) {
             return parent.onOptionsItemSelected(item);
@@ -163,7 +167,15 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
 
     public void handleInsetts(View root) {
         Insetter.builder()
-            .padding(WindowInsetsCompat.Type.navigationBars())
-            .applyToView(root);
+                .padding(WindowInsetsCompat.Type.navigationBars())
+                .applyToView(root);
+    }
+
+    protected void enableEdgeToEdgeNoContrast() {
+        SystemBarStyle systemBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT);
+        EdgeToEdge.enable(this, systemBarStyle);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
     }
 }

@@ -11,12 +11,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import a.a.a.qA;
+import dev.pranav.filepicker.FilePickerCallback;
+import dev.pranav.filepicker.FilePickerDialogFragment;
+import dev.pranav.filepicker.FilePickerOptions;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 import pro.sketchware.databinding.DialogAddNewListenerBinding;
@@ -78,6 +82,49 @@ public class EventsManagerFragment extends qA {
         binding.activityEventsDescription.setText(getNumOfEvents(""));
         binding.fabNewListener.setOnClickListener(v -> showAddNewListenerDialog());
         refreshList();
+
+        {
+            View view1 = binding.appBarLayout;
+            int left = view1.getPaddingLeft();
+            int top = view1.getPaddingTop();
+            int right = view1.getPaddingRight();
+            int bottom = view1.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top + insets.top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
+
+        {
+            View view1 = binding.content;
+            int left = view1.getPaddingLeft();
+            int top = view1.getPaddingTop();
+            int right = view1.getPaddingRight();
+            int bottom = view1.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
+
+        {
+            View view1 = binding.fabNewListener;
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) view1.getLayoutParams();
+            int end = lp.getMarginEnd();
+            int bottom = lp.bottomMargin;
+
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                lp.setMarginEnd(end + insets.right);
+                lp.bottomMargin = bottom + insets.bottom;
+                v.setLayoutParams(lp);
+                return i;
+            });
+        }
     }
 
     private void showAddNewListenerDialog() {
@@ -139,32 +186,32 @@ public class EventsManagerFragment extends qA {
     }
 
     private void showImportEventsDialog() {
-        DialogProperties dialogProperties = new DialogProperties();
-        dialogProperties.selection_mode = 0;
-        dialogProperties.selection_type = 0;
-        File file = new File(FileUtil.getExternalStorageDir());
-        dialogProperties.root = file;
-        dialogProperties.error_dir = file;
-        dialogProperties.offset = file;
-        dialogProperties.extensions = null;
-        FilePickerDialog filePickerDialog = new FilePickerDialog(requireContext(), dialogProperties, R.style.RoundedCornersDialog);
-        filePickerDialog.setTitle("Select a .txt file");
-        filePickerDialog.setDialogSelectionListener(selections -> {
-            if (FileUtil.readFile(selections[0]).isEmpty()) {
-                SketchwareUtil.toastError("The selected file is empty!");
-            } else if (FileUtil.readFile(selections[0]).equals("[]")) {
-                SketchwareUtil.toastError("The selected file is empty!");
-            } else {
-                try {
-                    String[] split = FileUtil.readFile(selections[0]).split("\n");
-                    importEvents(new Gson().fromJson(split[0], Helper.TYPE_MAP_LIST),
-                            new Gson().fromJson(split[1], Helper.TYPE_MAP_LIST));
-                } catch (Exception e) {
-                    SketchwareUtil.toastError("Invalid file");
+        FilePickerOptions options = new FilePickerOptions();
+        options.setTitle("Select a .txt file");
+        options.setExtensions(new String[]{"txt"});
+
+        FilePickerCallback callback = new FilePickerCallback() {
+            @Override
+            public void onFileSelected(File file) {
+                if (FileUtil.readFile(file.getAbsolutePath()).isEmpty()) {
+                    SketchwareUtil.toastError("The selected file is empty!");
+                } else if (FileUtil.readFile(file.getAbsolutePath()).equals("[]")) {
+                    SketchwareUtil.toastError("The selected file is empty!");
+                } else {
+                    try {
+                        String[] split = FileUtil.readFile(file.getAbsolutePath()).split("\n");
+                        importEvents(new Gson().fromJson(split[0], Helper.TYPE_MAP_LIST),
+                                new Gson().fromJson(split[1], Helper.TYPE_MAP_LIST));
+                    } catch (Exception e) {
+                        SketchwareUtil.toastError("Invalid file");
+                    }
                 }
             }
-        });
-        filePickerDialog.show();
+
+        };
+        FilePickerDialogFragment filePickerDialog = new FilePickerDialogFragment(options, callback);
+
+        filePickerDialog.show(getChildFragmentManager(), "filePickerDialog");
     }
 
     private void importEvents(ArrayList<HashMap<String, Object>> data, ArrayList<HashMap<String, Object>> data2) {
@@ -264,7 +311,7 @@ public class EventsManagerFragment extends qA {
             holder.binding.eventTitle.setText(name);
             holder.binding.eventSubtitle.setText(getNumOfEvents(name));
 
-            holder.itemView.setOnClickListener(v -> openFragment(new EventsManagerDetailsFragment(name)));
+            holder.itemView.setOnClickListener(v -> openFragment(EventsManagerDetailsFragment.newInstance(name)));
 
             holder.itemView.setOnLongClickListener(v -> {
                 new MaterialAlertDialogBuilder(context)

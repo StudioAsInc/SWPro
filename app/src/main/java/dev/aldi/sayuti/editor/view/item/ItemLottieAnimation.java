@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.besome.sketch.beans.ViewBean;
-import pro.sketchware.R;
 
 import a.a.a.sy;
 import a.a.a.wB;
+import pro.sketchware.R;
 
 public class ItemLottieAnimation extends LinearLayout implements sy {
 
@@ -58,6 +58,7 @@ public class ItemLottieAnimation extends LinearLayout implements sy {
         return hasFixed;
     }
 
+    @Override
     public void setFixed(boolean z) {
         hasFixed = z;
     }

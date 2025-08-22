@@ -12,8 +12,6 @@ import androidx.annotation.DrawableRes;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 
-import a.a.a.wB;
-
 public class BaseWidget extends LinearLayout {
     private ImageView img_widget;
     private TextView tv_widget;
@@ -47,25 +45,25 @@ public class BaseWidget extends LinearLayout {
         return Helper.getText(tv_widget);
     }
 
-    public int getWidgetType() {
-        return widgetType;
-    }
-
-    public void setWidgetImage(@DrawableRes int image) {
-        this.widgetImgResId = image;
-        img_widget.setImageResource(image);
-    }
-
     public void setWidgetName(String widgetName) {
         tv_widget.setText(widgetName);
     }
 
-    public void setWidgetNameTextSize(float sizeSp) {
-        tv_widget.setTextSize(sizeSp);
+    public int getWidgetType() {
+        return widgetType;
     }
 
     public void setWidgetType(a widgetType) {
         this.widgetType = widgetType.ordinal();
+    }
+
+    public void setWidgetImage(@DrawableRes int image) {
+        widgetImgResId = image;
+        img_widget.setImageResource(image);
+    }
+
+    public void setWidgetNameTextSize(float sizeSp) {
+        tv_widget.setTextSize(sizeSp);
     }
 
     public enum a {

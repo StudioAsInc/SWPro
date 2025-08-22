@@ -2,34 +2,31 @@ package pro.sketchware.activities.preview;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
-
-import a.a.a.jC;
-import a.a.a.mB;
-import a.a.a.sy;
-
 import com.besome.sketch.beans.ViewBean;
 import com.besome.sketch.editor.view.ViewPane;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
 
+import java.util.ArrayList;
+
+import a.a.a.jC;
+import a.a.a.mB;
+import a.a.a.sy;
 import pro.sketchware.databinding.ActivityLayoutPreviewBinding;
 import pro.sketchware.tools.ViewBeanParser;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.UI;
-
-import java.util.ArrayList;
 
 public class LayoutPreviewActivity extends BaseAppCompatActivity {
 
     private ActivityLayoutPreviewBinding binding;
 
     private ViewPane pane;
-    
+
     private String content;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        EdgeToEdge.enable(this);
+        enableEdgeToEdgeNoContrast();
         super.onCreate(savedInstanceState);
         binding = ActivityLayoutPreviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -47,7 +44,7 @@ public class LayoutPreviewActivity extends BaseAppCompatActivity {
         content = getIntent().getStringExtra("xml");
         var sc_id = getIntent().getStringExtra("sc_id");
         pane = binding.pane;
-        pane.setScId(sc_id);
+        pane.initialize(sc_id, true);
         pane.updateRootLayout(sc_id, getIntent().getStringExtra("title"));
         pane.setVerticalScrollBarEnabled(true);
         pane.setResourceManager(jC.d(sc_id));
@@ -72,7 +69,11 @@ public class LayoutPreviewActivity extends BaseAppCompatActivity {
     private sy loadView(ViewBean view) {
         var itemView = pane.createItemView(view);
         pane.addViewAndUpdateIndex(itemView);
-        return (sy) itemView;
+        if (itemView instanceof sy sy) {
+            sy.setFixed(true);
+            return sy;
+        }
+        return null;
     }
 
     private sy loadViews(ArrayList<ViewBean> views) {

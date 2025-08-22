@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,13 +25,9 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
-import com.github.angads25.filepicker.model.DialogConfigs;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
+import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.JsonParseException;
-import pro.sketchware.R;
-import com.besome.sketch.lib.base.BaseAppCompatActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,9 +35,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import pro.sketchware.utility.SketchwareUtil;
-import pro.sketchware.utility.FileUtil;
+import dev.pranav.filepicker.FilePickerCallback;
+import dev.pranav.filepicker.FilePickerDialogFragment;
+import dev.pranav.filepicker.FilePickerOptions;
 import mod.hey.studios.util.Helper;
+import pro.sketchware.R;
+import pro.sketchware.utility.FileUtil;
+import pro.sketchware.utility.SketchwareUtil;
 
 public class BlocksManagerDetailsActivity extends BaseAppCompatActivity {
 
@@ -83,7 +82,7 @@ public class BlocksManagerDetailsActivity extends BaseAppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
-        ((ViewGroup) background).addView(toolbar, 0);
+        background.addView(toolbar, 0);
 
         fab_button.setOnClickListener(v -> {
             Object paletteColor = pallet_list.get(palette - 9).get("color");
@@ -101,31 +100,31 @@ public class BlocksManagerDetailsActivity extends BaseAppCompatActivity {
     }
 
     public void openFileExplorerImport() {
-        DialogProperties properties = new DialogProperties();
-        properties.selection_mode = DialogConfigs.SINGLE_MODE;
-        properties.selection_type = DialogConfigs.FILE_SELECT;
-        File externalStorageDir = Environment.getExternalStorageDirectory();
-        properties.root = externalStorageDir;
-        properties.error_dir = externalStorageDir;
-        properties.offset = externalStorageDir;
-        properties.extensions = new String[]{"json"};
-        FilePickerDialog filePickerDialog = new FilePickerDialog(this, properties, R.style.RoundedCornersDialog);
-        filePickerDialog.setTitle("Select a JSON file");
-        filePickerDialog.setDialogSelectionListener(selections -> {
-            if (FileUtil.readFile(selections[0]).isEmpty()) {
-                SketchwareUtil.toastError("The selected file is empty!");
-            } else if (FileUtil.readFile(selections[0]).equals("[]")) {
-                SketchwareUtil.toastError("The selected file is empty!");
-            } else {
-                try {
-                    ArrayList<HashMap<String, Object>> readMap = getGson().fromJson(FileUtil.readFile(selections[0]), Helper.TYPE_MAP_LIST);
-                    _importBlocks(readMap);
-                } catch (JsonParseException e) {
-                    SketchwareUtil.toastError("Invalid JSON file");
+        FilePickerOptions options = new FilePickerOptions();
+        options.setExtensions(new String[]{"json"});
+        options.setTitle("Select a JSON file");
+
+        FilePickerCallback callback = new FilePickerCallback() {
+            @Override
+            public void onFileSelected(File file) {
+                if (FileUtil.readFile(file.getAbsolutePath()).isEmpty()) {
+                    SketchwareUtil.toastError("The selected file is empty!");
+                } else if (FileUtil.readFile(file.getAbsolutePath()).equals("[]")) {
+                    SketchwareUtil.toastError("The selected file is empty!");
+                } else {
+                    try {
+                        ArrayList<HashMap<String, Object>> readMap = getGson().fromJson(FileUtil.readFile(file.getAbsolutePath()), Helper.TYPE_MAP_LIST);
+                        _importBlocks(readMap);
+                    } catch (JsonParseException e) {
+                        SketchwareUtil.toastError("Invalid JSON file");
+                    }
                 }
             }
-        });
-        filePickerDialog.show();
+        };
+
+        FilePickerDialogFragment dialog = new FilePickerDialogFragment(options, callback);
+
+        dialog.show(getSupportFragmentManager(), "filePickerDialog");
     }
 
     @Override
@@ -306,7 +305,7 @@ public class BlocksManagerDetailsActivity extends BaseAppCompatActivity {
         _refreshLists();
     }
 
-    private void _showItemPopup(View view, final int position) {
+    private void _showItemPopup(View view, int position) {
         if (palette == -1) {
             PopupMenu popupMenu = new PopupMenu(this, view);
             Menu menu = popupMenu.getMenu();
@@ -406,7 +405,7 @@ public class BlocksManagerDetailsActivity extends BaseAppCompatActivity {
         _refreshLists();
     }
 
-    private void _changePallette(final int position) {
+    private void _changePallette(int position) {
         ArrayList<String> paletteNames = new ArrayList<>();
         for (int j = 0, pallet_listSize = pallet_list.size(); j < pallet_listSize; j++) {
             HashMap<String, Object> palette = pallet_list.get(j);
@@ -447,10 +446,10 @@ public class BlocksManagerDetailsActivity extends BaseAppCompatActivity {
         builder.show();
     }
 
-    private void _importBlocks(final ArrayList<HashMap<String, Object>> blocks) {
+    private void _importBlocks(ArrayList<HashMap<String, Object>> blocks) {
         try {
             ArrayList<String> names = new ArrayList<>();
-            final ArrayList<Integer> toAdd = new ArrayList<>();
+            ArrayList<Integer> toAdd = new ArrayList<>();
             for (int i = 0; i < blocks.size(); i++) {
                 Object blockName = blocks.get(i).get("name");
 
@@ -541,20 +540,20 @@ public class BlocksManagerDetailsActivity extends BaseAppCompatActivity {
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(R.layout.block_customview, parent, false);
             }
 
-            final HashMap<String, Object> block = blocks.get(position);
+            HashMap<String, Object> block = blocks.get(position);
 
-            final LinearLayout background = convertView.findViewById(R.id.background);
-            final TextView name = convertView.findViewById(R.id.name);
-            final TextView spec = convertView.findViewById(R.id.spec);
-            final CardView upLayout = convertView.findViewById(R.id.up_layout);
-            final CardView downLayout = convertView.findViewById(R.id.down_layout);
-            final LinearLayout down = convertView.findViewById(R.id.down);
-            final LinearLayout up = convertView.findViewById(R.id.up);
+            LinearLayout background = convertView.findViewById(R.id.background);
+            TextView name = convertView.findViewById(R.id.name);
+            TextView spec = convertView.findViewById(R.id.spec);
+            CardView upLayout = convertView.findViewById(R.id.up_layout);
+            CardView downLayout = convertView.findViewById(R.id.down_layout);
+            LinearLayout down = convertView.findViewById(R.id.down);
+            LinearLayout up = convertView.findViewById(R.id.up);
 
             if (mode.equals("normal")) {
                 downLayout.setVisibility(View.GONE);

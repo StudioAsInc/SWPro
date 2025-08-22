@@ -18,25 +18,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
-
-import a.a.a.Rs;
-import a.a.a.Zx;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
+import com.besome.sketch.lib.ui.ColorPickerDialog;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.JsonParseException;
-
-import mod.hey.studios.util.Helper;
-import mod.hilal.saif.lib.PCP;
-
-import pro.sketchware.R;
-import pro.sketchware.databinding.ActivityBlocksManagerCreatorBinding;
-import pro.sketchware.lib.base.BaseTextWatcher;
-import pro.sketchware.lib.highlighter.SimpleHighlighter;
-import pro.sketchware.utility.FileUtil;
-import pro.sketchware.utility.PropertiesUtil;
-import pro.sketchware.utility.SketchwareUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,14 +37,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import a.a.a.Rs;
+import mod.hey.studios.util.Helper;
+import mod.hilal.saif.lib.PCP;
+import pro.sketchware.R;
+import pro.sketchware.databinding.ActivityBlocksManagerCreatorBinding;
+import pro.sketchware.lib.base.BaseTextWatcher;
+import pro.sketchware.lib.highlighter.SimpleHighlighter;
+import pro.sketchware.utility.FileUtil;
+import pro.sketchware.utility.PropertiesUtil;
+import pro.sketchware.utility.SketchwareUtil;
+
 public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
 
-    private ActivityBlocksManagerCreatorBinding binding;
-    private final ArrayList<String> id_detector = new ArrayList<>();
-    private ArrayList<HashMap<String, Object>> blocksList = new ArrayList<>();
-    
     private static final Pattern PARAM_PATTERN = Pattern.compile("%m(?!\\.[\\w]+)");
-    
+    private final ArrayList<String> id_detector = new ArrayList<>();
+    private ActivityBlocksManagerCreatorBinding binding;
+    private ArrayList<HashMap<String, Object>> blocksList = new ArrayList<>();
     /**
      * Current mode of this activity, "edit" if editing a block, "add" if creating a new block and "insert" if inserting a block above another
      */
@@ -68,6 +67,7 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        enableEdgeToEdgeNoContrast();
         super.onCreate(savedInstanceState);
         binding = ActivityBlocksManagerCreatorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -95,9 +95,11 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
                 String string = s.toString();
                 if (!id_detector.contains(string)) {
                     binding.nameLayout.setError(null);
+                    binding.nameLayout.setErrorEnabled(false);
                     binding.save.setEnabled(true);
                 } else if (!mode.equals("edit")) {
                     binding.nameLayout.setError("Block name already in use");
+                    binding.nameLayout.setErrorEnabled(true);
                     binding.save.setEnabled(false);
                 } else {
                     HashMap<String, Object> savedBlocksListBlock = blocksList.get(blockPosition);
@@ -105,6 +107,7 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
 
                     if (!string.equals(blockNameObject)) {
                         binding.nameLayout.setError("Block name already in use");
+                        binding.nameLayout.setErrorEnabled(true);
                         binding.save.setEnabled(false);
                     }
                 }
@@ -146,12 +149,12 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
                     AutoTransition transition = new AutoTransition();
                     transition.setDuration(300L);
                     TransitionManager.beginDelayedTransition(binding.scrollView, transition);
-                    binding.spec2InputLayout.setVisibility(View.VISIBLE);
+                    binding.spec2Layout.setVisibility(View.VISIBLE);
                 } else {
                     AutoTransition transition = new AutoTransition();
                     transition.setDuration(300L);
                     TransitionManager.beginDelayedTransition(binding.scrollView, transition);
-                    binding.spec2InputLayout.setVisibility(View.GONE);
+                    binding.spec2Layout.setVisibility(View.GONE);
                 }
                 updateBlockSpec(s.toString(), Helper.getText(binding.colour));
             }
@@ -165,18 +168,20 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
         });
 
         binding.openColorPalette.setOnClickListener(v -> {
-            Zx zx = new Zx(this, 0, false, false);
-            zx.a(new PCP(binding.colour));
-            zx.showAtLocation(v, Gravity.CENTER, 0, 0);
+            ColorPickerDialog colorPickerDialog = new ColorPickerDialog(this, 0, false, false);
+            colorPickerDialog.a(new PCP(binding.colour));
+            colorPickerDialog.showAtLocation(v, Gravity.CENTER, 0, 0);
         });
 
         binding.colour.addTextChangedListener(new BaseTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!PropertiesUtil.isHexColor(s.toString())) {
-                    binding.colourLay.setError("Invalid hex color");
+                    binding.colourLayout.setError("Invalid hex color");
+                    binding.colourLayout.setErrorEnabled(true);
                 } else {
-                    binding.colourLay.setError(null);
+                    binding.colourLayout.setError(null);
+                    binding.colourLayout.setErrorEnabled(false);
                 }
                 updateBlockSpec(Helper.getText(binding.type), s.toString());
             }
@@ -228,9 +233,37 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
         addParameters();
         receiveIntents();
         new SimpleHighlighter(binding.code);
+
+        {
+            View view = binding.content;
+            int left = view.getPaddingLeft();
+            int top = view.getPaddingTop();
+            int right = view.getPaddingRight();
+            int bottom = view.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.ime() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
+
+        {
+            View view = binding.appBarLayout;
+            int left = view.getPaddingLeft();
+            int top = view.getPaddingTop();
+            int right = view.getPaddingRight();
+            int bottom = view.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top + insets.top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
     }
 
-    private View addBlockMenu(final String menu, String name) {
+    private View addBlockMenu(String menu, String name) {
         TextView textView = new TextView(this);
         textView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -257,22 +290,19 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
 
     private void inputProperties() {
         binding.name.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        binding.name.setSingleLine(true);
+        binding.name.setMaxLines(1);
         binding.type.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        binding.type.setSingleLine(true);
+        binding.type.setMaxLines(1);
         binding.typename.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        binding.typename.setSingleLine(true);
+        binding.typename.setMaxLines(1);
         binding.spec.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        binding.spec.setSingleLine(true);
+        binding.spec.setMaxLines(1);
         binding.colour.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        binding.colour.setSingleLine(true);
+        binding.colour.setMaxLines(1);
         binding.spec2.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        binding.spec2.setSingleLine(true);
+        binding.spec2.setMaxLines(1);
         binding.code.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        binding.code.setSingleLine(false);
-        binding.parameterScrollView.setVerticalScrollBarEnabled(false);
-        binding.parameterScrollView.setHorizontalScrollBarEnabled(false);
-        binding.spec2InputLayout.setVisibility(View.GONE);
+        binding.spec2Layout.setVisibility(View.GONE);
     }
 
     private void addParameters() {
@@ -328,12 +358,12 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
         if (nameObject instanceof String) {
             binding.name.setText((String) nameObject);
         } else {
-            binding.name.setError("Invalid name block data");
+            binding.nameLayout.setError("Invalid name block data");
+            binding.nameLayout.setErrorEnabled(true);
         }
 
         Object typeObject = block.get("type");
-        if (typeObject instanceof String) {
-            String typeString = (String) typeObject;
+        if (typeObject instanceof String typeString) {
 
             if (typeString.equals(" ")) {
                 binding.type.setText("regular");
@@ -341,7 +371,8 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
                 binding.type.setText(typeString);
             }
         } else {
-            binding.type.setError("Invalid type block data");
+            binding.typeLayout.setError("Invalid type block data");
+            binding.typeLayout.setErrorEnabled(true);
         }
 
         Object typeName = block.get("typeName");
@@ -349,7 +380,8 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
             if (typeName instanceof String) {
                 binding.typename.setText((String) typeName);
             } else {
-                binding.typename.setError("Invalid typeName block data");
+                binding.typenameLayout.setError("Invalid typeName block data");
+                binding.typenameLayout.setErrorEnabled(true);
             }
         }
 
@@ -357,7 +389,8 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
         if (specObject instanceof String) {
             binding.spec.setText((String) specObject);
         } else {
-            binding.spec.setError("Invalid spec block data");
+            binding.specLayout.setError("Invalid spec block data");
+            binding.specLayout.setErrorEnabled(true);
         }
 
         Object spec2Object = block.get("spec2");
@@ -365,16 +398,18 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
             if (spec2Object instanceof String) {
                 binding.spec2.setText((String) spec2Object);
             } else {
-                binding.spec2.setError("Invalid spec2 block data");
+                binding.spec2Layout.setError("Invalid spec2 block data");
+                binding.spec2Layout.setErrorEnabled(true);
             }
         }
-        
+
         Object importsObject = block.get("imports");
         if (importsObject != null) {
             if (importsObject instanceof String) {
                 binding.customImport.setText((String) importsObject);
             } else {
-                binding.customImport.setError("Invalid imports block data");
+                binding.customImportLayout.setError("Invalid imports block data");
+                binding.customImportLayout.setErrorEnabled(true);
             }
         }
 
@@ -383,7 +418,8 @@ public class BlocksManagerCreatorActivity extends BaseAppCompatActivity {
             if (colorObject instanceof String) {
                 binding.colour.setText((String) colorObject);
             } else {
-                binding.colour.setError("Invalid color block data");
+                binding.colourLayout.setError("Invalid color block data");
+                binding.colourLayout.setErrorEnabled(true);
             }
         } else {
             binding.colour.setText(palletColour);

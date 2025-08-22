@@ -1,8 +1,5 @@
 package com.besome.sketch.editor.view;
 
-import static mod.bobur.StringEditorActivity.convertXmlToListMap;
-import static mod.bobur.StringEditorActivity.isXmlStringsContains;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,12 +28,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.besome.sketch.beans.ImageBean;
 import com.besome.sketch.beans.LayoutBean;
 import com.besome.sketch.beans.ProjectResourceBean;
 import com.besome.sketch.beans.ViewBean;
 import com.besome.sketch.design.DesignActivity;
+import com.besome.sketch.editor.manage.library.material3.Material3LibraryManager;
 import com.besome.sketch.editor.view.item.ItemAdView;
 import com.besome.sketch.editor.view.item.ItemBottomNavigationView;
 import com.besome.sketch.editor.view.item.ItemButton;
@@ -80,32 +80,14 @@ import a.a.a.wB;
 import a.a.a.wq;
 import a.a.a.yB;
 import a.a.a.zB;
-import dev.aldi.sayuti.editor.view.item.ItemBadgeView;
-import dev.aldi.sayuti.editor.view.item.ItemCircleImageView;
-import dev.aldi.sayuti.editor.view.item.ItemCodeView;
-import dev.aldi.sayuti.editor.view.item.ItemLottieAnimation;
-import dev.aldi.sayuti.editor.view.item.ItemMaterialButton;
-import dev.aldi.sayuti.editor.view.item.ItemOTPView;
-import dev.aldi.sayuti.editor.view.item.ItemPatternLockView;
-import dev.aldi.sayuti.editor.view.item.ItemViewPager;
-import dev.aldi.sayuti.editor.view.item.ItemWaveSideBar;
-import dev.aldi.sayuti.editor.view.item.ItemYoutubePlayer;
-
+import dev.aldi.sayuti.editor.view.item.*;
 import mod.agus.jcoderz.beans.ViewBeans;
-import mod.agus.jcoderz.editor.view.item.ItemAnalogClock;
-import mod.agus.jcoderz.editor.view.item.ItemAutoCompleteTextView;
-import mod.agus.jcoderz.editor.view.item.ItemDatePicker;
-import mod.agus.jcoderz.editor.view.item.ItemDigitalClock;
-import mod.agus.jcoderz.editor.view.item.ItemGridView;
-import mod.agus.jcoderz.editor.view.item.ItemMultiAutoCompleteTextView;
-import mod.agus.jcoderz.editor.view.item.ItemRadioButton;
-import mod.agus.jcoderz.editor.view.item.ItemRatingBar;
-import mod.agus.jcoderz.editor.view.item.ItemTimePicker;
-import mod.agus.jcoderz.editor.view.item.ItemVideoView;
+import mod.agus.jcoderz.editor.view.item.*;
 import mod.bobur.XmlToSvgConverter;
 import mod.hey.studios.util.ProjectFile;
-
 import pro.sketchware.R;
+import pro.sketchware.activities.resourceseditor.components.utils.ColorsEditorManager;
+import pro.sketchware.activities.resourceseditor.components.utils.StringsEditorManager;
 import pro.sketchware.managers.inject.InjectRootLayoutManager;
 import pro.sketchware.utility.FilePathUtil;
 import pro.sketchware.utility.FileUtil;
@@ -114,8 +96,10 @@ import pro.sketchware.utility.InvokeUtil;
 import pro.sketchware.utility.PropertiesUtil;
 import pro.sketchware.utility.ResourceUtil;
 import pro.sketchware.utility.SvgUtils;
+import pro.sketchware.utility.ThemeUtils;
 
 public class ViewPane extends RelativeLayout {
+    private final String stringsStart = "@string/";
     private Context context;
     private ViewGroup rootLayout;
     private int b = 99;
@@ -124,27 +108,19 @@ public class ViewPane extends RelativeLayout {
     private TextView highlightedTextView;
     private kC resourcesManager;
     private String sc_id;
-    private final String stringsStart = "@string/";
-
     private SvgUtils svgUtils;
+    private ColorsEditorManager colorsEditorManager;
+    private int defaultTextColor = 0; // need to save the original color before changes, cause using getDefaultColor() returns the current text color
+    private int defaultHintColor = 0;
+
+    private Material3LibraryManager material3LibraryManager;
 
     public ViewPane(Context context) {
         super(context);
-        initialize();
     }
 
     public ViewPane(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        initialize();
-    }
-
-    private void initialize() {
-        context = new ContextThemeWrapper(getContext(), R.style.ThemeOverlay_SketchwarePro_ViewEditor);
-        svgUtils = new SvgUtils(context);
-        svgUtils.initImageLoader();
-        setBackgroundColor(Color.WHITE);
-        //addRootLayout();
-        initTextView();
     }
 
     public void clearViews() {
@@ -230,8 +206,23 @@ public class ViewPane extends RelativeLayout {
         return (sy) findViewWithTag;
     }
 
-    public void setScId(String sc_id) {
+    public void initialize(String sc_id, boolean isPreviewMode) {
         this.sc_id = sc_id;
+        material3LibraryManager = new Material3LibraryManager(getContext(), sc_id);
+        colorsEditorManager = new ColorsEditorManager();
+        int viewEditorThemeOverlay = material3LibraryManager.getViewEditorThemeOverlay();
+        context = new ContextThemeWrapper(getContext(), viewEditorThemeOverlay);
+        svgUtils = new SvgUtils(context);
+        svgUtils.initImageLoader();
+        if (viewEditorThemeOverlay == R.style.ThemeOverlay_SketchwarePro_ViewEditor) {
+            setBackgroundColor(Color.WHITE);
+        } else if (isPreviewMode) {
+            setBackgroundColor(ThemeUtils.getColor(context, R.attr.colorSurface));
+        } else {
+            setBackground(AppCompatResources.getDrawable(context, R.drawable.bg_view_pane));
+        }
+        //addRootLayout();
+        initTextView();
     }
 
     public void addRootLayout(ViewBean viewBean) {
@@ -317,8 +308,8 @@ public class ViewPane extends RelativeLayout {
         updateItemView(item, viewBean);
         return item;
     }
-    
-    private final View getUnknownItemView(final ViewBean bean) {
+
+    private View getUnknownItemView(ViewBean bean) {
         bean.type = ViewBean.VIEW_TYPE_LAYOUT_LINEAR;
         return new ItemLinearLayout(context);
     }
@@ -380,11 +371,53 @@ public class ViewPane extends RelativeLayout {
             view.setLayoutParams(layoutParams);
             if (viewBean.getClassInfo().b("FloatingActionButton") && (imageBean = viewBean.image) != null && (str = imageBean.resName) != null && !str.isEmpty()) {
                 try {
-                    Bitmap decodeFile = BitmapFactory.decodeFile(resourcesManager.f(viewBean.image.resName));
-                    int round = Math.round(getResources().getDisplayMetrics().density / 2.0f);
-                    ((FloatingActionButton) view).setImageBitmap(Bitmap.createScaledBitmap(decodeFile, decodeFile.getWidth() * round, decodeFile.getHeight() * round, true));
-                } catch (Exception ignored) {
-                }
+                    FloatingActionButton fab = (FloatingActionButton) view;
+                    if (resourcesManager.h(viewBean.image.resName) == ProjectResourceBean.PROJECT_RES_TYPE_RESOURCE) {
+                        int resourceId = getContext().getResources().getIdentifier(viewBean.image.resName, "drawable", getContext().getPackageName());
+                        if (resourceId != 0) {
+                            fab.setImageResource(resourceId);
+                        }
+                    } else if (viewBean.image.resName.equals("default_image")) {
+                        fab.setImageResource(R.drawable.default_image);
+                    } else {
+                        String imagePath = resourcesManager.f(viewBean.image.resName);
+                        File imageFile = new File(imagePath);
+
+                        if (imageFile.exists()) {
+                            int scaleFactor = Math.round(getResources().getDisplayMetrics().density / 2.0f);
+
+                            if (imagePath.endsWith(".xml")) {
+                                FilePathUtil fpu = new FilePathUtil();
+                                svgUtils.loadScaledSvgIntoImageView(new AppCompatImageView(getContext()) {
+                                    @Override
+                                    public void setImageBitmap(Bitmap bitmap) {
+                                        fab.setImageBitmap(bitmap);
+                                    }
+                                }, fpu.getSvgFullPath(sc_id, viewBean.image.resName), scaleFactor);
+                            } else {
+                                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                                if (bitmap != null) {
+                                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(
+                                            bitmap,
+                                            bitmap.getWidth() * scaleFactor,
+                                            bitmap.getHeight() * scaleFactor,
+                                            true
+                                    );
+                                    fab.setImageBitmap(scaledBitmap);
+                                }
+                            }
+                        } else {
+                            XmlToSvgConverter xmlToSvgConverter = new XmlToSvgConverter();
+                            ImageView tempImageView = new AppCompatImageView(getContext()) {
+                                @Override
+                                public void setImageDrawable(android.graphics.drawable.Drawable drawable) {
+                                    fab.setImageDrawable(drawable);
+                                }
+                            };
+                            xmlToSvgConverter.setImageVectorFromFile(tempImageView, xmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, viewBean.image.resName));
+                        }
+                    }
+                } catch (Exception ignored) {}
             }
             view.setRotation(viewBean.image.rotate);
             view.setAlpha(viewBean.alpha);
@@ -466,7 +499,7 @@ public class ViewPane extends RelativeLayout {
                 try {
                     String imagelocation = resourcesManager.f(viewBean.image.resName);
                     File file = new File(imagelocation);
-                    if (file.exists()) {
+                    if (file.exists() && file.length() > 0) {
                         int round3 = Math.round(getResources().getDisplayMetrics().density / 2.0f);
                         if (imagelocation.endsWith(".xml")) {
                             FilePathUtil fpu = new FilePathUtil();
@@ -476,9 +509,12 @@ public class ViewPane extends RelativeLayout {
                             ((ImageView) view).setImageBitmap(Bitmap.createScaledBitmap(decodeFile3, decodeFile3.getWidth() * round3, decodeFile3.getHeight() * round3, true));
                         }
                     } else {
-                        XmlToSvgConverter.setImageVectorFromFile(((ImageView) view), XmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, viewBean.image.resName));
+                        XmlToSvgConverter xmlToSvgConverter = new XmlToSvgConverter();
+                        xmlToSvgConverter.setImageVectorFromFile(((ImageView) view), xmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, viewBean.image.resName));
                     }
                 } catch (Exception unused2) {
+                    FileUtil.deleteFile(new XmlToSvgConverter().getVectorFullPath(DesignActivity.sc_id, viewBean.image.resName));
+                    viewBean.image.resName = "default_image";
                     ((ImageView) view).setImageResource(R.drawable.default_image);
                 }
             }
@@ -729,23 +765,15 @@ public class ViewPane extends RelativeLayout {
         return result;
     }
 
-    private Rect getRectFor(View view) {
-        var rect = new Rect();
-        view.getGlobalVisibleRect(rect);
-        int scaledWidth = (int) (view.getWidth() * getScaleX());
-        int scaledHeight = (int) (view.getHeight() * getScaleY());
-        rect.right = rect.left + scaledWidth;
-        rect.bottom = rect.top + scaledHeight;
-        return rect;
-    }
-
     private void a(ViewBean view, ItemLinearLayout linearLayout) {
         float scaleX = getScaleX();
         float scaleY = getScaleY();
-        Rect parentRect = getRectFor(linearLayout);
+        int[] locationOnScreen = new int[2];
+        linearLayout.getLocationOnScreen(locationOnScreen);
         int layoutGravity = linearLayout.getLayoutGravity();
         int horizontalGravity = layoutGravity & Gravity.FILL_HORIZONTAL;
         int verticalGravity = layoutGravity & Gravity.FILL_VERTICAL;
+        Rect parentRect = new Rect(locationOnScreen[0], locationOnScreen[1], ((int) (linearLayout.getWidth() * getScaleX())) + locationOnScreen[0], ((int) (linearLayout.getHeight() * getScaleY())) + locationOnScreen[1]);
         addViewInfo(parentRect, linearLayout, -1, calculateViewDepth(linearLayout));
 
         int parentWidth = (int) (linearLayout.getMeasuredWidth() * scaleX);
@@ -757,7 +785,9 @@ public class ViewPane extends RelativeLayout {
         for (int i = 0; i < linearLayout.getChildCount(); i++) {
             View child = linearLayout.getChildAt(i);
             if (child != null && child.getTag() != null && (view == null || view.id == null || !child.getTag().equals(view.id)) && child.getVisibility() == View.VISIBLE) {
-                Rect childRect = getRectFor(child);
+                int[] childLocationOnScreen = new int[2];
+                linearLayout.getLocationOnScreen(childLocationOnScreen);
+                Rect childRect = new Rect();
                 var layoutParams = (LinearLayout.LayoutParams) child.getLayoutParams();
                 int leftMargin = layoutParams.leftMargin;
                 int rightMargin = layoutParams.rightMargin;
@@ -769,8 +799,8 @@ public class ViewPane extends RelativeLayout {
                     if (verticalGravity == Gravity.CENTER_VERTICAL) {
                         int childTopY;
                         if (i == 0) {
-                            childTopY = childRect.top - (int) (topMargin * scaleY);
-                            final int parentLeft = parentRect.left;
+                            childTopY = childLocationOnScreen[1] - (int) (topMargin * scaleY);
+                            int parentLeft = parentRect.left;
                             addViewInfo(
                                     new Rect(
                                             parentLeft,
@@ -793,7 +823,7 @@ public class ViewPane extends RelativeLayout {
                         childRect.bottom = paddingTop;
                         paddingLeft = parentLeft;
                     } else if (verticalGravity == Gravity.BOTTOM) {
-                        final int childTopY = (int) (topMargin * scaleY);
+                        int childTopY = (int) (topMargin * scaleY);
                         paddingLeft = parentRect.left;
                         childRect.left = paddingLeft;
                         childRect.top = paddingTop;
@@ -801,7 +831,7 @@ public class ViewPane extends RelativeLayout {
                         childRect.bottom = paddingTop - childTopY;
                         paddingTop = (int) ((paddingTop + childHeight + bottomMargin) * scaleY);
                     } else {
-                        final int childBottomY =
+                        int childBottomY =
                                 (int) ((childHeight + topMargin + bottomMargin) * scaleY)
                                         + paddingTop;
                         paddingLeft = parentRect.left;
@@ -814,7 +844,7 @@ public class ViewPane extends RelativeLayout {
                 } else {
                     if (horizontalGravity == Gravity.CENTER_HORIZONTAL) {
                         if (i == 0) {
-                            int childStartX = childRect.left - (int) (leftMargin * scaleX);
+                            int childStartX = childLocationOnScreen[0] - (int) (leftMargin * scaleX);
                             int parentTop = parentRect.top;
                             addViewInfo(
                                     new Rect(
@@ -869,11 +899,21 @@ public class ViewPane extends RelativeLayout {
                 }
                 childIndex++;
             }
+
+
         }
     }
 
     private void addDroppableForViewGroup(ViewBean viewBean, ViewGroup viewGroup) {
-        addViewInfo(getRectFor(viewGroup), viewGroup, -1, calculateViewDepth(viewGroup));
+        int[] viewLocationOnScreen = new int[2];
+        viewGroup.getLocationOnScreen(viewLocationOnScreen);
+        int xCoordinate = viewLocationOnScreen[0];
+        int yCoordinate = viewLocationOnScreen[1];
+        addViewInfo(new Rect(xCoordinate, yCoordinate,
+                        ((int) (viewGroup.getWidth() * getScaleX())) + xCoordinate,
+                        ((int) (viewGroup.getHeight() * getScaleY())) + yCoordinate),
+                viewGroup, -1, calculateViewDepth(viewGroup)
+        );
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View childAt = viewGroup.getChildAt(i);
             if (childAt != null && childAt.getTag() != null && ((viewBean == null || viewBean.id == null || !childAt.getTag().equals(viewBean.id)) && childAt.getVisibility() == View.VISIBLE)) {
@@ -977,8 +1017,11 @@ public class ViewPane extends RelativeLayout {
         int rightMargin = (int) wB.a(getContext(), (float) viewBean.layout.marginRight);
         int bottomMargin = (int) wB.a(getContext(), (float) viewBean.layout.marginBottom);
 
-        viewBean.parentType = getActualParentType(view, viewBean.parentType);
-        view.setBackgroundColor(viewBean.layout.backgroundColor);
+        if (viewBean.layout.backgroundResColor == null) {
+            view.setBackgroundColor(viewBean.layout.backgroundColor);
+        } else {
+            view.setBackgroundColor(PropertiesUtil.parseColor(colorsEditorManager.getColorValue(context, viewBean.layout.backgroundResColor, 3, material3LibraryManager.canUseNightVariantColors())));
+        }
         if (viewBean.parentType == ViewBean.VIEW_TYPE_LAYOUT_LINEAR) {
             LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(width, height);
             layoutParams2.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
@@ -1218,7 +1261,16 @@ public class ViewPane extends RelativeLayout {
         } else {
             textView.setTypeface(null, viewBean.text.textType);
         }
-        textView.setTextColor(viewBean.text.textColor);
+        if (defaultTextColor == 0) {
+            defaultTextColor = textView.getTextColors().getDefaultColor();
+        }
+        if (viewBean.text.resTextColor == null) {
+            textView.setTextColor(
+                    viewBean.text.textColor == 0xffffff ? defaultTextColor : viewBean.text.textColor
+            );
+        } else {
+            textView.setTextColor(PropertiesUtil.parseColor(colorsEditorManager.getColorValue(context, viewBean.text.resTextColor, 3, material3LibraryManager.canUseNightVariantColors())));
+        }
         textView.setTextSize(viewBean.text.textSize);
         textView.setLines(viewBean.text.line);
         textView.setSingleLine(viewBean.text.singleLine != 0);
@@ -1232,9 +1284,10 @@ public class ViewPane extends RelativeLayout {
 
         ArrayList<HashMap<String, Object>> stringsListMap = new ArrayList<>();
 
-        convertXmlToListMap(FileUtil.readFileIfExist(filePath), stringsListMap);
+        StringsEditorManager stringsEditorManager = new StringsEditorManager();
+        stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFileIfExist(filePath), stringsListMap);
 
-        if (key.equals("@string/app_name") && !isXmlStringsContains(stringsListMap, "app_name")) {
+        if (key.equals("@string/app_name") && !stringsEditorManager.isXmlStringsExist(stringsListMap, "app_name")) {
             return yB.c(lC.b(sc_id), "my_app_name");
         }
 
@@ -1251,7 +1304,16 @@ public class ViewPane extends RelativeLayout {
     private void updateEditText(EditText editText, ViewBean viewBean) {
         String str = viewBean.text.hint;
         editText.setHint(str.startsWith(stringsStart) ? getXmlString(str) : str);
-        editText.setHintTextColor(viewBean.text.hintColor);
+        if (defaultHintColor == 0) {
+            defaultHintColor = editText.getHintTextColors().getDefaultColor();
+        }
+        if (viewBean.text.resHintColor == null) {
+            editText.setHintTextColor(
+                    viewBean.text.hintColor == 0xffffff ? defaultHintColor : viewBean.text.hintColor
+            );
+        } else {
+            editText.setHintTextColor(PropertiesUtil.parseColor(colorsEditorManager.getColorValue(context, viewBean.text.resHintColor, 3, material3LibraryManager.canUseNightVariantColors())));
+        }
     }
 
     private void updateCardView(ItemCardView cardView, InjectAttributeHandler handler) {
@@ -1263,7 +1325,16 @@ public class ViewPane extends RelativeLayout {
         String strokeColor = handler.getAttributeValueOf("strokeColor");
         String strokeWidth = handler.getAttributeValueOf("strokeWidth");
 
-        cardView.setBackgroundColor(PropertiesUtil.isHexColor(cardBackgroundColor) ? PropertiesUtil.parseColor(cardBackgroundColor) : bean.layout.backgroundColor);
+        if (cardBackgroundColor.isEmpty()) {
+            if (bean.layout.backgroundResColor == null) {
+                cardView.setCardBackgroundColor(bean.layout.backgroundColor);
+            } else {
+                cardView.setCardBackgroundColor(PropertiesUtil.parseColor(colorsEditorManager.getColorValue(context, bean.layout.backgroundResColor, 3, material3LibraryManager.canUseNightVariantColors())));
+            }
+        } else {
+            cardView.setCardBackgroundColor(PropertiesUtil.parseColor(colorsEditorManager.getColorValue(context, cardBackgroundColor, 3, material3LibraryManager.canUseNightVariantColors())));
+        }
+
         cardView.setCardElevation(PropertiesUtil.resolveSize(cardElevation, 4));
         cardView.setRadius(PropertiesUtil.resolveSize(cardCornerRadius, 8));
         cardView.setUseCompatPadding(Boolean.parseBoolean(TextUtils.isEmpty(compatPadding) ? "false" : compatPadding));
@@ -1320,6 +1391,18 @@ public class ViewPane extends RelativeLayout {
         return matcher.find() ? matcher.group(1) : "";
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.d("ViewEditor", "onMeasure" + getMeasuredWidth() + "x" + getMeasuredHeight());
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getClass().getName() + "@" + Integer.toHexString(hashCode());
+    }
+
     private static class ViewInfo {
 
         private final Rect rect;
@@ -1349,17 +1432,5 @@ public class ViewPane extends RelativeLayout {
         public int getDepth() {
             return depth;
         }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.d("ViewEditor", "onMeasure" + getMeasuredWidth() + "x" + getMeasuredHeight());
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return getClass().getName() + "@" + Integer.toHexString(hashCode());
     }
 }

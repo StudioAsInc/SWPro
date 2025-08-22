@@ -5,9 +5,9 @@ import android.view.ViewGroup;
 
 import com.besome.sketch.beans.ViewBean;
 import com.besome.sketch.editor.view.palette.IconBase;
-import pro.sketchware.R;
 
 import mod.agus.jcoderz.beans.ViewBeans;
+import pro.sketchware.R;
 
 public class IconCardView extends IconBase {
 
@@ -28,7 +28,7 @@ public class IconCardView extends IconBase {
         viewBean.layout.paddingRight = 8;
         viewBean.layout.paddingBottom = 8;
         viewBean.convert = "androidx.cardview.widget.CardView";
-        viewBean.inject = "app:cardElevation=\"10dp\"\napp:cardCornerRadius=\"20dp\"";
+        viewBean.inject = "app:cardElevation=\"2dp\"\napp:cardCornerRadius=\"20dp\"";
         return viewBean;
     }
 }

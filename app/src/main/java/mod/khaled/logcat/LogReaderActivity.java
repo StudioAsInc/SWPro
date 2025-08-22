@@ -15,19 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import pro.sketchware.R;
-import pro.sketchware.databinding.ActivityLogcatreaderBinding;
-import pro.sketchware.databinding.EasyDeleteEdittextBinding;
-import pro.sketchware.databinding.ViewLogcatItemBinding;
-
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,27 +32,30 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mod.hey.studios.util.Helper;
+import pro.sketchware.R;
+import pro.sketchware.databinding.ActivityLogcatreaderBinding;
+import pro.sketchware.databinding.EasyDeleteEdittextBinding;
+import pro.sketchware.databinding.ViewLogcatItemBinding;
+import pro.sketchware.lib.base.BaseTextWatcher;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
-import pro.sketchware.lib.base.BaseTextWatcher;
-import mod.hey.studios.util.Helper;
 
 public class LogReaderActivity extends BaseAppCompatActivity {
 
     private final BroadcastReceiver logger = new Logger();
     private final Pattern logPattern = Pattern.compile("^(.*\\d) ([VADEIW]) (.*): (.*)");
+    private final ArrayList<HashMap<String, Object>> mainList = new ArrayList<>();
     private String pkgFilter = "";
     private String packageName = "pro.sketchware";
     private boolean autoScroll = true;
-
-    private final ArrayList<HashMap<String, Object>> mainList = new ArrayList<>();
     private ArrayList<String> pkgFilterList = new ArrayList<>();
 
     private ActivityLogcatreaderBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        EdgeToEdge.enable(this);
+        enableEdgeToEdgeNoContrast();
         super.onCreate(savedInstanceState);
 
         binding = ActivityLogcatreaderBinding.inflate(getLayoutInflater());
@@ -103,7 +98,7 @@ public class LogReaderActivity extends BaseAppCompatActivity {
         binding.searchInput.addTextChangedListener(new BaseTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                final String _charSeq = s.toString();
+                String _charSeq = s.toString();
                 if (_charSeq.isEmpty() && (pkgFilterList.isEmpty())) {
                     binding.logsRecyclerView.setAdapter(new Adapter(mainList));
                 } else {
@@ -201,6 +196,18 @@ public class LogReaderActivity extends BaseAppCompatActivity {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        binding.searchInput.clearFocus();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(logger);
+    }
+
     private class Logger extends BroadcastReceiver {
 
         @Override
@@ -249,27 +256,19 @@ public class LogReaderActivity extends BaseAppCompatActivity {
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        binding.searchInput.clearFocus();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(logger);
-    }
-
     private class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         private final ArrayList<HashMap<String, Object>> data;
 
-        public void updateList(final HashMap<String, Object> _map) {
+        public Adapter(ArrayList<HashMap<String, Object>> data) {
+            this.data = data;
+        }
+
+        public void updateList(HashMap<String, Object> _map) {
             data.add(_map);
             binding.logsRecyclerView.getAdapter().notifyItemInserted(data.size() + 1);
 
             if (autoScroll) {
-                ((LinearLayoutManager) binding.logsRecyclerView.getLayoutManager()).scrollToPosition(data.size() - 1);
+                binding.logsRecyclerView.getLayoutManager().scrollToPosition(data.size() - 1);
                 binding.appBarLayout.setExpanded(false);
             }
 
@@ -282,10 +281,6 @@ public class LogReaderActivity extends BaseAppCompatActivity {
             binding.noContentLayout.setVisibility(View.VISIBLE);
         }
 
-        public Adapter(ArrayList<HashMap<String, Object>> data) {
-            this.data = data;
-        }
-
         @Override
         @NonNull
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -296,7 +291,7 @@ public class LogReaderActivity extends BaseAppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             var binding = holder.listBinding;
 
             if (data.get(position).containsKey("pkgName")) {

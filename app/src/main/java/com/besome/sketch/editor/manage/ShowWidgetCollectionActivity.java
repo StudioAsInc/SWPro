@@ -13,12 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import com.besome.sketch.beans.ViewBean;
+import com.besome.sketch.design.DesignActivity;
 import com.besome.sketch.editor.view.ViewPane;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.besome.sketch.lib.ui.EasyDeleteEditText;
-
-import mod.hey.studios.util.Helper;
-import pro.sketchware.R;
 
 import java.util.ArrayList;
 
@@ -31,6 +29,8 @@ import a.a.a.kC;
 import a.a.a.mB;
 import a.a.a.sy;
 import a.a.a.wq;
+import mod.hey.studios.util.Helper;
+import pro.sketchware.R;
 
 public class ShowWidgetCollectionActivity extends BaseAppCompatActivity implements View.OnClickListener {
     private String widgetName;
@@ -101,6 +101,7 @@ public class ShowWidgetCollectionActivity extends BaseAppCompatActivity implemen
         widgetName = getIntent().getStringExtra("widget_name");
         viewPane = findViewById(R.id.pane);
         viewPane.setVerticalScrollBarEnabled(true);
+        viewPane.initialize(DesignActivity.sc_id, true);
         kC kCVar = new kC("", wq.a() + "/image/data/", "", "");
         kCVar.b(Op.g().f());
         viewPane.setResourceManager(kCVar);

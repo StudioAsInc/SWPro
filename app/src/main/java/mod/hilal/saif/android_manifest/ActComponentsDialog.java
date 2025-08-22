@@ -1,7 +1,7 @@
 package mod.hilal.saif.android_manifest;
 
-import static pro.sketchware.utility.SketchwareUtil.getDip;
 import static pro.sketchware.utility.GsonUtils.getGson;
+import static pro.sketchware.utility.SketchwareUtil.getDip;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -14,20 +14,19 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import pro.sketchware.R;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import pro.sketchware.utility.SketchwareUtil;
-import pro.sketchware.utility.FileUtil;
 import mod.hey.studios.lib.code_editor.CodeEditorEditText;
 import mod.hey.studios.lib.code_editor.CodeEditorLayout;
 import mod.hey.studios.lib.code_editor.ColorScheme;
 import mod.hey.studios.util.Helper;
 import mod.hilal.saif.asd.DialogButtonGradientDrawable;
+import pro.sketchware.R;
+import pro.sketchware.utility.FileUtil;
+import pro.sketchware.utility.SketchwareUtil;
 
 public class ActComponentsDialog extends Dialog {
 
@@ -83,7 +82,7 @@ public class ActComponentsDialog extends Dialog {
     }
 
     private void addControl() {
-        final LinearLayout linearLayout = new LinearLayout(getContext());
+        LinearLayout linearLayout = new LinearLayout(getContext());
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,

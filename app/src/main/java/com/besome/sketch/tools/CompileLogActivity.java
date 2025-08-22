@@ -12,21 +12,18 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.PopupMenu;
 
-import androidx.activity.EdgeToEdge;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import pro.sketchware.databinding.CompileLogBinding;
-
-import com.besome.sketch.lib.base.BaseAppCompatActivity;
-
-import pro.sketchware.utility.SketchwareUtil;
 import mod.hey.studios.util.CompileLogHelper;
 import mod.hey.studios.util.Helper;
 import mod.jbk.diagnostic.CompileErrorSaver;
 import mod.jbk.util.AddMarginOnApplyWindowInsetsListener;
+import pro.sketchware.databinding.CompileLogBinding;
+import pro.sketchware.utility.SketchwareUtil;
 
 public class CompileLogActivity extends BaseAppCompatActivity {
 
@@ -41,7 +38,7 @@ public class CompileLogActivity extends BaseAppCompatActivity {
     @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        EdgeToEdge.enable(this);
+        enableEdgeToEdgeNoContrast();
         super.onCreate(savedInstanceState);
         binding = CompileLogBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

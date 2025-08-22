@@ -19,11 +19,8 @@ import com.besome.sketch.beans.ViewBean;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 
-import mod.hey.studios.util.Helper;
-import pro.sketchware.R;
-import pro.sketchware.databinding.ManageScreenActivityAddTempBinding;
-
 import java.util.ArrayList;
+import java.util.Objects;
 
 import a.a.a.YB;
 import a.a.a.bB;
@@ -31,6 +28,15 @@ import a.a.a.rq;
 import a.a.a.uq;
 import a.a.a.wB;
 import a.a.a.xB;
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.library.LibraryUtils;
+import extensions.anbui.daydream.project.ProjectDataBuildConfig;
+import extensions.anbui.daydream.project.ProjectDataConfig;
+import extensions.anbui.daydream.project.ProjectDataDayDream;
+import extensions.anbui.daydream.project.ProjectDataLibrary;
+import mod.hey.studios.util.Helper;
+import pro.sketchware.R;
+import pro.sketchware.databinding.ManageScreenActivityAddTempBinding;
 
 public class AddViewActivity extends BaseAppCompatActivity {
 
@@ -166,6 +172,121 @@ public class AddViewActivity extends BaseAppCompatActivity {
         featuresAdapter.notifyDataSetChanged();
     }
 
+    private void initializeDayDreamFeature() {
+        if (projectFileBean != null) {
+            binding.edgetoedge.setChecked(ProjectDataDayDream.isEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName));
+            binding.windowinsetshandling.setChecked(ProjectDataDayDream.isEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName));
+            binding.disableautomaticpermissionrequests.setChecked(ProjectDataDayDream.isDisableAutomaticPermissionRequests(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swContentprotection.setChecked(ProjectDataDayDream.isContentProtection(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportworkmanager.setChecked(ProjectDataDayDream.isImportWorkManager(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportmedia3.setChecked(ProjectDataDayDream.isImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportandroixbrowser.setChecked(ProjectDataDayDream.isImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportandroixcredentialmanager.setChecked(ProjectDataDayDream.isImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.fileName));
+            binding.swImportshizuku.setChecked(ProjectDataDayDream.isImportShizuku(Configs.currentProjectID, projectFileBean.fileName));
+
+            binding.lnEdgetoedge.setOnClickListener(v -> binding.edgetoedge.toggle());
+            binding.lnWindowinsetshandling.setOnClickListener(v -> binding.windowinsetshandling.toggle());
+            binding.lnDisableautomaticpermissionrequests.setOnClickListener(v -> binding.disableautomaticpermissionrequests.toggle());
+            binding.lnContentprotection.setOnClickListener(v -> binding.swContentprotection.toggle());
+            binding.lnImportworkmanager.setOnClickListener(v -> binding.swImportworkmanager.toggle());
+            binding.lnImportmedia3.setOnClickListener(v -> binding.swImportmedia3.toggle());
+            binding.lnImportandroixbrowser.setOnClickListener(v -> binding.swImportandroixbrowser.toggle());
+            binding.lnImportandroixcredentialmanager.setOnClickListener(v -> binding.swImportandroixcredentialmanager.toggle());
+            binding.lnImportshizuku.setOnClickListener(v -> binding.swImportshizuku.toggle());
+        }
+
+        if (!ProjectDataLibrary.isEnabledAppCompat(Configs.currentProjectID)) {
+            binding.lnEdgetoedge.setEnabled(false);
+            binding.lnWindowinsetshandling.setEnabled(false);
+            binding.lnEdgetoedge.setAlpha(0.5f);
+            binding.lnWindowinsetshandling.setAlpha(0.5f);
+            binding.tvEdgetoedgenote.setText("To use, enable AppCompat. " + binding.tvEdgetoedgenote.getText().toString());
+            binding.tvWindowinsetshandlingnote.setText("To use, enable AppCompat. " + binding.tvWindowinsetshandlingnote.getText().toString());
+        } else {
+            if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalEdgeToEdge(Configs.currentProjectID)) {
+                binding.lnEdgetoedge.setEnabled(false);
+                binding.lnEdgetoedge.setAlpha(0.5f);
+                binding.tvEdgetoedgenote.setText("It is enabled and cannot be changed because it applies to the entire project. " + binding.tvEdgetoedgenote.getText().toString());
+            }
+
+            if (ProjectDataBuildConfig.isUseJava7(Configs.currentProjectID)) {
+                binding.lnWindowinsetshandling.setEnabled(false);
+                binding.lnWindowinsetshandling.setAlpha(0.5f);
+                binding.tvWindowinsetshandlingnote.setText("To use, use a newer version of Java. " + binding.tvWindowinsetshandlingnote.getText().toString());
+            } else if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalWindowInsetsHandling(Configs.currentProjectID)) {
+                binding.lnWindowinsetshandling.setEnabled(false);
+                binding.lnWindowinsetshandling.setAlpha(0.5f);
+                binding.tvWindowinsetshandlingnote.setText("It is enabled and cannot be changed because it applies to the entire project. " + binding.tvWindowinsetshandlingnote.getText().toString());
+            }
+        }
+
+        if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalDisableAutomaticPermissionRequests(Configs.currentProjectID)) {
+            binding.lnDisableautomaticpermissionrequests.setEnabled(false);
+            binding.lnDisableautomaticpermissionrequests.setAlpha(0.5f);
+            binding.tvDisableautomaticpermissionrequestsnote.setText("It is enabled and cannot be changed because it applies to the entire project. " + binding.tvDisableautomaticpermissionrequestsnote.getText().toString());
+        }
+
+        if (ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID) && ProjectDataDayDream.isUniversalContentProtection(Configs.currentProjectID)) {
+            binding.lnContentprotection.setEnabled(false);
+            binding.lnContentprotection.setAlpha(0.5f);
+            binding.tvContentprotectionnote.setText("It is enabled and cannot be changed because it applies to the entire project. " + binding.tvContentprotectionnote.getText().toString());
+        }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isForceAddWorkManager(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseAndroidXWorkManager(Configs.currentProjectID))) {
+            binding.lnImportworkmanager.setVisibility(View.GONE);
+        }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isUniversalUseMedia3(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseAndroidXMedia3(Configs.currentProjectID))) {
+            binding.lnImportmedia3.setVisibility(View.GONE);
+        }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isUniversalUseAndroidXBrowser(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseAndroidXBrowser(Configs.currentProjectID))) {
+            binding.lnImportandroixbrowser.setVisibility(View.GONE);
+        }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isUniversalUseAndroidXCredentialManager(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseAndroidXCredentialManager(Configs.currentProjectID))) {
+            binding.lnImportandroixcredentialmanager.setVisibility(View.GONE);
+        }
+
+        if (!(ProjectDataDayDream.isEnableDayDream(Configs.currentProjectID)
+                && ProjectDataDayDream.isUseShizuku(Configs.currentProjectID)
+                && LibraryUtils.isAllowUseShizuku(Configs.currentProjectID))) {
+            binding.lnImportshizuku.setVisibility(View.GONE);
+        }
+    }
+
+    private void saveDayDreamData() {
+        if (projectFileBean != null) {
+            ProjectDataDayDream.setEnableEdgeToEdge(Configs.currentProjectID, projectFileBean.fileName, binding.edgetoedge.isChecked());
+            ProjectDataDayDream.setEnableWindowInsetsHandling(Configs.currentProjectID, projectFileBean.fileName, binding.windowinsetshandling.isChecked());
+            ProjectDataDayDream.setDisableAutomaticPermissionRequests(Configs.currentProjectID, projectFileBean.fileName, binding.disableautomaticpermissionrequests.isChecked());
+            ProjectDataDayDream.setContentProtection(Configs.currentProjectID, projectFileBean.fileName, binding.swContentprotection.isChecked());
+            ProjectDataDayDream.setImportWorkManager(Configs.currentProjectID, projectFileBean.fileName, binding.swImportworkmanager.isChecked());
+            ProjectDataDayDream.setImportAndroidXMedia3(Configs.currentProjectID, projectFileBean.fileName, binding.swImportmedia3.isChecked());
+            ProjectDataDayDream.setImportAndroidXBrowser(Configs.currentProjectID, projectFileBean.fileName, binding.swImportandroixbrowser.isChecked());
+            ProjectDataDayDream.setImportAndroidXCredentialManager(Configs.currentProjectID, projectFileBean.fileName, binding.swImportandroixcredentialmanager.isChecked());
+            ProjectDataDayDream.setImportShizuku(Configs.currentProjectID, projectFileBean.fileName, binding.swImportshizuku.isChecked());
+        } else {
+            ProjectDataDayDream.setEnableEdgeToEdge(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.edgetoedge.isChecked());
+            ProjectDataDayDream.setEnableWindowInsetsHandling(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.windowinsetshandling.isChecked());
+            ProjectDataDayDream.setDisableAutomaticPermissionRequests(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.disableautomaticpermissionrequests.isChecked());
+            ProjectDataDayDream.setContentProtection(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swContentprotection.isChecked());
+            ProjectDataDayDream.setImportWorkManager(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportworkmanager.isChecked());
+            ProjectDataDayDream.setImportAndroidXMedia3(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportmedia3.isChecked());
+            ProjectDataDayDream.setImportAndroidXBrowser(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportandroixbrowser.isChecked());
+            ProjectDataDayDream.setImportAndroidXCredentialManager(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportandroixcredentialmanager.isChecked());
+            ProjectDataDayDream.setImportShizuku(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), binding.swImportshizuku.isChecked());
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -207,6 +328,16 @@ public class AddViewActivity extends BaseAppCompatActivity {
             }
         });
 
+        binding.viewTypeSelector.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == R.id.select_activity) {
+                    setManifestViewState(true);
+                } else {
+                    setManifestViewState(false);
+                }
+            }
+        });
+
         binding.btnSave.setOnClickListener(v -> {
             int options = ProjectFileBean.OPTION_ACTIVITY_TOOLBAR;
             if (265 == requestCode) {
@@ -229,9 +360,16 @@ public class AddViewActivity extends BaseAppCompatActivity {
                 intent.putExtra("project_file", projectFileBean);
                 setResult(RESULT_OK, intent);
                 bB.a(getApplicationContext(), xB.b().a(getApplicationContext(), R.string.design_manager_message_edit_complete, new Object[0]), bB.TOAST_NORMAL).show();
+
+                saveDayDreamData();
+
                 finish();
             } else if (isValid(nameValidator)) {
-                String var4 = Helper.getText(binding.edName) + getSuffix(binding.viewTypeSelector);
+                String var4 = Helper.getText(binding.edName);
+
+                if (binding.cbAddSuffix.isChecked()) var4 += getSuffix(binding.viewTypeSelector);
+                ProjectDataDayDream.setActivityType(Configs.currentProjectID, Objects.requireNonNull(binding.edName.getText()).toString(), getSuffix(binding.viewTypeSelector));
+
                 ProjectFileBean projectFileBean = new ProjectFileBean(ProjectFileBean.PROJECT_FILE_TYPE_ACTIVITY, var4, getSelectedButtonIndex(binding.screenOrientationSelector), getSelectedButtonIndex(binding.keyboardSettingsSelector), featureToolbar, !featureStatusBar, featureFab, featureDrawer);
                 Intent intent = new Intent();
                 intent.putExtra("project_file", projectFileBean);
@@ -240,14 +378,19 @@ public class AddViewActivity extends BaseAppCompatActivity {
                 }
                 setResult(RESULT_OK, intent);
                 bB.a(getApplicationContext(), xB.b().a(getApplicationContext(), R.string.design_manager_message_add_complete, new Object[0]), bB.TOAST_NORMAL).show();
+
+                saveDayDreamData();
+
                 finish();
             }
 
         });
+
         binding.btnCancel.setOnClickListener(v -> {
             setResult(RESULT_CANCELED);
             finish();
         });
+
         if (requestCode == 265) {
             nameValidator = new YB(getApplicationContext(), binding.tiName, uq.b, new ArrayList<>(), projectFileBean.fileName);
             binding.edName.setText(projectFileBean.fileName);
@@ -255,6 +398,12 @@ public class AddViewActivity extends BaseAppCompatActivity {
             binding.edName.setBackgroundResource(R.color.transparent);
             initItem(projectFileBean.options);
             binding.addViewTypeSelectorLayout.setVisibility(View.GONE);
+            if (projectFileBean.fileName.endsWith("_fragment")
+                    || ProjectDataDayDream.getActivityType(Configs.currentProjectID, projectFileBean.fileName).contains("_fragment")) {
+                binding.viewOrientationSelectorLayout.setVisibility(View.GONE);
+                binding.viewKeyboardSettingsSelectorLayout.setVisibility(View.GONE);
+                binding.lnDaydreamfeaturesforactivity.setVisibility(View.GONE);
+            }
             binding.screenOrientationSelector.check(binding.screenOrientationSelector.getChildAt(projectFileBean.orientation).getId());
             binding.keyboardSettingsSelector.check(binding.keyboardSettingsSelector.getChildAt(projectFileBean.keyboardSetting).getId());
 
@@ -269,6 +418,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             nameValidator = new YB(getApplicationContext(), binding.tiName, uq.b, screenNames);
         }
         initializeItems();
+        initializeDayDreamFeature();
     }
 
     private String getSuffix(MaterialButtonToggleGroup toggleGroup) {
@@ -322,6 +472,7 @@ public class AddViewActivity extends BaseAppCompatActivity {
             return featureItems.size();
         }
 
+        @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
             d = true;
             FeatureItem featureItem = featureItems.get(position);
@@ -377,6 +528,21 @@ public class AddViewActivity extends BaseAppCompatActivity {
                     }
                 });
             }
+        }
+    }
+
+    private void setManifestViewState(boolean vis) {
+        if (vis) {
+            binding.viewOrientationSelectorLayout.setVisibility(View.VISIBLE);
+            binding.viewKeyboardSettingsSelectorLayout.setVisibility(View.VISIBLE);
+            binding.lnDaydreamfeaturesforactivity.setVisibility(View.VISIBLE);
+            binding.lnAddSuffix.setVisibility(View.GONE);
+        } else {
+            binding.viewOrientationSelectorLayout.setVisibility(View.GONE);
+            binding.viewKeyboardSettingsSelectorLayout.setVisibility(View.GONE);
+            binding.lnDaydreamfeaturesforactivity.setVisibility(View.GONE);
+            binding.lnAddSuffix.setVisibility(View.VISIBLE);
+            binding.cbAddSuffix.setText("Add " + getSuffix(binding.viewTypeSelector) + " suffix.");
         }
     }
 }

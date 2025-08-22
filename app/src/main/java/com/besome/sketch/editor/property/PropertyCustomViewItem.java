@@ -13,11 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.besome.sketch.beans.ProjectFileBean;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 
 import a.a.a.Kw;
-import a.a.a.aB;
 import a.a.a.mB;
 import a.a.a.wB;
 import a.a.a.xB;
@@ -55,9 +55,9 @@ public class PropertyCustomViewItem extends RelativeLayout implements View.OnCli
     }
 
     private void a() {
-        aB dialog = new aB((Activity) getContext());
-        dialog.b(Helper.getText(tvName));
-        dialog.a(f);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(getContext());
+        dialog.setTitle(Helper.getText(tvName));
+        dialog.setIcon(f);
         PropertyPopupSelectorSingleBinding propertyBinding = PropertyPopupSelectorSingleBinding.inflate(((Activity) getContext()).getLayoutInflater());
         RadioGroup rgContent = propertyBinding.rgContent;
         rgContent.addView(a("none"));
@@ -76,8 +76,8 @@ public class PropertyCustomViewItem extends RelativeLayout implements View.OnCli
             }
         }
 
-        dialog.a(propertyBinding.getRoot());
-        dialog.b(xB.b().a(getContext(), R.string.common_word_select), v -> {
+        dialog.setView(propertyBinding.getRoot());
+        dialog.setPositiveButton(xB.b().a(getContext(), R.string.common_word_select), (v, which) -> {
             for (int i = 0, childCount = rgContent.getChildCount(); i < childCount; i++) {
                 RadioButton radioButton = (RadioButton) rgContent.getChildAt(i);
 
@@ -88,9 +88,9 @@ public class PropertyCustomViewItem extends RelativeLayout implements View.OnCli
             if (propertyValueChangeListener != null) {
                 propertyValueChangeListener.a(key, value);
             }
-            dialog.dismiss();
+            v.dismiss();
         });
-        dialog.a(xB.b().a(getContext(), R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
+        dialog.setNegativeButton(xB.b().a(getContext(), R.string.common_word_cancel), null);
         dialog.show();
     }
 
@@ -101,31 +101,14 @@ public class PropertyCustomViewItem extends RelativeLayout implements View.OnCli
         propertyItem = findViewById(R.id.property_item);
         propertyMenuItem = findViewById(R.id.property_menu_item);
         imgLeftIcon = findViewById(R.id.img_left_icon);
-        if (var2) {
-            setOnClickListener(this);
-            setSoundEffectsEnabled(true);
-        }
-
+//        if (var2) {
+//            propertyMenuItem.setOnClickListener(this);
+//            propertyMenuItem.setSoundEffectsEnabled(true);
+//        }
     }
 
     public String getKey() {
         return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void onClick(View var1) {
-        if (!mB.a()) {
-            if ("property_custom_view_listview".equals(key)) {
-                a();
-            }
-        }
-    }
-
-    public void setCustomView(ArrayList<ProjectFileBean> customView) {
-        customViews = customView;
     }
 
     public void setKey(String key) {
@@ -146,19 +129,8 @@ public class PropertyCustomViewItem extends RelativeLayout implements View.OnCli
 
     }
 
-    public void setOnPropertyValueChangeListener(Kw var1) {
-        propertyValueChangeListener = var1;
-    }
-
-    public void setOrientationItem(int orientationItem) {
-        if (orientationItem == 0) {
-            propertyItem.setVisibility(View.GONE);
-            propertyMenuItem.setVisibility(View.VISIBLE);
-        } else {
-            propertyItem.setVisibility(View.VISIBLE);
-            propertyMenuItem.setVisibility(View.GONE);
-        }
-
+    public String getValue() {
+        return value;
     }
 
     public void setValue(String value) {
@@ -167,5 +139,36 @@ public class PropertyCustomViewItem extends RelativeLayout implements View.OnCli
         }
         this.value = value;
         tvValue.setText(value);
+    }
+
+    @Override
+    public void onClick(View var1) {
+        if (!mB.a()) {
+            if ("property_custom_view_listview".equals(key)) {
+                a();
+            }
+        }
+    }
+
+    public void setCustomView(ArrayList<ProjectFileBean> customView) {
+        customViews = customView;
+    }
+
+    public void setOnPropertyValueChangeListener(Kw var1) {
+        propertyValueChangeListener = var1;
+    }
+
+    public void setOrientationItem(int orientationItem) {
+        if (orientationItem == 0) {
+            propertyItem.setVisibility(GONE);
+            propertyMenuItem.setVisibility(VISIBLE);
+            propertyItem.setOnClickListener(null);
+            propertyMenuItem.setOnClickListener(this);
+        } else {
+            propertyItem.setVisibility(VISIBLE);
+            propertyMenuItem.setVisibility(GONE);
+            propertyItem.setOnClickListener(this);
+            propertyMenuItem.setOnClickListener(null);
+        }
     }
 }

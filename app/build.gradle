@@ -10,19 +10,19 @@ if (analyticsEnabled) {
 }
 
 android {
-    compileSdk 35
+    compileSdk = 36
 
     def gitCommitHash = "git rev-parse HEAD".execute().text.trim()
-
     def shortCommitHash = "git rev-parse --short HEAD".execute().text.trim()
 
     defaultConfig {
-        applicationId "pro.sketchware"
-        namespace "pro.sketchware"
+        applicationId = "pro.sketchware"
+        namespace = "pro.sketchware"
         //noinspection ExpiredTargetSdkVersion since we don't target getting Sketchware Pro on Google Play.
-        targetSdkVersion 28
-        versionCode 150
-        versionName "v7.0.0-SNAPSHOT-" + shortCommitHash
+        targetSdk = 28
+        minSdk = 26
+        versionCode = 150
+        versionName = "v7.0.0-SNAPSHOT-" + shortCommitHash
 
         buildConfigField("String", "GIT_HASH", "\"${gitCommitHash}\"")
 
@@ -34,27 +34,11 @@ android {
         buildConfigField("String", "SKETCHUB_API_KEY", "\"${System.getenv("SKETCHUB_API_KEY")}\"")
     }
 
-    flavorDimensions = ["api"]
-    productFlavors {
-        minApi26 {
-            dimension "api"
-            minSdkVersion 26
-            versionNameSuffix "-minApi26"
-            isDefault = true
-        }
-
-        minApi21 {
-            dimension "api"
-            minSdkVersion 21
-            versionNameSuffix "-minApi21"
-        }
-    }
-
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.debug
+            minifyEnabled = false
+            proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.debug
         }
     }
 
@@ -65,9 +49,9 @@ android {
     }
 
     compileOptions {
-        coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
@@ -80,45 +64,46 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file("../testkey.keystore")
-            storePassword "testkey"
-            keyAlias "testkey"
-            keyPassword "testkey"
+            storeFile = file("../testkey.keystore")
+            storePassword = "testkey"
+            keyAlias = "testkey"
+            keyPassword = "testkey"
         }
     }
 
     buildFeatures {
-        viewBinding true
-        buildConfig true
+        viewBinding = true
+        buildConfig = true
     }
 
-    configurations.minApi26Implementation {
+    configurations.implementation {
         exclude group: 'javax.inject', module: 'javax.inject'
+        exclude group: "org.jetbrains.kotlin", module: "kotlin-scripting-compiler-embeddable"
+        exclude group: "org.jetbrains.kotlin", module: "kotlin-scripting-common"
+        exclude group: "org.jetbrains.kotlin", module: "kotlin-scripting-jvm"
+        exclude group: "org.jetbrains.kotlin", module: "kotlin-script-runtime"
     }
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"], exclude: "proguard-base-7.2.2.jar")
+    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
 
-    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.appcompat:appcompat:1.7.1"
     implementation "androidx.core:core-splashscreen:1.0.1"
     implementation "androidx.activity:activity:1.10.1"
     implementation "androidx.recyclerview:recyclerview:1.4.0"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.viewpager:viewpager:1.1.0"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-    implementation "com.google.android.material:material:1.13.0-alpha12"
-    implementation "com.airbnb.android:lottie:6.5.2"
+    implementation "com.google.android.material:material:1.14.0-alpha03"
+    implementation "com.airbnb.android:lottie:6.6.7"
     implementation "com.google.android.flexbox:flexbox:3.0.0"
 
     implementation "com.github.bumptech.glide:glide:4.16.0"
 
-    implementation "androidx.annotation:annotation:1.9.1"
-    implementation "com.android.tools:annotations:31.9.1"
-    implementation "com.google.guava:guava:33.3.1-jre"
-    implementation 'androidx.exifinterface:exifinterface:1.4.0'
+    implementation 'androidx.exifinterface:exifinterface:1.4.1'
     implementation "androidx.preference:preference:1.2.1"
-    implementation files('libs/android-svg.jar')
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     def editorGroupId = "io.github.Rosemoe.sora-editor"
     implementation platform("$editorGroupId:bom:0.23.5")
@@ -127,52 +112,59 @@ dependencies {
     implementation "$editorGroupId:language-textmate"
 
     implementation "de.hdodenhof:circleimageview:3.1.0"
-    implementation "com.github.angads25:filepicker:1.1.1"
 
-    implementation 'io.coil-kt:coil:2.0.0'
-    implementation 'io.coil-kt:coil-svg:2.0.0'
+    implementation 'io.coil-kt:coil:2.7.0'
+    implementation 'io.coil-kt:coil-svg:2.7.0'
 
-    minApi26Implementation "com.android.tools.build:bundletool:1.15.6"
+    implementation "com.android.tools.build:bundletool:1.18.1"
 
     //noinspection GradleDependency copied from above dependency for not just runtime access
-    minApi26Implementation "com.google.protobuf:protobuf-java:3.19.2"
+    implementation "com.google.protobuf:protobuf-java:3.19.2"
     //noinspection GradleDependency
-    implementation "com.android.tools:sdklib:25.3.0", { exclude group: "com.intellij", module: "annotations" }
-    implementation "com.android.tools:r8:8.7.18"
-    implementation "com.github.Iyxan23:zipalign-java:1.2.1"
+    implementation("com.android.tools:sdklib:25.3.0") {
+        exclude group: "com.intellij", module: "annotations"
+    }
+    implementation "com.android.tools:r8:8.11.18"
+    implementation "com.github.Iyxan23:zipalign-java:1.2.2"
 
-    implementation "com.google.code.gson:gson:2.11.0"
-    implementation "com.madgag:scpkix-jdk15on:1.47.0.2"
+    implementation "com.google.code.gson:gson:2.13.1"
+    implementation "com.madgag:scpkix-jdk15on:1.47.0.3"
 
     implementation 'io.noties.markwon:core:4.6.2'
 
-    //noinspection GradleDependency
-    implementation "com.squareup.okhttp3:okhttp:4.10.0"
-    //noinspection GradleDependency
-    implementation "com.squareup.okio:okio:3.1.0"
+    implementation "com.squareup.okhttp3:okhttp:5.1.0"
+    implementation "com.squareup.okio:okio:3.16.0"
 
-    implementation "com.github.Cosmic-Ide:DependencyResolver:290880eb6c"
+    implementation "org.eclipse.jdt:ecj:3.26.0"
 
-    minApi21Implementation "net.sf.proguard:proguard-base:6.0.3"
-    minApi26Implementation files('libs/proguard-base-7.2.2.jar')
-    minApi26Implementation 'com.guardsquare:proguard-core:9.0.2'
-    minApi26Implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0'
+    implementation "com.github.waelchateur:kotlinc-for-sketchware:2.1.21_rc3"
+    compileOnly "org.jetbrains.kotlin:kotlin-compiler:2.1.21"
+    implementation 'io.github.itsaky:nb-javac-android:17.0.0.3'
+    implementation 'com.fasterxml.woodstox:woodstox-core:6.5.1'
 
-    //noinspection GradleDependency
-    minApi21Implementation "org.eclipse.jdt:ecj:3.13.0"
-    minApi26Implementation "org.eclipse.jdt:ecj:3.26.0"
+    implementation "com.github.Cosmic-Ide:DependencyResolver:05ec26af0b"
+    implementation "com.github.PranavPurwar:filepicker:74526bea66"
 
-    minApi26Implementation "com.github.Cosmic-IDE:kotlinc-android:f49c67a8c0"
+    implementation 'com.guardsquare:proguard-core:9.0.2'
 
     implementation "com.github.topjohnwu.libsu:core:5.0.4"
     implementation "dev.chrisbanes.insetter:insetter:0.6.1"
+
+    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.25.3") {
+        exclude group: "com.google.guava", module: "guava"
+    }
 
     // Analytics and Crashlytics
     if (analyticsEnabled) {
         new File("$projectDir/google-services.json").text = secrets
     }
-    implementation platform("com.google.firebase:firebase-bom:33.11.0")
+    implementation platform("com.google.firebase:firebase-bom:34.0.0")
     implementation "com.google.firebase:firebase-crashlytics"
     implementation "com.google.firebase:firebase-analytics"
+    implementation "com.google.firebase:firebase-messaging"
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs_nio:2.1.5"
+
+    implementation "net.lingala.zip4j:zip4j:2.11.5"
+
+    implementation "org.eclipse.jgit:org.eclipse.jgit:7.3.0.202506031305-r"
 }

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -17,27 +16,27 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
-import pro.sketchware.R;
-import pro.sketchware.databinding.ActivityAboutAppBinding;
 
-import pro.sketchware.activities.about.fragments.ChangeLogFragment;
+import mod.hey.studios.util.Helper;
+import pro.sketchware.R;
 import pro.sketchware.activities.about.fragments.BetaChangesFragment;
+import pro.sketchware.activities.about.fragments.ChangeLogFragment;
 import pro.sketchware.activities.about.fragments.TeamFragment;
 import pro.sketchware.activities.about.models.AboutAppViewModel;
 import pro.sketchware.activities.about.models.AboutResponseModel;
+import pro.sketchware.databinding.ActivityAboutAppBinding;
 import pro.sketchware.utility.Network;
-import mod.hey.studios.util.Helper;
 
 public class AboutActivity extends BaseAppCompatActivity {
 
+    private final Network network = new Network();
+    public AboutAppViewModel aboutAppData;
     private ActivityAboutAppBinding binding;
     private SharedPreferences sharedPref;
-    public AboutAppViewModel aboutAppData;
-    private final Network network = new Network();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        EdgeToEdge.enable(this);
+        enableEdgeToEdgeNoContrast();
         super.onCreate(savedInstanceState);
 
         binding = ActivityAboutAppBinding.inflate(getLayoutInflater());

@@ -11,14 +11,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.besome.sketch.beans.QuizBean;
-import pro.sketchware.R;
-import pro.sketchware.databinding.QuizBoardBinding;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import a.a.a.mB;
 import a.a.a.tq;
+import pro.sketchware.R;
+import pro.sketchware.databinding.QuizBoardBinding;
 
 public class QuizBoard extends LinearLayout implements View.OnClickListener {
 
@@ -161,6 +161,7 @@ public class QuizBoard extends LinearLayout implements View.OnClickListener {
         b();
     }
 
+    @Override
     public void onClick(View var1) {
         if (!mB.a()) {
             a();
@@ -179,10 +180,12 @@ public class QuizBoard extends LinearLayout implements View.OnClickListener {
             super(var2, var4);
         }
 
+        @Override
         public void onFinish() {
             f();
         }
 
+        @Override
         public void onTick(long millisUntilFinished) {
             (new Handler()).post(() -> quizBinding.tvRemaingTime.setText(String.valueOf(millisUntilFinished / 1000L + 1L)));
         }

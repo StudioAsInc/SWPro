@@ -13,40 +13,39 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.PopupMenu;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.angads25.filepicker.model.DialogConfigs;
-import com.github.angads25.filepicker.model.DialogProperties;
-import com.github.angads25.filepicker.view.FilePickerDialog;
-
+import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import dev.pranav.filepicker.FilePickerCallback;
+import dev.pranav.filepicker.FilePickerDialogFragment;
+import dev.pranav.filepicker.FilePickerOptions;
+import mod.hey.studios.util.Helper;
+import mod.jbk.util.AddMarginOnApplyWindowInsetsListener;
 import pro.sketchware.R;
 import pro.sketchware.databinding.DialogCreateNewFileLayoutBinding;
 import pro.sketchware.databinding.DialogInputLayoutBinding;
 import pro.sketchware.databinding.ManageFileBinding;
 import pro.sketchware.databinding.ManageJavaItemHsBinding;
-
-import com.besome.sketch.lib.base.BaseAppCompatActivity;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.FilePathUtil;
 import pro.sketchware.utility.FileResConfig;
 import pro.sketchware.utility.FileUtil;
-import mod.hey.studios.util.Helper;
-import mod.jbk.util.AddMarginOnApplyWindowInsetsListener;
+import pro.sketchware.utility.SketchwareUtil;
 
 public class ManageNativelibsActivity extends BaseAppCompatActivity implements View.OnClickListener {
-    private FilePickerDialog filePicker;
+    private FilePickerDialogFragment filePicker;
     private FilePathUtil fpu;
     private FileResConfig frc;
     private String numProj;
@@ -56,7 +55,7 @@ public class ManageNativelibsActivity extends BaseAppCompatActivity implements V
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        EdgeToEdge.enable(this);
+        enableEdgeToEdgeNoContrast();
         super.onCreate(savedInstanceState);
         binding = ManageFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -123,7 +122,7 @@ public class ManageNativelibsActivity extends BaseAppCompatActivity implements V
             if (isInMainDirectory()) {
                 createNewDialog();
             } else {
-                filePicker.show();
+                filePicker.show(getSupportFragmentManager(), "filePicker");
             }
         });
 
@@ -231,33 +230,30 @@ public class ManageNativelibsActivity extends BaseAppCompatActivity implements V
 
 
     private void setupDialog() {
-        File externalStorageDir = new File(FileUtil.getExternalStorageDir());
-
-        DialogProperties properties = new DialogProperties();
-        properties.selection_mode = DialogConfigs.MULTI_MODE;
-        properties.selection_type = DialogConfigs.FILE_SELECT;
-        properties.root = externalStorageDir;
-        properties.error_dir = externalStorageDir;
-        properties.offset = externalStorageDir;
-        properties.extensions = new String[]{"so"};
-
-        filePicker = new FilePickerDialog(this, properties, R.style.RoundedCornersDialog);
-        filePicker.setTitle("Select a native library (.so)");
-        filePicker.setDialogSelectionListener(selections -> {
-            for (String path : selections) {
-                try {
-                    FileUtil.copyDirectory(new File(path), new File(nativeLibrariesPath + File.separator + Uri.parse(path).getLastPathSegment()));
-                } catch (IOException e) {
-                    SketchwareUtil.toastError("Couldn't import library! [" + e.getMessage() + "]");
+        FilePickerOptions options = new FilePickerOptions();
+        options.setTitle("Import Native Libraries");
+        options.setMultipleSelection(true);
+        options.setExtensions(new String[]{"so"});
+        FilePickerCallback callback = new FilePickerCallback() {
+            @Override
+            public void onFilesSelected(@NotNull List<? extends File> files) {
+                for (File file : files) {
+                    try {
+                        FileUtil.copyDirectory(file, new File(nativeLibrariesPath + File.separator + Uri.fromFile(file).getLastPathSegment()));
+                    } catch (IOException e) {
+                        SketchwareUtil.toastError("Couldn't import library! [" + e.getMessage() + "]");
+                    }
                 }
-            }
 
-            handleAdapter(nativeLibrariesPath);
-            handleFab();
-        });
+                handleAdapter(nativeLibrariesPath);
+                handleFab();
+            }
+        };
+
+        filePicker = new FilePickerDialogFragment(options, callback);
     }
 
-    private void showRenameDialog(final String path) {
+    private void showRenameDialog(String path) {
         DialogInputLayoutBinding dialogBinding = DialogInputLayoutBinding.inflate(getLayoutInflater());
         var inputText = dialogBinding.inputText;
 
@@ -348,7 +344,7 @@ public class ManageNativelibsActivity extends BaseAppCompatActivity implements V
                 menu.show();
             });
 
-            binding.getRoot().setOnLongClickListener((View.OnLongClickListener) view -> {
+            binding.getRoot().setOnLongClickListener(view -> {
                 if (FileUtil.isDirectory(frc.listFileNativeLibs.get(position))) {
                     PopupMenu menu = new PopupMenu(ManageNativelibsActivity.this, view);
                     menu.getMenu().add("Delete");

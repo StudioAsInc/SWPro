@@ -1,9 +1,5 @@
 package com.besome.sketch.editor;
 
-import static mod.bobur.StringEditorActivity.convertListMapToXml;
-import static mod.bobur.StringEditorActivity.convertXmlToListMap;
-import static mod.bobur.StringEditorActivity.isXmlStringsContains;
-import static pro.sketchware.utility.SketchwareUtil.getDip;
 import static pro.sketchware.widgets.WidgetsCreatorManager.clearErrorOnTextChanged;
 
 import android.animation.ObjectAnimator;
@@ -61,7 +57,7 @@ import com.besome.sketch.beans.MoreBlockCollectionBean;
 import com.besome.sketch.beans.ProjectFileBean;
 import com.besome.sketch.beans.ViewBean;
 import com.besome.sketch.design.DesignActivity;
-import com.besome.sketch.editor.component.ComponentAddActivity;
+import com.besome.sketch.editor.component.AddComponentBottomSheet;
 import com.besome.sketch.editor.logic.BlockPane;
 import com.besome.sketch.editor.logic.LogicTopMenu;
 import com.besome.sketch.editor.logic.PaletteBlock;
@@ -71,6 +67,7 @@ import com.besome.sketch.editor.manage.ShowBlockCollectionActivity;
 import com.besome.sketch.editor.view.ViewDummy;
 import com.besome.sketch.editor.view.ViewLogicEditor;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
+import com.besome.sketch.lib.ui.ColorPickerDialog;
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -91,7 +88,6 @@ import a.a.a.DB;
 import a.a.a.FB;
 import a.a.a.Fx;
 import a.a.a.GB;
-import a.a.a.Lx;
 import a.a.a.MA;
 import a.a.a.Mp;
 import a.a.a.NB;
@@ -103,8 +99,6 @@ import a.a.a.Ts;
 import a.a.a.Us;
 import a.a.a.Vs;
 import a.a.a.ZB;
-import a.a.a.Zx;
-import a.a.a.aB;
 import a.a.a.bC;
 import a.a.a.eC;
 import a.a.a.jC;
@@ -118,7 +112,6 @@ import a.a.a.xB;
 import a.a.a.yq;
 import a.a.a.yy;
 import dev.aldi.sayuti.block.ExtraPaletteBlock;
-import mod.bobur.StringEditorActivity;
 import mod.bobur.XmlToSvgConverter;
 import mod.hey.studios.editor.view.IdGenerator;
 import mod.hey.studios.moreblock.ReturnMoreblockManager;
@@ -130,16 +123,18 @@ import mod.jbk.editor.manage.MoreblockImporter;
 import mod.jbk.util.BlockUtil;
 import mod.pranav.viewbinding.ViewBindingBuilder;
 import pro.sketchware.R;
+import pro.sketchware.activities.editor.view.CodeViewerActivity;
+import pro.sketchware.activities.resourceseditor.ResourcesEditorActivity;
+import pro.sketchware.activities.resourceseditor.components.utils.StringsEditorManager;
 import pro.sketchware.databinding.ImagePickerItemBinding;
-import pro.sketchware.databinding.SearchWithRecyclerViewBinding;
 import pro.sketchware.databinding.PropertyPopupSelectorSingleBinding;
+import pro.sketchware.databinding.SearchWithRecyclerViewBinding;
 import pro.sketchware.databinding.ViewStringEditorAddBinding;
 import pro.sketchware.menu.ExtraMenuBean;
 import pro.sketchware.utility.FilePathUtil;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.SvgUtils;
-import pro.sketchware.activities.editor.view.CodeViewerActivity;
 
 @SuppressLint({"ClickableViewAccessibility", "RtlHardcoded", "SetTextI18n", "DefaultLocale"})
 public class LogicEditorActivity extends BaseAppCompatActivity implements View.OnClickListener, Vs, View.OnTouchListener, MoreblockImporterDialog.CallBack {
@@ -162,21 +157,23 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     private ViewLogicEditor n;
     private ViewDummy p;
     private PaletteSelector paletteSelector;
+
     private Rs w;
     private float r, q, s, t;
     private int A, S, x, y;
     private int T = -30;
     private View Y;
     private boolean G, u, W, X, da, ea, ha, ia;
-    private final Runnable aa = this::r;
     private ArrayList<BlockBean> savedBlockBean = new ArrayList<>();
-    private Boolean isViewBindingEnabled;
+    private final Runnable aa = this::r;
 
-    private final ActivityResultLauncher<Intent> openStringEditor = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+    private final ActivityResultLauncher<Intent> openResourcesEditor = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
             paletteSelector.performClickPalette(-1);
         }
     });
+
+    private Boolean isViewBindingEnabled;
 
     private void loadEventBlocks() {
         ArrayList<BlockBean> eventBlocks = jC.a(B).a(M.getJavaName(), C + "_" + D);
@@ -237,6 +234,25 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         }
     }
 
+    public static ArrayList<String> getAllJavaFileNames(String projectScId) {
+        ArrayList<String> javaFileNames = new ArrayList<>();
+        for (ProjectFileBean projectFile : jC.b(projectScId).b()) {
+            javaFileNames.add(projectFile.getJavaName());
+        }
+        return javaFileNames;
+    }
+
+    public static ArrayList<String> getAllXmlFileNames(String projectScId) {
+        ArrayList<String> xmlFileNames = new ArrayList<>();
+        for (ProjectFileBean projectFile : jC.b(projectScId).b()) {
+            String xmlName = projectFile.getXmlName();
+            if (xmlName != null && !xmlName.isEmpty()) {
+                xmlFileNames.add(xmlName);
+            }
+        }
+        return xmlFileNames;
+    }
+
     private void redo() {
         if (!u) {
             HistoryBlockBean historyBlockBean = bC.d(B).i(s());
@@ -292,15 +308,14 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void G() {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(R.string.logic_editor_title_add_new_list));
-        aBVar.a(R.drawable.ic_mtrl_add);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(R.string.logic_editor_title_add_new_list));
         View a2 = wB.a(this, R.layout.logic_popup_add_list);
         RadioGroup radioGroup = a2.findViewById(R.id.rg_type);
         TextInputEditText editText = a2.findViewById(R.id.ed_input);
         ZB zb = new ZB(getContext(), a2.findViewById(R.id.ti_input), uq.b, uq.a(), jC.a(B).a(M));
-        aBVar.a(a2);
-        aBVar.b(getTranslatedString(R.string.common_word_add), v -> {
+        aBVar.setView(a2);
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_add), (v, which) -> {
             if (zb.b()) {
                 int i = 1;
                 int checkedRadioButtonId = radioGroup.getCheckedRadioButtonId();
@@ -313,24 +328,23 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 }
 
                 a(i, Helper.getText(editText));
-                aBVar.dismiss();
+                v.dismiss();
             }
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
     }
 
     private void showAddNewVariableDialog() {
-        aB dialog = new aB(this);
-        dialog.b(getTranslatedString(R.string.logic_editor_title_add_new_variable));
-        dialog.a(R.drawable.ic_mtrl_add);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
+        dialog.setTitle(getTranslatedString(R.string.logic_editor_title_add_new_variable));
 
         View customView = wB.a(this, R.layout.logic_popup_add_variable);
         RadioGroup radioGroup = customView.findViewById(R.id.rg_type);
         TextInputEditText editText = customView.findViewById(R.id.ed_input);
         ZB nameValidator = new ZB(getContext(), customView.findViewById(R.id.ti_input), uq.b, uq.a(), jC.a(B).a(M));
-        dialog.a(customView);
-        dialog.b(getTranslatedString(R.string.common_word_add), v -> {
+        dialog.setView(customView);
+        dialog.setPositiveButton(getTranslatedString(R.string.common_word_add), (v, which) -> {
             int variableType = 1;
             if (radioGroup.getCheckedRadioButtonId() == R.id.rb_boolean) {
                 variableType = 0;
@@ -344,29 +358,30 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 
             if (nameValidator.b()) {
                 b(variableType, Helper.getText(editText));
-                dialog.dismiss();
+                v.dismiss();
             }
         });
-        dialog.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
+        dialog.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         dialog.show();
     }
 
     private void showAddNewXmlStringDialog() {
-        aB dialog = new aB(this);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
         ViewStringEditorAddBinding binding = ViewStringEditorAddBinding.inflate(LayoutInflater.from(this));
-        dialog.b("Create new string");
-        dialog.b("Create", v1 -> {
+        dialog.setTitle("Create new string");
+        dialog.setPositiveButton("Create", (v1, which) -> {
 
             String filePath = new FilePathUtil().getPathResource(B) + "/values/strings.xml";
             ArrayList<HashMap<String, Object>> StringsListMap = new ArrayList<>();
-            convertXmlToListMap(FileUtil.readFile(filePath), StringsListMap);
+            StringsEditorManager stringsEditorManager = new StringsEditorManager();
+            stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFile(filePath), StringsListMap);
 
             clearErrorOnTextChanged(binding.stringKeyInput, binding.stringKeyInputLayout);
 
             String key = Objects.requireNonNull(binding.stringKeyInput.getText()).toString();
             String value = Objects.requireNonNull(binding.stringValueInput.getText()).toString();
 
-            if (isXmlStringsContains(StringsListMap, key)) {
+            if (stringsEditorManager.isXmlStringsExist(StringsListMap, key)) {
                 binding.stringKeyInputLayout.setError("\"" + key + "\" is already exist");
                 return;
             }
@@ -379,14 +394,13 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             HashMap<String, Object> map = new HashMap<>();
             map.put("key", key);
             map.put("text", value);
-            map.put("translatable", "true");
             StringsListMap.add(map);
-            FileUtil.writeFile(filePath, convertListMapToXml(StringsListMap));
+            FileUtil.writeFile(filePath, stringsEditorManager.convertListMapToXmlStrings(StringsListMap, new HashMap<>()));
             paletteSelector.performClickPalette(-1);
-            dialog.dismiss();
+            v1.dismiss();
         });
-        dialog.a(Helper.getResString(R.string.cancel), v1 -> dialog.dismiss());
-        dialog.a(binding.getRoot());
+        dialog.setNegativeButton(Helper.getResString(R.string.cancel), (v1, which) -> v1.dismiss());
+        dialog.setView(binding.getRoot());
         dialog.show();
     }
 
@@ -394,11 +408,11 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         String filePath = new FilePathUtil().getPathResource(B) + "/values/strings.xml";
 
         ArrayList<HashMap<String, Object>> stringsList = new ArrayList<>();
-        convertXmlToListMap(FileUtil.readFile(filePath), stringsList);
+        StringsEditorManager stringsEditorManager = new StringsEditorManager();
+        stringsEditorManager.convertXmlStringsToListMap(FileUtil.readFile(filePath), stringsList);
 
-        aB dialog = new aB(this);
-        dialog.b(getTranslatedString(R.string.logic_editor_title_remove_xml_strings));
-        dialog.a(R.drawable.delete_96);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
+        dialog.setTitle(getTranslatedString(R.string.logic_editor_title_remove_xml_strings));
 
         PropertyPopupSelectorSingleBinding binding = PropertyPopupSelectorSingleBinding.inflate(LayoutInflater.from(this));
         ViewGroup viewGroup = binding.rgContent;
@@ -411,9 +425,9 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             viewGroup.addView(checkBox);
         }
 
-        dialog.a(binding.getRoot());
+        dialog.setView(binding.getRoot());
 
-        dialog.b(getTranslatedString(R.string.common_word_remove), v -> {
+        dialog.setPositiveButton(getTranslatedString(R.string.common_word_remove), (v, which) -> {
             int childCount = viewGroup.getChildCount();
 
             for (int i = 0; i < childCount; i++) {
@@ -423,13 +437,13 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 }
             }
 
-            FileUtil.writeFile(filePath, convertListMapToXml(stringsList));
+            FileUtil.writeFile(filePath, stringsEditorManager.convertListMapToXmlStrings(stringsList, new HashMap<>()));
 
             paletteSelector.performClickPalette(-1);
-            dialog.dismiss();
+            v.dismiss();
         });
 
-        dialog.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
+        dialog.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         dialog.show();
     }
 
@@ -447,7 +461,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 
     private boolean isXmlStringUsed(String projectScId, String key) {
         if ("app_name".equals(key)) {
-            return false;
+            return true;
         }
         eC projectDataManager = jC.a(projectScId);
 
@@ -532,32 +546,11 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         return length;
     }
 
-    public static ArrayList<String> getAllJavaFileNames(String projectScId) {
-        ArrayList<String> javaFileNames = new ArrayList<>();
-        for (ProjectFileBean projectFile : jC.b(projectScId).b()) {
-            javaFileNames.add(projectFile.getJavaName());
-        }
-        return javaFileNames;
-    }
-
-    public static ArrayList<String> getAllXmlFileNames(String projectScId) {
-        ArrayList<String> xmlFileNames = new ArrayList<>();
-        for (ProjectFileBean projectFile : jC.b(projectScId).b()) {
-            String xmlName = projectFile.getXmlName();
-            if (xmlName != null && !xmlName.isEmpty()) {
-                xmlFileNames.add(xmlName);
-            }
-        }
-        return xmlFileNames;
-    }
-
-    public void openStringEditor() {
+    public void openResourcesEditor() {
         Intent intent = new Intent();
-        intent.setClass(getApplicationContext(), StringEditorActivity.class);
-        intent.putExtra("title", "strings.xml");
-        intent.putExtra("content", new FilePathUtil().getPathResource(B) + "/values/strings.xml");
-        intent.putExtra("xml", "");
-        openStringEditor.launch(intent);
+        intent.setClass(getApplicationContext(), ResourcesEditorActivity.class);
+        intent.putExtra("sc_id", B);
+        openResourcesEditor.launch(intent);
     }
 
     public void I() {
@@ -566,16 +559,15 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void J() {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(R.string.logic_editor_title_remove_list));
-        aBVar.a(R.drawable.ic_mtrl_delete);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(R.string.logic_editor_title_remove_list));
         View a2 = wB.a(this, R.layout.property_popup_selector_single);
         ViewGroup viewGroup = a2.findViewById(R.id.rg_content);
         for (Pair<Integer, String> list : jC.a(B).j(M.getJavaName())) {
             viewGroup.addView(e(list.second));
         }
-        aBVar.a(a2);
-        aBVar.b(getTranslatedString(R.string.common_word_remove), v -> {
+        aBVar.setView(a2);
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_remove), (v, which) -> {
             int childCount = viewGroup.getChildCount();
             int i = 0;
             while (i < childCount) {
@@ -591,16 +583,15 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 }
                 i++;
             }
-            aBVar.dismiss();
+            v.dismiss();
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
     }
 
     public void K() {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(R.string.logic_editor_title_remove_variable));
-        aBVar.a(R.drawable.ic_mtrl_delete);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(R.string.logic_editor_title_remove_variable));
         View a2 = wB.a(this, R.layout.property_popup_selector_single);
         ViewGroup viewGroup = a2.findViewById(R.id.rg_content);
         for (Pair<Integer, String> next : jC.a(B).k(M.getJavaName())) {
@@ -608,8 +599,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             e.setTag(next.first);
             viewGroup.addView(e);
         }
-        aBVar.a(a2);
-        aBVar.b(getTranslatedString(R.string.common_word_remove), v -> {
+        aBVar.setView(a2);
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_remove), (v, which) -> {
             int childCount = viewGroup.getChildCount();
             int i = 0;
             while (i < childCount) {
@@ -625,9 +616,9 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 }
                 i++;
             }
-            aBVar.dismiss();
+            v.dismiss();
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
     }
 
@@ -746,7 +737,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                     }
                 } else {
                     try {
-                        XmlToSvgConverter.setImageVectorFromFile(imageView, XmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, str));
+                        XmlToSvgConverter xmlToSvgConverter = new XmlToSvgConverter();
+                        xmlToSvgConverter.setImageVectorFromFile(imageView, xmlToSvgConverter.getVectorFullPath(DesignActivity.sc_id, str));
                     } catch (Exception e) {
                         imageView.setImageResource(R.drawable.ic_remove_grey600_24dp);
                     }
@@ -901,19 +893,17 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 
         SearchWithRecyclerViewBinding binding = SearchWithRecyclerViewBinding.inflate(getLayoutInflater());
 
-        aB dialog = new aB(this);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
         if (selectingImage) {
-            dialog.b(getTranslatedString(R.string.logic_editor_title_select_image));
+            dialog.setTitle(getTranslatedString(R.string.logic_editor_title_select_image));
         } else if (selectingBackgroundImage) {
-            dialog.b(getTranslatedString(R.string.logic_editor_title_select_image_background));
+            dialog.setTitle(getTranslatedString(R.string.logic_editor_title_select_image_background));
         }
-
-        dialog.a(R.drawable.ic_picture_48dp);
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ArrayList<String> images = jC.d(B).m();
-        images.addAll(XmlToSvgConverter.getVectorDrawables(DesignActivity.sc_id));
+        images.addAll(new XmlToSvgConverter().getVectorDrawables(DesignActivity.sc_id));
         if (selectingImage) {
             images.add(0, "default_image");
         } else if (selectingBackgroundImage) {
@@ -926,10 +916,12 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 
         binding.searchInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -938,22 +930,21 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             }
         });
 
-        dialog.b(getTranslatedString(R.string.common_word_save), view -> {
+        dialog.setPositiveButton(getTranslatedString(R.string.common_word_save), (v, which) -> {
             String selectedImg = selectedImage.get();
             if (!selectedImg.isEmpty()) {
                 a(ss, selectedImage.get());
             }
         });
 
-        dialog.a(binding.getRoot());
-        dialog.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
+        dialog.setView(binding.getRoot());
+        dialog.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         dialog.show();
     }
 
     public void a(Ss ss, boolean z) {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(z ? R.string.logic_editor_title_enter_number_value : R.string.logic_editor_title_enter_string_value));
-        aBVar.a(R.drawable.rename_96_blue);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(z ? R.string.logic_editor_title_enter_number_value : R.string.logic_editor_title_enter_string_value));
         View a2 = wB.a(this, R.layout.property_popup_input_text);
         EditText editText = a2.findViewById(R.id.ed_input);
         if (z) {
@@ -965,8 +956,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             editText.setImeOptions(EditorInfo.IME_ACTION_NONE);
         }
         editText.setText(ss.getArgValue().toString());
-        aBVar.a(a2);
-        aBVar.b(getTranslatedString(R.string.common_word_save), v -> {
+        aBVar.setView(a2);
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_save), (v, which) -> {
             String text = Helper.getText(editText);
             emptyStringSetter:
             {
@@ -990,95 +981,10 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             }
 
             a(ss, text);
-            aBVar.dismiss();
+            v.dismiss();
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
-    }
-
-    public class ImagePickerAdapter extends RecyclerView.Adapter<ImagePickerAdapter.ViewHolder> {
-
-        private final ArrayList<String> images;
-        private String selectedImage;
-        private final OnImageSelectedListener listener;
-        private final ArrayList<String> filteredImages;
-        private final Map<String, View> imageCache = new HashMap<>();
-
-        public interface OnImageSelectedListener {
-            void onImageSelected(String image);
-        }
-
-        public ImagePickerAdapter(ArrayList<String> images, String selectedImage, OnImageSelectedListener listener) {
-            this.images = images;
-            this.selectedImage = selectedImage;
-            this.listener = listener;
-            this.filteredImages = new ArrayList<>(images);
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            ImagePickerItemBinding binding = ImagePickerItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-            return new ViewHolder(binding);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            String image = filteredImages.get(position);
-
-            holder.binding.textView.setText(image);
-
-            View imageView = imageCache.get(image);
-            if (imageView == null) {
-                imageView = setImageViewContent(image);
-                imageCache.put(image, imageView);
-            }
-
-            if (imageView.getParent() != null) {
-                ((ViewGroup) imageView.getParent()).removeView(imageView);
-            }
-
-            holder.binding.layoutImg.removeAllViews();
-            holder.binding.layoutImg.addView(imageView);
-
-            holder.binding.radioButton.setChecked(image.equals(selectedImage));
-
-            holder.binding.transparentOverlay.setOnClickListener(v -> {
-                if (!image.equals(selectedImage)) {
-                    selectedImage = image;
-                    listener.onImageSelected(image);
-                    notifyDataSetChanged();
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return filteredImages.size();
-        }
-
-        public void filter(String query) {
-            filteredImages.clear();
-            if (query.isEmpty()) {
-                filteredImages.addAll(images);
-            } else {
-                for (String image : images) {
-                    if (image.toLowerCase().contains(query)) {
-                        filteredImages.add(image);
-                    }
-                }
-            }
-            notifyDataSetChanged();
-        }
-
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-            public final ImagePickerItemBinding binding;
-
-            public ViewHolder(@NonNull ImagePickerItemBinding binding) {
-                super(binding.getRoot());
-                this.binding = binding;
-            }
-        }
     }
 
     public void a(BlockBean blockBean, boolean z) {
@@ -1530,8 +1436,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void b(Ss ss) {
-        Zx zx = new Zx(this, (ss.getArgValue() == null || ss.getArgValue().toString().length() <= 0 || ss.getArgValue().toString().indexOf("0xFF") != 0) ? 0 : Color.parseColor(ss.getArgValue().toString().replace("0xFF", "#")), true, false, B);
-        zx.a(new Zx.b() {
+        ColorPickerDialog colorPickerDialog = new ColorPickerDialog(this, (ss.getArgValue() == null || ss.getArgValue().toString().isEmpty()) ? "Color.TRANSPARENT" : ss.getArgValue().toString().replace("0xFF", "#"), true, false, B);
+        colorPickerDialog.a(new ColorPickerDialog.b() {
             @Override
             public void a(int var1) {
                 if (var1 == 0) {
@@ -1543,10 +1449,11 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 
             @Override
             public void a(String var1, int var2) {
-                LogicEditorActivity.this.a(ss, "getResources().getColor(R.color." + var1 + ")");
+                LogicEditorActivity.this.a(ss, "R.color." + var1);
             }
         });
-        zx.showAtLocation(ss, Gravity.CENTER, 0, 0);
+        colorPickerDialog.materialColorAttr((attr, attrColor) -> LogicEditorActivity.this.a(ss, "R.attr." + attr));
+        colorPickerDialog.showAtLocation(ss, Gravity.CENTER, 0, 0);
     }
 
     public void b(String str, String str2) {
@@ -1572,9 +1479,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void c(Rs rs) {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(R.string.logic_block_favorites_save_title));
-        aBVar.a(R.drawable.ic_bookmark_red_48dp);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(R.string.logic_block_favorites_save_title));
         View a2 = wB.a(this, R.layout.property_popup_save_to_favorite);
         ((TextView) a2.findViewById(R.id.tv_favorites_guide)).setText(getTranslatedString(R.string.logic_block_favorites_save_guide));
         EditText editText = a2.findViewById(R.id.ed_input);
@@ -1583,21 +1489,20 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         NB nb = new NB(this, a2.findViewById(R.id.ti_input), Mp.h().g());
-        aBVar.a(a2);
-        aBVar.b(getTranslatedString(R.string.common_word_save), v -> {
+        aBVar.setView(a2);
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_save), (v, which) -> {
             if (nb.b()) {
                 a(Helper.getText(editText), rs);
-                aBVar.dismiss();
+                v.dismiss();
             }
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
     }
 
     public void c(Ss ss) {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(R.string.logic_editor_title_enter_string_value));
-        aBVar.a(R.drawable.rename_96_blue);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(R.string.logic_editor_title_enter_string_value));
         View a2 = wB.a(this, R.layout.property_popup_input_text);
         ((TextInputLayout) a2.findViewById(R.id.ti_input)).setHint(getTranslatedString(R.string.property_hint_enter_value));
         EditText editText = a2.findViewById(R.id.ed_input);
@@ -1605,12 +1510,12 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS);
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         editText.setText(ss.getArgValue().toString());
-        aBVar.a(a2);
-        aBVar.b(getTranslatedString(R.string.common_word_save), v -> {
+        aBVar.setView(a2);
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_save), (v, which) -> {
             a(ss, Helper.getText(editText));
-            aBVar.dismiss();
+            v.dismiss();
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
     }
 
@@ -1665,7 +1570,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         }
         RadioButton radioButton = new RadioButton(this);
         radioButton.setText(type + " : " + id);
-        radioButton.setTag(isViewBindingEnabled ? "binding." + id : id);
+        radioButton.setTag(id);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (wB.a(this, 1.0f) * 40.0f));
         radioButton.setGravity(Gravity.CENTER | Gravity.LEFT);
         radioButton.setLayoutParams(layoutParams);
@@ -1673,9 +1578,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void d(Ss ss) {
-        aB dialog = new aB(this);
-        dialog.b(getTranslatedString(R.string.logic_editor_title_select_font));
-        dialog.a(R.drawable.abc_96_color);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
+        dialog.setTitle(getTranslatedString(R.string.logic_editor_title_select_font));
 
         View customView = wB.a(this, R.layout.property_popup_selector_color);
         RadioGroup radioGroup = customView.findViewById(R.id.rg);
@@ -1693,8 +1597,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             linearLayout.addView(fontPreview);
         }
 
-        dialog.a(customView);
-        dialog.b(getTranslatedString(R.string.common_word_select), v -> {
+        dialog.setView(customView);
+        dialog.setPositiveButton(getTranslatedString(R.string.common_word_select), (v, which) -> {
             for (int i = 0; i < radioGroup.getChildCount(); i++) {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 if (radioButton.isChecked()) {
@@ -1702,9 +1606,9 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                     break;
                 }
             }
-            dialog.dismiss();
+            v.dismiss();
         });
-        dialog.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
+        dialog.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         dialog.show();
     }
 
@@ -1739,21 +1643,20 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void e(Ss ss) {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(R.string.logic_editor_title_enter_data_value));
-        aBVar.a(R.drawable.rename_96_blue);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(R.string.logic_editor_title_enter_data_value));
         View a2 = wB.a(this, R.layout.property_popup_input_intent_data);
         ((TextView) a2.findViewById(R.id.tv_desc_intent_usage)).setText(getTranslatedString(R.string.property_description_component_intent_usage));
         EditText editText = a2.findViewById(R.id.ed_input);
         ((TextInputLayout) a2.findViewById(R.id.ti_input)).setHint(getTranslatedString(R.string.property_hint_enter_value));
         editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         editText.setText(ss.getArgValue().toString());
-        aBVar.a(a2);
-        aBVar.b(getTranslatedString(R.string.common_word_save), v -> {
+        aBVar.setView(a2);
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_save), (v, which) -> {
             a(ss, Helper.getText(editText));
-            aBVar.dismiss();
+            v.dismiss();
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
     }
 
@@ -1791,7 +1694,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 i2 = width - ((int) wB.a(this, 320.0f));
                 a2 = ViewGroup.LayoutParams.MATCH_PARENT;
             } else {
-                a2 = (width - GB.f(getContext())) - ((int) wB.a(this, 264.0f));
+                a2 = n.getHeight() - K.getHeight();
             }
             layoutParams = new LinearLayout.LayoutParams(i2, a2);
         } else {
@@ -1802,7 +1705,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void f(Ss ss) {
-        aB dialog = new aB(this);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
         View customView = wB.a(this, R.layout.property_popup_selector_single);
         ViewGroup viewGroup = customView.findViewById(R.id.rg_content);
         String xmlName = M.getXmlName();
@@ -1818,7 +1721,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             }
         }
 
-        dialog.b(getTranslatedString(R.string.logic_editor_title_select_view));
+        dialog.setTitle(getTranslatedString(R.string.logic_editor_title_select_view));
         ArrayList<ViewBean> views = jC.a(B).d(xmlName);
         for (ViewBean viewBean : views) {
             String convert = viewBean.convert;
@@ -1826,7 +1729,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             if (!convert.equals("include")) {
                 Set<String> toNotAdd = new Ox(new jq(), M).readAttributesToReplace(viewBean);
                 if (!toNotAdd.contains("android:id")) {
-                    String classInfo = ss.getClassInfo().a();
+                    String classInfo = ss.getClassInfo().getClassName();
                     if ((classInfo.equals("CheckBox") && viewBean.getClassInfo().a("CompoundButton")) || viewBean.getClassInfo().a(classInfo)) {
                         viewGroup.addView(d(typeName, viewBean.id));
                     }
@@ -1844,16 +1747,16 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             }
         }
 
-        dialog.a(customView);
-        dialog.configureDefaultButton("Code Editor", v -> {
+        dialog.setView(customView);
+        dialog.setNeutralButton("Code Editor", (v, which) -> {
             AsdDialog editor = new AsdDialog(this);
-            editor.setCon(ss.getArgValue().toString());
+            editor.setContent(ss.getArgValue().toString());
             editor.show();
-            editor.saveLis(this, false, ss, editor);;
-            editor.cancelLis(editor);
-            dialog.dismiss();
+            editor.setOnSaveClickListener(this, false, ss, editor);
+            editor.setOnCancelClickListener(editor);
+            v.dismiss();
         });
-        dialog.b(getTranslatedString(R.string.common_word_select), v -> {
+        dialog.setPositiveButton(getTranslatedString(R.string.common_word_select), (v, which) -> {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 RadioButton radioButton = (RadioButton) viewGroup.getChildAt(i);
                 if (radioButton.isChecked()) {
@@ -1861,9 +1764,9 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                     break;
                 }
             }
-            dialog.dismiss();
+            v.dismiss();
         });
-        dialog.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
+        dialog.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         dialog.show();
     }
 
@@ -1960,9 +1863,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void h(Ss ss) {
-        aB dialog = new aB(this);
-        dialog.b(getTranslatedString(R.string.logic_editor_title_select_sound));
-        dialog.a(R.drawable.music_48);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
+        dialog.setTitle(getTranslatedString(R.string.logic_editor_title_select_sound));
 
         View customView = wB.a(this, R.layout.property_popup_selector_single);
         RadioGroup radioGroup = customView.findViewById(R.id.rg_content);
@@ -1987,13 +1889,13 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
             }
             sound.setOnClickListener(v -> soundPool.load(jC.d(B).i(Helper.getText(sound)), 1));
         }
-        dialog.a(customView);
-        dialog.b(getTranslatedString(R.string.common_word_select), v -> {
+        dialog.setView(customView);
+        dialog.setPositiveButton(getTranslatedString(R.string.common_word_select), (v, which) -> {
             RadioButton checkedRadioButton = radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
             a(ss, Helper.getText(checkedRadioButton));
-            dialog.dismiss();
+            v.dismiss();
         });
-        dialog.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(dialog));
+        dialog.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         dialog.show();
     }
 
@@ -2014,9 +1916,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void i(Ss ss) {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(R.string.logic_editor_title_select_typeface));
-        aBVar.a(R.drawable.abc_96_color);
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(R.string.logic_editor_title_select_typeface));
         View a3 = wB.a(this, R.layout.property_popup_selector_single);
         RadioGroup radioGroup = a3.findViewById(R.id.rg_content);
         for (Pair<Integer, String> pair : sq.a("property_text_style")) {
@@ -2026,8 +1927,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 e.setChecked(true);
             }
         }
-        aBVar.a(a3);
-        aBVar.b(getTranslatedString(R.string.common_word_save), v -> {
+        aBVar.setView(a3);
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_save), (v, which) -> {
             int childCount = radioGroup.getChildCount();
             for (int i = 0; i < childCount; i++) {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
@@ -2037,9 +1938,9 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                 }
             }
 
-            aBVar.dismiss();
+            v.dismiss();
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
     }
 
@@ -2081,16 +1982,15 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
     }
 
     public void n(String str) {
-        aB aBVar = new aB(this);
-        aBVar.b(getTranslatedString(R.string.logic_block_favorites_delete_title));
-        aBVar.a(R.drawable.high_priority_96_red);
-        aBVar.a(getTranslatedString(R.string.logic_block_favorites_delete_message));
-        aBVar.b(getTranslatedString(R.string.common_word_delete), v -> {
+        MaterialAlertDialogBuilder aBVar = new MaterialAlertDialogBuilder(this);
+        aBVar.setTitle(getTranslatedString(R.string.logic_block_favorites_delete_title));
+        aBVar.setMessage(getTranslatedString(R.string.logic_block_favorites_delete_message));
+        aBVar.setPositiveButton(getTranslatedString(R.string.common_word_delete), (v, which) -> {
             Mp.h().a(str, true);
             O.a(str);
-            aBVar.dismiss();
+            v.dismiss();
         });
-        aBVar.a(getTranslatedString(R.string.common_word_cancel), Helper.getDialogDismissListener(aBVar));
+        aBVar.setNegativeButton(getTranslatedString(R.string.common_word_cancel), null);
         aBVar.show();
     }
 
@@ -2147,8 +2047,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                     showAddNewXmlStringDialog();
                 } else if (tag.equals("XmlString.remove")) {
                     showRemoveXmlStringDialog();
-                } else if (tag.equals("openStringEditor")) {
-                    openStringEditor();
+                } else if (tag.equals("openResourcesEditor")) {
+                    openResourcesEditor();
                 } else if (tag.equals("listAdd")) {
                     G();
                 } else if (tag.equals("listRemove")) {
@@ -2160,11 +2060,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivityForResult(intent, 222);
                 } else if (tag.equals("componentAdd")) {
-                    Intent intent = new Intent(getContext(), ComponentAddActivity.class);
-                    intent.putExtra("sc_id", B);
-                    intent.putExtra("project_file", M);
-                    intent.putExtra("filename", M.getJavaName());
-                    startActivityForResult(intent, 224);
+                    AddComponentBottomSheet addComponentBottomSheet = AddComponentBottomSheet.newInstance(B, M, () -> a(7, 0xff2ca5e2));
+                    addComponentBottomSheet.show(getSupportFragmentManager(), null);
                 } else if (tag.equals("blockImport")) {
                     I();
                 }
@@ -2233,6 +2130,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         openBlocksMenuButton.setOnClickListener(v -> e(!X));
         logicTopMenu = findViewById(R.id.top_menu);
         O = findViewById(R.id.right_drawer);
+        findViewById(R.id.search_header).setOnClickListener(v -> paletteSelector.showSearchDialog());
         extraPaletteBlock = new ExtraPaletteBlock(this, isViewBindingEnabled);
     }
 
@@ -2718,7 +2616,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 
     public void showSourceCode() {
         yq yq = new yq(this, B);
-        yq.a(jC.c(B), jC.b(B), jC.a(B), false);
+        yq.a(jC.c(B), jC.b(B), jC.a(B));
         String code = new Fx(M.getActivityName(), yq.N, o.getBlocks(), isViewBindingEnabled).a();
         var intent = new Intent(this, CodeViewerActivity.class);
         intent.putExtra("code", code);
@@ -2779,6 +2677,91 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
         public void b() {
             publishProgress("Now saving..");
             activity.get().E();
+        }
+    }
+
+    public class ImagePickerAdapter extends RecyclerView.Adapter<ImagePickerAdapter.ViewHolder> {
+
+        private final ArrayList<String> images;
+        private final OnImageSelectedListener listener;
+        private final ArrayList<String> filteredImages;
+        private final Map<String, View> imageCache = new HashMap<>();
+        private String selectedImage;
+
+        public ImagePickerAdapter(ArrayList<String> images, String selectedImage, OnImageSelectedListener listener) {
+            this.images = images;
+            this.selectedImage = selectedImage;
+            this.listener = listener;
+            filteredImages = new ArrayList<>(images);
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            ImagePickerItemBinding binding = ImagePickerItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ViewHolder(binding);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            String image = filteredImages.get(position);
+
+            holder.binding.textView.setText(image);
+
+            View imageView = imageCache.get(image);
+            if (imageView == null) {
+                imageView = setImageViewContent(image);
+                imageCache.put(image, imageView);
+            }
+
+            if (imageView.getParent() != null) {
+                ((ViewGroup) imageView.getParent()).removeView(imageView);
+            }
+
+            holder.binding.layoutImg.removeAllViews();
+            holder.binding.layoutImg.addView(imageView);
+
+            holder.binding.radioButton.setChecked(image.equals(selectedImage));
+
+            holder.binding.transparentOverlay.setOnClickListener(v -> {
+                if (!image.equals(selectedImage)) {
+                    selectedImage = image;
+                    listener.onImageSelected(image);
+                    notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return filteredImages.size();
+        }
+
+        public void filter(String query) {
+            filteredImages.clear();
+            if (query.isEmpty()) {
+                filteredImages.addAll(images);
+            } else {
+                for (String image : images) {
+                    if (image.toLowerCase().contains(query)) {
+                        filteredImages.add(image);
+                    }
+                }
+            }
+            notifyDataSetChanged();
+        }
+
+        public interface OnImageSelectedListener {
+            void onImageSelected(String image);
+        }
+
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+            public final ImagePickerItemBinding binding;
+
+            public ViewHolder(@NonNull ImagePickerItemBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
+            }
         }
     }
 }

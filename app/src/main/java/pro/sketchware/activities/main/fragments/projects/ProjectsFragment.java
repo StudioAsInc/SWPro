@@ -21,15 +21,15 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuProvider;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.NestedScrollView;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.besome.sketch.adapters.ProjectsAdapter;
 import com.besome.sketch.design.DesignActivity;
 import com.besome.sketch.editor.manage.library.ProjectComparator;
 import com.besome.sketch.projects.MyProjectSettingActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.transition.MaterialFadeThrough;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,24 +40,48 @@ import java.util.stream.IntStream;
 
 import a.a.a.DA;
 import a.a.a.DB;
-import a.a.a.aB;
 import a.a.a.lC;
 import dev.chrisbanes.insetter.Insetter;
+import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.project.RestoreProject;
 import mod.hey.studios.project.ProjectTracker;
 import mod.hey.studios.project.backup.BackupRestoreManager;
-import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 import pro.sketchware.activities.main.activities.MainActivity;
 import pro.sketchware.databinding.MyprojectsBinding;
 import pro.sketchware.databinding.SortProjectDialogBinding;
+import pro.sketchware.utility.UI;
 
 public class ProjectsFragment extends DA {
-    private MyprojectsBinding binding;
-    private ProjectsAdapter projectsAdapter;
-    private DB preference;
-    private SearchView projectsSearchView;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final List<HashMap<String, Object>> projectsList = new ArrayList<>();
+    private MyprojectsBinding binding;
+    private ProjectsAdapter projectsAdapter;
+    public final ActivityResultLauncher<Intent> openProjectSettings = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == Activity.RESULT_OK) {
+            Intent data = result.getData();
+            if (data != null) {
+                String sc_id = data.getStringExtra("sc_id");
+                if (data.getBooleanExtra("is_new", false)) {
+                    toDesignActivity(sc_id);
+                    addProject(sc_id);
+                } else {
+                    updateProject(sc_id);
+                }
+            }
+        }
+    });
+    private DB preference;
+    private SearchView projectsSearchView;
+    private MenuProvider menuProvider;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setEnterTransition(new MaterialFadeThrough());
+        setReturnTransition(new MaterialFadeThrough());
+        setExitTransition(new MaterialFadeThrough());
+        setReenterTransition(new MaterialFadeThrough());
+    }
 
     @Override
     public void b(int requestCode) {
@@ -120,31 +144,33 @@ public class ProjectsFragment extends DA {
 
         ExtendedFloatingActionButton fab = requireActivity().findViewById(R.id.create_new_project);
         fab.setOnClickListener((v) -> toProjectSettingsActivity());
-        Insetter.builder()
-                .margin(WindowInsetsCompat.Type.navigationBars())
-                .applyToView(fab);
+        Insetter.builder().margin(WindowInsetsCompat.Type.navigationBars()).applyToView(fab);
 
         binding.swipeRefresh.setOnRefreshListener(this::refreshProjectsList);
 
         projectsAdapter = new ProjectsAdapter(this, projectsList);
         binding.myprojects.setAdapter(projectsAdapter);
+        binding.myprojects.setHasFixedSize(true);
 
         binding.myprojects.post(this::refreshProjectsList); // wait for RecyclerView to be ready
+        UI.addSystemWindowInsetToPadding(binding.specialActionContainer, true, false, true, false);
+        UI.addSystemWindowInsetToPadding(binding.loadingContainer, true, false, true, true);
+        UI.addSystemWindowInsetToPadding(binding.titleContainer, true, false, true, false);
+        UI.addSystemWindowInsetToPadding(binding.myprojects, true, false, true, true);
 
-        binding.nestedScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY > oldScrollY) {
-                    fab.shrink();
-                } else if (scrollY < oldScrollY) {
-                    fab.extend();
-                }
+        binding.nestedScroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (scrollY > oldScrollY) {
+                fab.shrink();
+            } else if (scrollY < oldScrollY) {
+                fab.extend();
             }
         });
 
+        binding.iconSort.setOnClickListener(v -> showProjectSortingDialog());
         binding.specialAction.getRoot().setOnClickListener(v -> restoreProject());
+        RestoreProject.setupDropFileTo(getActivity(), binding.specialAction.getRoot());
 
-        requireActivity().addMenuProvider(new MenuProvider() {
+        menuProvider = new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.projects_fragment_menu, menu);
@@ -166,33 +192,23 @@ public class ProjectsFragment extends DA {
             }
 
             @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId() == R.id.sortProject) {
-                    showProjectSortingDialog();
-                    return true;
-                }
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 return false;
             }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+        };
+
+        requireActivity().addMenuProvider(menuProvider);
     }
 
-    public final ActivityResultLauncher<Intent> openProjectSettings = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    if (data != null) {
-                        String sc_id = data.getStringExtra("sc_id");
-                        if (data.getBooleanExtra("is_new", false)) {
-                            toDesignActivity(sc_id);
-                            addProject(sc_id);
-                        } else {
-                            updateProject(sc_id);
-                        }
-                    }
-                }
-            }
-    );
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            requireActivity().removeMenuProvider(menuProvider);
+        } else {
+            requireActivity().addMenuProvider(menuProvider);
+        }
+    }
 
     public void refreshProjectsList() {
         // Check if the fragment is still attached to the activity
@@ -213,8 +229,8 @@ public class ProjectsFragment extends DA {
 
             requireActivity().runOnUiThread(() -> {
                 if (binding.swipeRefresh.isRefreshing()) binding.swipeRefresh.setRefreshing(false);
-                if (binding.loading3balls.getVisibility() == View.VISIBLE) {
-                    binding.loading3balls.setVisibility(View.GONE);
+                if (binding.loadingContainer.getVisibility() == View.VISIBLE) {
+                    binding.loadingContainer.setVisibility(View.GONE);
                     binding.myprojects.setVisibility(View.VISIBLE);
                 }
                 projectsList.clear();
@@ -232,7 +248,7 @@ public class ProjectsFragment extends DA {
             if (newProject != null) {
                 requireActivity().runOnUiThread(() -> {
                     projectsList.add(0, newProject);
-                    projectsAdapter.notifyItemInserted(0);
+                    projectsAdapter.notifyDataSetChanged();
                     binding.myprojects.scrollToPosition(0);
                 });
             }
@@ -246,15 +262,15 @@ public class ProjectsFragment extends DA {
                 int index = IntStream.range(0, projectsList.size()).filter(i -> projectsList.get(i).get("sc_id").equals(sc_id)).findFirst().orElse(-1);
                 if (index != -1) {
                     projectsList.set(index, updatedProject);
-                    requireActivity().runOnUiThread(() -> projectsAdapter.notifyItemChanged(index));
+                    requireActivity().runOnUiThread(() -> projectsAdapter.notifyDataSetChanged());
                 }
             }
         });
     }
 
     private void showProjectSortingDialog() {
-        aB dialog = new aB(requireActivity());
-        dialog.b("Sort options");
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(requireActivity());
+        dialog.setTitle("Sort options");
 
         SortProjectDialogBinding dialogBinding = SortProjectDialogBinding.inflate(LayoutInflater.from(requireActivity()));
         RadioButton sortByName = dialogBinding.sortByName;
@@ -274,8 +290,8 @@ public class ProjectsFragment extends DA {
             sortOrderDesc.setChecked(true);
         }
 
-        dialog.a(dialogBinding.getRoot());
-        dialog.b("Save", v -> {
+        dialog.setView(dialogBinding.getRoot());
+        dialog.setPositiveButton("Save", (v, which) -> {
             int sortValue = 0;
             if (sortByName.isChecked()) {
                 sortValue |= ProjectComparator.SORT_BY_NAME;
@@ -290,10 +306,10 @@ public class ProjectsFragment extends DA {
                 sortValue |= ProjectComparator.SORT_ORDER_DESCENDING;
             }
             preference.a("sortBy", sortValue, true);
-            dialog.dismiss();
+            v.dismiss();
             refreshProjectsList();
         });
-        dialog.a("Cancel", Helper.getDialogDismissListener(dialog));
+        dialog.setNegativeButton("Cancel", null);
         dialog.show();
     }
 

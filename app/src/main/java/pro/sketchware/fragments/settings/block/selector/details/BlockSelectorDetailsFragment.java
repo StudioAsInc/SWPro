@@ -2,40 +2,57 @@ package pro.sketchware.fragments.settings.block.selector.details;
 
 import static pro.sketchware.utility.GsonUtils.getGson;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import mod.hey.studios.util.Helper;
-import pro.sketchware.databinding.FragmentBlockSelectorManagerBinding;
-import pro.sketchware.databinding.DialogAddCustomActivityBinding;
-import pro.sketchware.databinding.DialogSelectorActionsBinding;
-
-import pro.sketchware.utility.SketchwareUtil;
-import pro.sketchware.utility.FileUtil;
-import pro.sketchware.fragments.settings.block.selector.Selector;
-import pro.sketchware.fragments.settings.block.selector.BlockSelectorConsts;
-
+import java.util.ArrayList;
 import java.util.List;
 
-import a.a.a.aB;
 import a.a.a.qA;
+import mod.hey.studios.util.Helper;
+import pro.sketchware.databinding.DialogAddCustomActivityBinding;
+import pro.sketchware.databinding.DialogSelectorActionsBinding;
+import pro.sketchware.databinding.FragmentBlockSelectorManagerBinding;
+import pro.sketchware.fragments.settings.block.selector.BlockSelectorConsts;
+import pro.sketchware.fragments.settings.block.selector.Selector;
+import pro.sketchware.utility.FileUtil;
+import pro.sketchware.utility.SketchwareUtil;
 
 public class BlockSelectorDetailsFragment extends qA {
-
-    private final int index;
-    private final List<Selector> selectors;
+    private int index;
+    private List<Selector> selectors;
     private FragmentBlockSelectorManagerBinding binding;
     private BlockSelectorDetailsAdapter adapter;
 
-    public BlockSelectorDetailsFragment(int index, List<Selector> selectors) {
-        this.index = index;
-        this.selectors = selectors;
+    public static BlockSelectorDetailsFragment newInstance(int index, ArrayList<Selector> selectors) {
+        var fragment = new BlockSelectorDetailsFragment();
+        var args = new Bundle();
+        args.putInt("index", index);
+        args.putParcelableArrayList("selectors", selectors);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        index = args.getInt("index");
+        selectors = args.getParcelableArrayList("selectors");
     }
 
     @Nullable
@@ -49,16 +66,58 @@ public class BlockSelectorDetailsFragment extends qA {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         configureToolbar(binding.toolbar);
-        handleInsetts(binding.getRoot());
 
         adapter = new BlockSelectorDetailsAdapter(
-          (selector, indexA) -> showActionsDialog(indexA)
+                (selector, indexA) -> showActionsDialog(indexA)
         );
-        
+
         adapter.submitList(selectors.get(index).getData());
         binding.list.setAdapter(adapter);
 
         binding.createNew.setOnClickListener(v -> showCreateEditDialog(false, 0));
+
+        {
+            View view1 = binding.appBarLayout;
+            int left = view1.getPaddingLeft();
+            int top = view1.getPaddingTop();
+            int right = view1.getPaddingRight();
+            int bottom = view1.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top + insets.top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
+
+        {
+            View view1 = binding.content;
+            int left = view1.getPaddingLeft();
+            int top = view1.getPaddingTop();
+            int right = view1.getPaddingRight();
+            int bottom = view1.getPaddingBottom();
+
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                v.setPadding(left + insets.left, top, right + insets.right, bottom + insets.bottom);
+                return i;
+            });
+        }
+
+        {
+            View view1 = binding.createNew;
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) view1.getLayoutParams();
+            int end = lp.getMarginEnd();
+            int bottom = lp.bottomMargin;
+
+            ViewCompat.setOnApplyWindowInsetsListener(view1, (v, i) -> {
+                Insets insets = i.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                lp.setMarginEnd(end + insets.right);
+                lp.bottomMargin = bottom + insets.bottom;
+                v.setLayoutParams(lp);
+                return i;
+            });
+        }
     }
 
     private void showCreateEditDialog(boolean isEdit, int indexA) {
@@ -68,9 +127,9 @@ public class BlockSelectorDetailsFragment extends qA {
             dialogBinding.activityNameInput.setText(selectors.get(index).getData().get(indexA));
         }
 
-        aB dialog = new aB(requireActivity());
-        dialog.b("New Selector Item");
-        dialog.b("Create", v -> {
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(requireActivity());
+        dialog.setTitle("New Selector Item");
+        dialog.setPositiveButton("Create", (v, which) -> {
             String newItem = Helper.getText(dialogBinding.activityNameInput);
             if (newItem != null && !newItem.isEmpty()) {
                 if (!isEdit) {
@@ -81,19 +140,19 @@ public class BlockSelectorDetailsFragment extends qA {
                 saveAll();
                 adapter.notifyDataSetChanged();
             }
-            dialog.dismiss();
+            v.dismiss();
         });
-        dialog.a("Cancel", v -> dialog.dismiss());
-        dialog.a(dialogBinding.getRoot());
+        dialog.setNegativeButton("Cancel", null);
+        dialog.setView(dialogBinding.getRoot());
         dialog.show();
     }
 
     private void showActionsDialog(int indexA) {
         DialogSelectorActionsBinding dialogBinding = DialogSelectorActionsBinding.inflate(LayoutInflater.from(requireContext()));
 
-        aB dialog = new aB(requireActivity());
-        dialog.b("Actions");
-        dialog.a(dialogBinding.getRoot());
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireActivity()).create();
+        dialog.setTitle("Actions");
+        dialog.setView(dialogBinding.getRoot());
 
         dialogBinding.edit.setOnClickListener(v -> {
             dialog.dismiss();
@@ -105,14 +164,14 @@ public class BlockSelectorDetailsFragment extends qA {
         dialogBinding.delete.setOnClickListener(v -> {
             dialog.dismiss();
             showConfirmationDialog(
-                "Are you sure you want to delete this Selector Item?",
-                confirmDialog -> {
-                    selectors.get(index).getData().remove(indexA);
-                    saveAll();
-                    adapter.notifyDataSetChanged();
-                    confirmDialog.dismiss();
-                },
-                cancelDialog -> cancelDialog.dismiss()
+                    "Are you sure you want to delete this Selector Item?",
+                    confirmDialog -> {
+                        selectors.get(index).getData().remove(indexA);
+                        saveAll();
+                        adapter.notifyDataSetChanged();
+                        confirmDialog.dismiss();
+                    },
+                    DialogInterface::dismiss
             );
         });
 
@@ -120,11 +179,11 @@ public class BlockSelectorDetailsFragment extends qA {
     }
 
     private void showConfirmationDialog(String message, OnDialogClickListener onConfirm, OnDialogClickListener onCancel) {
-        aB dialog = new aB(requireActivity());
-        dialog.b("Attention");
-        dialog.a(message);
-        dialog.b("Yes", v -> onConfirm.onClick(dialog));
-        dialog.a("Cancel", v -> onCancel.onClick(dialog));
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(requireActivity());
+        dialog.setTitle("Attention");
+        dialog.setMessage(message);
+        dialog.setPositiveButton("Yes", (v, which) -> onConfirm.onClick(v));
+        dialog.setNegativeButton("Cancel", (v, which) -> onCancel.onClick(v));
 
         dialog.show();
     }
@@ -151,6 +210,6 @@ public class BlockSelectorDetailsFragment extends qA {
 
     @FunctionalInterface
     public interface OnDialogClickListener {
-        void onClick(aB dialog);
+        void onClick(DialogInterface dialog);
     }
 }

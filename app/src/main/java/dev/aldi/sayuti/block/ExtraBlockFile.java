@@ -8,9 +8,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import pro.sketchware.utility.FileUtil;
 import mod.hey.studios.util.Helper;
 import mod.hilal.saif.blocks.BlocksHandler;
+import pro.sketchware.utility.FileUtil;
 
 public class ExtraBlockFile {
 
@@ -19,9 +19,14 @@ public class ExtraBlockFile {
     public static final File EXTRA_BLOCKS_PALETTE_FILE = new File(Environment.getExternalStorageDirectory(),
             ".sketchware/resources/block/My Block/palette.json");
 
+    public static ArrayList<HashMap<String, Object>> buildInBlocks = new ArrayList<>();
+
     public static ArrayList<HashMap<String, Object>> getExtraBlockData() {
         ArrayList<HashMap<String, Object>> extraBlocks = new Gson().fromJson(getExtraBlockFile(), Helper.TYPE_MAP_LIST);
-        BlocksHandler.builtInBlocks(extraBlocks);
+
+        buildInBlocks.clear();
+        BlocksHandler.builtInBlocks(buildInBlocks);
+        extraBlocks.addAll(buildInBlocks);
 
         return extraBlocks;
     }
