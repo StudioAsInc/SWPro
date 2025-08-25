@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import extensions.anbui.daydream.dialog.DialogUtils;
 import extensions.anbui.daydream.git.DayDreamGitActionsActivity;
+import extensions.anbui.daydream.library.LibraryUtils;
 import extensions.anbui.daydream.tool.ProjectToolCore;
 import pro.sketchware.R;
 import pro.sketchware.activities.main.activities.MainActivity;
@@ -49,11 +50,18 @@ public class DayDreamProjectTool extends AppCompatActivity {
         binding.lnBackup.setOnClickListener(v -> backup());
         binding.lnClone.setOnClickListener(v -> cloneProject());
         binding.lnCleanuptemporaryfiles.setOnClickListener(v -> cleanUpTemporaryFiles());
-        binding.lnGit.setOnClickListener(v -> {
-            Intent intent = new Intent(this, DayDreamGitActionsActivity.class);
-            intent.putExtra("sc_id", projectID);
-            startActivity(intent);
-        });
+
+        if (LibraryUtils.isAllowUseGit()) {
+            binding.lnGit.setOnClickListener(v -> {
+                Intent intent = new Intent(this, DayDreamGitActionsActivity.class);
+                intent.putExtra("sc_id", projectID);
+                startActivity(intent);
+            });
+        } else {
+            binding.tvGitnote.setText("Android 13+ required to use this feature.");
+            binding.lnGit.setAlpha(0.5f);
+            binding.lnGit.setEnabled(false);
+        }
     }
 
     private void backup() {

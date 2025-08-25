@@ -110,7 +110,6 @@
         <activity
             android:name="com.besome.sketch.editor.LogicEditorActivity"
             android:configChanges="orientation|screenSize"
-            android:hardwareAccelerated="false"
             android:theme="@style/Theme.SketchwarePro.SmallToolbar"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity

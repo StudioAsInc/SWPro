@@ -19,6 +19,7 @@ import extensions.anbui.daydream.configs.Configs;
 import extensions.anbui.daydream.dialog.DialogUtils;
 import extensions.anbui.daydream.file.FileUtils;
 import extensions.anbui.daydream.git.DayDreamGitCloneActivity;
+import extensions.anbui.daydream.library.LibraryUtils;
 import extensions.anbui.daydream.tool.ToolCore;
 import pro.sketchware.R;
 import pro.sketchware.databinding.ActivityDaydreamToolsBinding;
@@ -42,10 +43,17 @@ public class DayDreamTools extends AppCompatActivity {
         binding.lnCleanuptemporaryfiles.setOnClickListener(v -> cleanUpTemporaryFiles());
         binding.lnCleanuplocallibrary.setOnClickListener(v -> cleanUpLocalLib());
         binding.lnCleanouttherecyclingbin.setOnClickListener(v -> cleanOutTheRecyclingBin());
-        binding.lnGitclone.setOnClickListener(v -> {
-            Intent intent = new Intent(this, DayDreamGitCloneActivity.class);
-            startActivity(intent);
-        });
+
+        if (LibraryUtils.isAllowUseGit()){
+            binding.lnGitclone.setOnClickListener(v -> {
+                Intent intent = new Intent(this, DayDreamGitCloneActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            binding.tvGitclonenote.setText("Android 13+ required to use this feature.");
+            binding.lnGitclone.setAlpha(0.5f);
+            binding.lnGitclone.setEnabled(false);
+        }
     }
 
     private void cleanUpLocalLib() {

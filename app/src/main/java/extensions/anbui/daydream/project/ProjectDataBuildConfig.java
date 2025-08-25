@@ -19,7 +19,7 @@ public class ProjectDataBuildConfig {
 
     public static void setDataForFirstTimeProjectCreation(String projectID) {
         Log.i(TAG, "setDataForFirstTimeProjectCreation: " + projectID);
-        writeDataFile(projectID, "{\"dexer\":\"D8\",\"classpath\":\"\",\"enable_logcat\":\"true\",\"no_http_legacy\":\"false\",\"android_jar\":\"\",\"no_warn\":\"true\",\"java_ver\":\"11\"}");
+        writeDataFile(projectID, "{\"dexer\":\"D8\",\"classpath\":\"\",\"enable_logcat\":\"true\",\"no_http_legacy\":\"false\",\"android_jar\":\"\",\"no_warn\":\"true\",\"java_ver\":\"17\"}");
     }
 
     public static boolean isUseJava7(String projectID) {
