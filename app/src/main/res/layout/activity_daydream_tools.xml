@@ -67,6 +67,7 @@
                         android:textSize="18sp" />
 
                     <TextView
+                        android:id="@+id/tv_gitclonenote"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Clone and add that project."

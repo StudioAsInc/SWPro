@@ -61,6 +61,7 @@
                 android:id="@+id/til_rurl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
                 android:hint="Repository URL (https://github.com/user/repo.git)">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_rurl"

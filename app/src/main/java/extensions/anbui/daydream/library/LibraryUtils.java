@@ -1,5 +1,6 @@
 package extensions.anbui.daydream.library;
 
+import android.os.Build;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -58,5 +59,10 @@ public class LibraryUtils {
         Log.i(TAG, "isAllowUseShizuku: " + projectID);
         return (ProjectDataLibrary.isEnabledAppCompat(projectID)
                 && ProjectDataConfig.isMinSDKNewerThan23(projectID));
+    }
+
+    public static boolean isAllowUseGit() {
+        Log.i(TAG, "isAllowUseGit");
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
     }
 }

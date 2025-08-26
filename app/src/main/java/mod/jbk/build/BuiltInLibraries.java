@@ -27,9 +27,9 @@ public class BuiltInLibraries {
     public static String ANDROIDX_ACTIVITY = "activity-1.10.1";
     public static String ANDROIDX_ANNOTATION = "annotation-1.5.1";
     public static String ANDROIDX_ANNOTATION_ANNOTATION_JVM = "annotation-jvm-1.9.1";
-    public static String ANDROIDX_ANNOTATION_EXPERIMENTAL = "annotation-experimental-1.4.1";
-    public static String ANDROIDX_APPCOMPAT = "appcompat-1.6.1";
-    public static String ANDROIDX_APPCOMPAT_RESOURCES = "appcompat-resources-1.6.1";
+    public static String ANDROIDX_ANNOTATION_EXPERIMENTAL = "annotation-experimental-1.5.1";
+    public static String ANDROIDX_APPCOMPAT = "appcompat-1.7.1";
+    public static String ANDROIDX_APPCOMPAT_RESOURCES = "appcompat-resources-1.7.1";
     public static String ANDROIDX_ARCH_CORE_CORE_COMMON = "android-arch-core-common-2.2.0";
     public static String ANDROIDX_ASYNCLAYOUTINFLATER = "asynclayoutinflater-1.0.0";
     public static String ANDROIDX_BIOMETRIC_BIOMETRIC = "biometric-1.1.0";
@@ -42,7 +42,7 @@ public class BuiltInLibraries {
     public static String ANDROIDX_CONSTRAINTLAYOUT = "constraintlayout-2.1.2";
     public static String ANDROIDX_CONSTRAINTLAYOUT_CORE = "constraintlayout-core-1.0.2";
     public static String ANDROIDX_COORDINATORLAYOUT = "coordinatorlayout-1.1.0";
-    public static String ANDROIDX_CORE = "core-1.16.0";
+    public static String ANDROIDX_CORE = "core-1.17.0";
     public static String ANDROIDX_CORE_CORE_VIEWTREE = "core-viewtree-1.0.0";
     public static String ANDROIDX_CORE_KTX = "core-ktx-1.16.0";
     public static String ANDROIDX_CORE_RUNTIME = "core-runtime-2.1.0";
@@ -52,7 +52,7 @@ public class BuiltInLibraries {
     public static String ANDROIDX_CUSTOMVIEW = "customview-1.1.0";
     public static String ANDROIDX_DOCUMENTFILE = "documentfile-1.0.1";
     public static String ANDROIDX_DRAWERLAYOUT = "drawerlayout-1.1.1";
-    public static String ANDROIDX_DYNAMIC_ANIMATION = "dynamic-animation-1.1.0-alpha03";
+    public static String ANDROIDX_DYNAMICANIMATION = "dynamicanimation-1.1.0";
     public static String ANDROIDX_EMOJI2 = "emoji2-1.0.1";
     public static String ANDROIDX_EMOJI2_VIEWS_HELPER = "emoji2-views-helper-1.0.1";
     public static String ANDROIDX_EXIFINTERFACE = "exifinterface-1.3.6";
@@ -87,8 +87,9 @@ public class BuiltInLibraries {
     public static String ANDROIDX_PRINT = "print-1.0.0";
     public static String ANDROIDX_PRIVACYSANDBOX_ADS_ADS_ADSERVICES = "ads-adservices-1.1.0-beta12";
     public static String ANDROIDX_PRIVACYSANDBOX_ADS_ADS_ADSERVICES_JAVA = "ads-adservices-java-1.1.0-beta12";
+    public static String ANDROIDX_PROFILEINSTALLER = "profileinstaller-1.4.1";
     public static String ANDROIDX_RECYCLERVIEW = "recyclerview-1.2.1";
-    public static String ANDROIDX_RESOURCEINSPECTION_ANNOTATION = "resourceinspection-annotation-1.0.0";
+    public static String ANDROIDX_RESOURCEINSPECTION_ANNOTATION = "resourceinspection-annotation-1.0.1";
     public static String ANDROIDX_ROOM_COMMON = "room-common-2.6.1";
     public static String ANDROIDX_ROOM_ROOM_KTX = "room-ktx-2.6.1";
     public static String ANDROIDX_ROOM_RUNTIME = "room-runtime-2.6.1";
@@ -100,15 +101,15 @@ public class BuiltInLibraries {
     public static String ANDROIDX_SWIPEREFRESHLAYOUT = "swiperefreshlayout-1.2.0-alpha01";
     public static String ANDROIDX_TRACING = "tracing-1.2.0";
     public static String ANDROIDX_TRACING_TRACING_KTX = "tracing-ktx-1.2.0";
-    public static String ANDROIDX_TRANSITION = "transition-1.4.1";
-    public static String ANDROIDX_VECTORDRAWABLE = "vectordrawable-1.1.0";
-    public static String ANDROIDX_VECTORDRAWABLE_ANIMATED = "vectordrawable-animated-1.1.0";
+    public static String ANDROIDX_TRANSITION = "transition-1.6.0";
+    public static String ANDROIDX_VECTORDRAWABLE = "vectordrawable-1.2.0";
+    public static String ANDROIDX_VECTORDRAWABLE_ANIMATED = "vectordrawable-animated-1.2.0";
     public static String ANDROIDX_VERSIONEDPARCELABLE = "versionedparcelable-1.1.1";
     public static String ANDROIDX_VIEWPAGER = "viewpager-1.0.0";
     public static String ANDROIDX_VIEWPAGER2 = "viewpager2-1.0.0";
     public static String ANDROIDX_WORK_RUNTIME = "work-runtime-2.10.3";
-    public static String CIRCLE_IMAGEVIEW = "circleimageview-3.1.0";
-    public static String CODE_VIEW = "CodeView-0.4.0";
+    public static String CIRCLEIMAGEVIEW = "circleimageview-3.1.0";
+    public static String CODEVIEW = "CodeView-0.4.0";
     public static String COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT = "play-services-measurement-23.0.0";
     public static String COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_API = "play-services-measurement-api-23.0.0";
     public static String COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_IMPL = "play-services-measurement-impl-23.0.0";
@@ -145,14 +146,14 @@ public class BuiltInLibraries {
     public static String GSON = "gson-2.8.7";
     public static String GUAVA = "guava-33.1.0-android";
     public static String GUAVA_LISTENABLEFUTURE = "listenablefuture-1.0.0";
-    public static String HTTP_LEGACY_ANDROID_28 = "http-legacy-android-28";
+    public static String HTTP_LEGACY_ANDROID = "http-legacy-android-28";
     public static String JAKARTA_INJECT_JAKARTA_INJECT_API = "firebase-annotations-16.2.0";
     public static String JETBRAINS_ANNOTATIONS = "org-jetbrains-annotations-23.0.0";
     public static String JUNIT_JUNIT = "junit-4.13.2";
-    public static String KOTLIN_STDLIB = "kotlin-stdlib-2.0.0";
+    public static String JETBRAINS_KOTLIN_STDLIB = "kotlin-stdlib-2.0.21";
     public static String KOTLIN_STDLIB_JDK7 = "kotlin-stdlib-jdk7-1.6.21";
     public static String LOTTIE = "lottie-3.4.0";
-    public static String MATERIAL = "material-1.14.0-alpha03";
+    public static String MATERIAL = "material-1.14.0-alpha04";
     public static String OKHTTP = "okhttp-3.9.1";
     public static String OKIO = "okio-1.17.4";
     public static String ONESIGNAL = "OneSignal-3.14.0";
@@ -184,9 +185,9 @@ public class BuiltInLibraries {
     public static String PLAY_SERVICES_PLACES_PLACEREPORT = "play-services-places-placereport-17.0.0";
     public static String PLAY_SERVICES_STATS = "play-services-stats-17.0.0";
     public static String PLAY_SERVICES_TASKS = "play-services-tasks-18.3.2";
-    public static String UMP_USER_MESSAGING_PLATFORM = "user-messaging-platform-2.0.0";
+    public static String USER_MESSAGING_PLATFORM = "user-messaging-platform-2.0.0";
     public static String WAVE_SIDE_BAR = "wave-side-bar";
-    public static String YOUTUBE_PLAYER = "android-youtube-player-10.0.5";
+    public static String ANDROID_YOUTUBE_PLAYER = "android-youtube-player-10.0.5";
 
 
     public static final BuiltInLibrary[] KNOWN_BUILT_IN_LIBRARIES = {
@@ -198,8 +199,8 @@ public class BuiltInLibraries {
 
             //==========Kotlin==========
             new BuiltInLibrary(JETBRAINS_ANNOTATIONS),
-            new BuiltInLibrary(KOTLIN_STDLIB, List.of(JETBRAINS_ANNOTATIONS)),
-            new BuiltInLibrary(KOTLIN_STDLIB_JDK7, List.of(KOTLIN_STDLIB)),
+            new BuiltInLibrary(JETBRAINS_KOTLIN_STDLIB, List.of(JETBRAINS_ANNOTATIONS)),
+            new BuiltInLibrary(KOTLIN_STDLIB_JDK7, List.of(JETBRAINS_KOTLIN_STDLIB)),
 
             new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_JVM),
             new BuiltInLibrary(ORG_JETBRAINS_KOTLINX_KOTLINX_COROUTINES_CORE_ANDROID),
@@ -222,6 +223,8 @@ public class BuiltInLibraries {
 
             new BuiltInLibrary(ANDROIDX_CONCURRENT_FUTURES, List.of(ANDROIDX_ANNOTATION, GUAVA_LISTENABLEFUTURE)),
             new BuiltInLibrary(ANDROIDX_CONCURRENT_CONCURRENT_FUTURES_KTX),
+
+            new BuiltInLibrary(ANDROIDX_PROFILEINSTALLER, List.of(ANDROIDX_STARTUP_RUNTIME, ANDROIDX_ANNOTATION, ANDROIDX_CONCURRENT_FUTURES)),
 
             new BuiltInLibrary(ANDROIDX_TRACING, List.of(ANDROIDX_ANNOTATION)),
             new BuiltInLibrary(ANDROIDX_TRACING_TRACING_KTX, List.of(), "androidx.tracing.ktx"),
@@ -249,7 +252,7 @@ public class BuiltInLibraries {
 
             new BuiltInLibrary(ANDROIDX_CARDVIEW, List.of(ANDROIDX_ANNOTATION), "androidx.cardview"),
 
-            new BuiltInLibrary(ANDROIDX_CONSTRAINTLAYOUT, List.of(ANDROIDX_APPCOMPAT, ANDROIDX_CORE, ANDROIDX_CONSTRAINTLAYOUT_CORE),
+            new BuiltInLibrary(ANDROIDX_CONSTRAINTLAYOUT, List.of(ANDROIDX_APPCOMPAT, ANDROIDX_CORE, ANDROIDX_CONSTRAINTLAYOUT_CORE, ANDROIDX_PROFILEINSTALLER),
                     "androidx.constraintlayout.widget"),
             new BuiltInLibrary(ANDROIDX_CONSTRAINTLAYOUT_CORE),
 
@@ -263,7 +266,8 @@ public class BuiltInLibraries {
             new BuiltInLibrary(ANDROIDX_DRAWERLAYOUT, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE, ANDROIDX_CUSTOMVIEW),
                     "androidx.drawerlayout"),
 
-            new BuiltInLibrary(ANDROIDX_DYNAMIC_ANIMATION),
+            new BuiltInLibrary(ANDROIDX_DYNAMICANIMATION, List.of(ANDROIDX_CORE, ORG_JSPECIFY_JSPECIFY,
+                    ANDROIDX_COLLECTION), "androidx.dynamicanimation"),
 
             new BuiltInLibrary(ANDROIDX_FRAGMENT, List.of(ANDROIDX_ACTIVITY, ANDROIDX_ANNOTATION, ANDROIDX_ANNOTATION_EXPERIMENTAL,
                     ANDROIDX_COLLECTION, ANDROIDX_CORE, ANDROIDX_LIFECYCLE_LIVEDATA_CORE, ANDROIDX_LIFECYCLE_VIEWMODEL,
@@ -279,7 +283,8 @@ public class BuiltInLibraries {
             new BuiltInLibrary(ANDROIDX_SWIPEREFRESHLAYOUT, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE, ANDROIDX_INTERPOLATOR),
                     "androidx.swiperefreshlayout"),
 
-            new BuiltInLibrary(ANDROIDX_TRANSITION, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE), "androidx.transition"),
+            new BuiltInLibrary(ANDROIDX_TRANSITION, List.of(ANDROIDX_ANNOTATION, ANDROIDX_CORE, ORG_JSPECIFY_JSPECIFY,
+                    ANDROIDX_COLLECTION, ANDROIDX_DYNAMICANIMATION), "androidx.transition"),
             new BuiltInLibrary(ANDROIDX_VECTORDRAWABLE, List.of(ANDROIDX_ANNOTATION, ANDROIDX_COLLECTION, ANDROIDX_CORE)),
             new BuiltInLibrary(ANDROIDX_VECTORDRAWABLE_ANIMATED, List.of(ANDROIDX_COLLECTION, ANDROIDX_INTERPOLATOR, ANDROIDX_VECTORDRAWABLE)),
 
@@ -384,9 +389,10 @@ public class BuiltInLibraries {
 
             //==========Material==========
             new BuiltInLibrary(MATERIAL, List.of(ANDROIDX_ANNOTATION, ANDROIDX_ANNOTATION_EXPERIMENTAL, ANDROIDX_APPCOMPAT, ANDROIDX_CARDVIEW,
-                    ANDROIDX_CONSTRAINTLAYOUT, ANDROIDX_COORDINATORLAYOUT, ANDROIDX_CORE, ANDROIDX_DRAWERLAYOUT, ANDROIDX_DYNAMIC_ANIMATION,
+                    ANDROIDX_CONSTRAINTLAYOUT, ANDROIDX_COORDINATORLAYOUT, ANDROIDX_CORE, ANDROIDX_DRAWERLAYOUT, ANDROIDX_DYNAMICANIMATION,
                     ANDROIDX_FRAGMENT, ANDROIDX_LIFECYCLE_RUNTIME, ANDROIDX_RECYCLERVIEW, ANDROIDX_TRANSITION, ANDROIDX_VECTORDRAWABLE,
-                    ANDROIDX_VIEWPAGER2, KOTLIN_STDLIB, ANDROIDX_COLLECTION_JVM, ANDROIDX_GRAPHICS_SHAPES_ANDROID), "com.google.android.material"),
+                    ANDROIDX_VIEWPAGER2, JETBRAINS_KOTLIN_STDLIB, ANDROIDX_COLLECTION_JVM, ANDROIDX_GRAPHICS_SHAPES_ANDROID,
+                    COM_GOOGLE_ERRORPRONE_ERROR_PRONE_ANNOTATIONS), "com.google.android.material"),
             //==========Material==========
 
             //==========Google Firebase==========
@@ -452,11 +458,11 @@ public class BuiltInLibraries {
             new BuiltInLibrary(PLAY_SERVICES_ADS_BASE, List.of(PLAY_SERVICES_BASEMENT)),
             new BuiltInLibrary(PLAY_SERVICES_ADS_IDENTIFIER, List.of(PLAY_SERVICES_BASEMENT)),
             new BuiltInLibrary(PLAY_SERVICES_ADS_LITE, List.of(PLAY_SERVICES_ADS_BASE, PLAY_SERVICES_BASEMENT,
-                    PLAY_SERVICES_MEASUREMENT_SDK_API, ANDROIDX_WORK_RUNTIME, UMP_USER_MESSAGING_PLATFORM), "com.google.android.gms.ads"),
+                    PLAY_SERVICES_MEASUREMENT_SDK_API, ANDROIDX_WORK_RUNTIME, USER_MESSAGING_PLATFORM), "com.google.android.gms.ads"),
 
             new BuiltInLibrary(PLAY_SERVICES_GASS, List.of(PLAY_SERVICES_ADS_BASE, PLAY_SERVICES_BASEMENT)),
 
-            new BuiltInLibrary(UMP_USER_MESSAGING_PLATFORM, List.of(ANDROIDX_ANNOTATION, PLAY_SERVICES_ADS_IDENTIFIER,
+            new BuiltInLibrary(USER_MESSAGING_PLATFORM, List.of(ANDROIDX_ANNOTATION, PLAY_SERVICES_ADS_IDENTIFIER,
                     PLAY_SERVICES_BASEMENT)), //Dialog consent
 
 
@@ -512,7 +518,7 @@ public class BuiltInLibraries {
 
             new BuiltInLibrary(COM_GOOGLE_ANDROID_GMS_PLAY_SERVICES_MEASUREMENT_API, List.of(PLAY_SERVICES_ADS_IDENTIFIER, PLAY_SERVICES_BASEMENT, PLAY_SERVICES_MEASUREMENT_BASE,
                     PLAY_SERVICES_MEASUREMENT_SDK_API, PLAY_SERVICES_TASKS, FIREBASE_COMMON, FIREBASE_COMPONENTS, COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS,
-                    COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP, FIREBASE_MEASUREMENT_CONNECTOR, GUAVA, KOTLIN_STDLIB)),
+                    COM_GOOGLE_FIREBASE_FIREBASE_INSTALLATIONS_INTEROP, FIREBASE_MEASUREMENT_CONNECTOR, GUAVA, JETBRAINS_KOTLIN_STDLIB)),
             //==========Play Services==========
 
             //==========Onesignal==========
@@ -548,11 +554,11 @@ public class BuiltInLibraries {
             //==========Gson==========
 
             //==========Circle ImageView==========
-            new BuiltInLibrary(CIRCLE_IMAGEVIEW, List.of(ANDROIDX_ANNOTATION), "de.hdodenhof.circleimageview"),
+            new BuiltInLibrary(CIRCLEIMAGEVIEW, List.of(ANDROIDX_ANNOTATION), "de.hdodenhof.circleimageview"),
             //==========Circle ImageView==========
 
             //==========Code View==========
-            new BuiltInLibrary(CODE_VIEW, List.of(), "br.tiagohm.codeview"),
+            new BuiltInLibrary(CODEVIEW, List.of(), "br.tiagohm.codeview"),
             //==========Code View==========
 
             //==========Wake side bar==========
@@ -560,7 +566,7 @@ public class BuiltInLibraries {
             //==========Wake side bar==========
 
             //==========YouTube Player==========
-            new BuiltInLibrary(YOUTUBE_PLAYER, List.of(ANDROIDX_APPCOMPAT, ANDROIDX_RECYCLERVIEW, KOTLIN_STDLIB_JDK7),
+            new BuiltInLibrary(ANDROID_YOUTUBE_PLAYER, List.of(ANDROIDX_APPCOMPAT, ANDROIDX_RECYCLERVIEW, KOTLIN_STDLIB_JDK7),
                     "com.pierfrancescosoffritti.androidyoutubeplayer"),
             //==========YouTube Player==========
 
@@ -582,13 +588,13 @@ public class BuiltInLibraries {
 
             //==========Http Legacy==========
             //Used to maintain compatibility for older apps or libraries that still use Apache HTTP Client on Android 6.0+
-            new BuiltInLibrary(HTTP_LEGACY_ANDROID_28),
+            new BuiltInLibrary(HTTP_LEGACY_ANDROID),
             //==========Http Legacy==========
 
             //==========Annotations==========
             new BuiltInLibrary(ANDROIDX_ANNOTATION), //Annotations @Nullable, @NonNull,...
             new BuiltInLibrary(ANDROIDX_ANNOTATION_ANNOTATION_JVM), //Annotations @Nullable, @NonNull,...
-            new BuiltInLibrary(ANDROIDX_ANNOTATION_EXPERIMENTAL, List.of(KOTLIN_STDLIB)), //Annotations @Experimental, @UseExperimental,...
+            new BuiltInLibrary(ANDROIDX_ANNOTATION_EXPERIMENTAL, List.of(JETBRAINS_KOTLIN_STDLIB)), //Annotations @Experimental, @UseExperimental,...
             new BuiltInLibrary(GOOGLE_AUTO_VALUE_ANNOTATIONS), //Automatically generate equals(), toString(),... code
             new BuiltInLibrary(JAKARTA_INJECT_JAKARTA_INJECT_API), //Annotations @Inject, @Qualifier,...
             //==========Annotations==========
