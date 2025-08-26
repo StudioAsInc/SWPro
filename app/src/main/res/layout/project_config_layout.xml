@@ -175,8 +175,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
-        android:visibility="gone">
+        android:padding="16dp">
 
         <ImageView
             android:layout_width="32dp"
@@ -189,7 +188,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="We recommend using Java 17 for best build performance. Java 21 is not yet stable and is not recommended." />
+            android:text="We recommend using Java 17 for best build performance. Java 20 is not yet stable and is not recommended." />
     </LinearLayout>
 
     <LinearLayout

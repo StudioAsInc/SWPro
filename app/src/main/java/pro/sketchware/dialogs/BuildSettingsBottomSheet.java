@@ -8,8 +8,8 @@ import static mod.hey.studios.build.BuildSettings.SETTING_JAVA_VERSION;
 import static mod.hey.studios.build.BuildSettings.SETTING_JAVA_VERSION_1_7;
 import static mod.hey.studios.build.BuildSettings.SETTING_JAVA_VERSION_1_8;
 import static mod.hey.studios.build.BuildSettings.SETTING_JAVA_VERSION_11;
-import static mod.hey.studios.build.BuildSettings.SETTING_JAVA_VERSION_15;
-import static mod.hey.studios.build.BuildSettings.SETTING_JAVA_VERSION_16;
+import static mod.hey.studios.build.BuildSettings.SETTING_JAVA_VERSION_17;
+import static mod.hey.studios.build.BuildSettings.SETTING_JAVA_VERSION_20;
 import static mod.hey.studios.build.BuildSettings.SETTING_NO_HTTP_LEGACY;
 import static mod.hey.studios.build.BuildSettings.SETTING_NO_WARNINGS;
 
@@ -54,7 +54,7 @@ public class BuildSettingsBottomSheet extends BottomSheetDialogFragment {
     }
 
     public static String[] getAvailableJavaVersions() {
-        return new String[]{SETTING_JAVA_VERSION_1_7, SETTING_JAVA_VERSION_1_8, SETTING_JAVA_VERSION_11, SETTING_JAVA_VERSION_15, SETTING_JAVA_VERSION_16};
+        return new String[]{SETTING_JAVA_VERSION_1_7, SETTING_JAVA_VERSION_1_8, SETTING_JAVA_VERSION_11, SETTING_JAVA_VERSION_17, SETTING_JAVA_VERSION_20};
     }
 
     public static void handleJavaVersionChange(String choice) {

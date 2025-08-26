@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.besome.sketch.beans.ViewBean;
 import com.besome.sketch.design.DesignActivity;
+import com.besome.sketch.editor.view.ItemView;
 import com.besome.sketch.editor.view.ViewPane;
 import com.besome.sketch.lib.base.BaseAppCompatActivity;
 import com.besome.sketch.lib.ui.EasyDeleteEditText;
@@ -27,7 +28,6 @@ import a.a.a.Rp;
 import a.a.a.bB;
 import a.a.a.kC;
 import a.a.a.mB;
-import a.a.a.sy;
 import a.a.a.wq;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
@@ -40,8 +40,8 @@ public class ShowWidgetCollectionActivity extends BaseAppCompatActivity implemen
     private LinearLayout actionContainer;
     private NB widgetNameValidator;
 
-    private sy loadViews(ArrayList<ViewBean> views) {
-        sy syVar = null;
+    private ItemView loadViews(ArrayList<ViewBean> views) {
+        ItemView syVar = null;
         for (ViewBean view : views) {
             if (views.indexOf(view) == 0) {
                 view.parent = "root";
@@ -100,8 +100,8 @@ public class ShowWidgetCollectionActivity extends BaseAppCompatActivity implemen
 
         widgetName = getIntent().getStringExtra("widget_name");
         viewPane = findViewById(R.id.pane);
-        viewPane.setVerticalScrollBarEnabled(true);
         viewPane.initialize(DesignActivity.sc_id, true);
+        viewPane.setVerticalScrollBarEnabled(true);
         kC kCVar = new kC("", wq.a() + "/image/data/", "", "");
         kCVar.b(Op.g().f());
         viewPane.setResourceManager(kCVar);
@@ -125,9 +125,9 @@ public class ShowWidgetCollectionActivity extends BaseAppCompatActivity implemen
         setActionContainerHeight();
     }
 
-    private sy loadView(ViewBean view) {
+    private ItemView loadView(ViewBean view) {
         View v = viewPane.createItemView(view);
         viewPane.addViewAndUpdateIndex(v);
-        return (sy) v;
+        return (ItemView) v;
     }
 }
