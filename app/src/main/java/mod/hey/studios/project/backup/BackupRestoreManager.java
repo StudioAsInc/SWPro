@@ -3,6 +3,7 @@ package mod.hey.studios.project.backup;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,12 +20,14 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import a.a.a.lC;
 import dev.pranav.filepicker.FilePickerCallback;
 import dev.pranav.filepicker.FilePickerDialogFragment;
 import dev.pranav.filepicker.FilePickerOptions;
 import extensions.anbui.daydream.configs.Configs;
+import extensions.anbui.daydream.settings.FilePickerSettings;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 import pro.sketchware.activities.main.activities.MainActivity;
@@ -137,10 +140,14 @@ public class BackupRestoreManager {
         options.setMultipleSelection(true);
         options.setExtensions(new String[]{BackupFactory.EXTENSION});
         options.setTitle("Select backups to restore (" + BackupFactory.EXTENSION + ")");
+        options.setInitialDirectory(FilePickerSettings.getLastOpenedFolder(act).isEmpty() ? Environment.getExternalStorageDirectory().getAbsolutePath() : FilePickerSettings.getLastOpenedFolder(act));
 
         FilePickerCallback callback = new FilePickerCallback() {
             @Override
             public void onFilesSelected(@NotNull List<? extends File> files) {
+
+                FilePickerSettings.setLastOpenedFolder(act, Objects.requireNonNull(files.get(0).getParentFile()).getAbsolutePath());
+
                 for (int i = 0; i < files.size(); i++) {
                     String backupFilePath = files.get(i).getAbsolutePath();
 
