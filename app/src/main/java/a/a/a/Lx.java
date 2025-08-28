@@ -90,7 +90,7 @@ public class Lx {
         if (isLibraryNotExcluded(BuiltInLibraries.ANDROIDX_APPCOMPAT, excludedLibraries) && metadata.g) {
             content.append("""
                     implementation 'androidx.appcompat:appcompat:1.7.1'\r
-                    implementation 'com.google.android.material:material:1.14.0-alpha03'\r
+                    implementation 'com.google.android.material:material:1.14.0-alpha04'\r
                     """);
         }
 
@@ -2064,7 +2064,10 @@ public class Lx {
                 "    }\r\n" +
                 "\r\n" +
                 "    public static String getPackageDataDir(Context context) {\r\n" +
-                "        return context.getExternalFilesDir(null).getAbsolutePath();\r\n" +
+                "        String path = context.getExternalFilesDir(null).getAbsolutePath();\r\n" +
+                "        if (path != null)\r\n" +
+                "            return path;\r\n" +
+                "        return \"/sdcard/Android/data/" + packageName + "/files\";\r\n" +
                 "    }\r\n" +
                 "\r\n" +
                 "    public static String getPublicDir(String type) {\r\n" +
